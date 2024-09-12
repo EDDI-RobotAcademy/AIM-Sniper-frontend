@@ -67,7 +67,7 @@ jobs:
         username: ec2-user
         key: ${{ secrets.PRIVATE_KEY }}
         source: "./dist/**"
-        target: "/home/ec2-user/tcp/actions-frontend"
+        target: "/home/ec2-user/aim/actions-frontend"
 
     - name: Remove Github Actions IP From Security Group
       run: |
@@ -82,7 +82,7 @@ jobs:
   deploy:
     name: Deploy to Production
     needs: build
-    runs-on: [ self-hosted, deploy-tcp-frontend ]
+    runs-on: [ self-hosted, deploy-aim-frontend ]
     steps:
       - name: Get Github Actions IP
         id: ip
@@ -108,8 +108,8 @@ jobs:
           script_stop: true
           script: |
             pwd
-            cd /home/ec2-user/tcp/vue-frontend
-            cp -r /home/ec2-user/tcp/actions-frontend/dist/* ./html/
+            cd /home/ec2-user/aim/vue-frontend
+            cp -r /home/ec2-user/aim/actions-frontend/dist/* ./html/
 
             docker image prune -f
             docker logout
