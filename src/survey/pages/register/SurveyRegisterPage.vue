@@ -8,7 +8,7 @@
           label="설문지 이름을 작성하세요."
           v-model="formTitle"
           @keyup.enter="disableEnter"
-          :rules="[v => !!v || '설문지 이름을 입력하세요.']"
+          :rules="[v => !!v || '설문지 이름은 필수 항목입니다']"
           required
         ></v-text-field>
         </form>
@@ -25,28 +25,28 @@
           <v-card  v-if="selectedType === 'text'" outlined>
             <v-card-text>
               <v-text-field
-                v-model="answer"
-                label="질문을 입력하세요"
-                :rules="[v => !!v || '질문을 입력하세요.']"
+                v-model="label"
+                label="질문 제목을 입력하세요"
+                :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
-              <v-btn @click="createQuestion(selectedType)"> 질문생성하기</v-btn>
+              <v-btn @click="createQuestion(selectedType)"> 질문 생성</v-btn>
             </v-card-text>
           </v-card>
 
           <v-card  v-if="selectedType === 'radio' || selectedType === 'checkbox'" outlined>
             <v-card-text>
               <v-text-field 
-                v-model="answer"
-                label="질문을 입력하세요" 
-                :rules="[v => !!v || '질문을 입력하세요.']"
+                v-model="label"
+                label="질문 제목을 입력하세요" 
+                :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
 
               <v-text-field 
                 v-model="option" 
                 @keyup.enter="addOption" 
-                label="항목을 입력하세요"
+                label="항목 이름을 입력하세요"
                 required
                 />
               <v-btn @click="addOption"> 항목 생성하기</v-btn>
@@ -66,14 +66,14 @@
         <v-col cols="12">
           <v-card outlined>
             <v-card-text>
-              <h4>{{ question.label }}</h4>
+              <h4>{{index+1}}. {{ question.label }}</h4>
 
               <v-text-field
               v-if="question.type === 'text'"
-              v-model="question.answer"
+              v-model="question.label"
               label="답변을 입력하세요"/>
 
-              <v-radio-group v-if="question.type === 'radio'" v-model="question.answer">
+              <v-radio-group v-if="question.type === 'radio'" v-model="question.label">
                 <v-radio v-for="option in question.options"
                     :key="option"
                     :label="option"
@@ -82,7 +82,7 @@
 
               <v-checkbox-group
                 v-if="question.type === 'checkbox'"
-                v-model="question.answer">
+                v-model="question.label">
                 <v-checkbox
                     v-for="option in question.options"
                     :key="option"
@@ -112,7 +112,7 @@
         optionList: [], 
         isAdded: false,
         formTitle: null,
-        answer: '',
+        label: '',
         generateOptions: ['text', 'radio', 'checkbox'],
         selectedType: null, 
         questions: [],
@@ -121,13 +121,13 @@
     },
     methods: {
       createQuestion(selectedType) {
-        if (this.answer !== '') {
+        if (this.label !== '') {
           if (selectedType !== 'text') {
             if (this.optionList.length !== 0) {
-              const form = { label: this.answer, type: selectedType,
-                            options: this.optionList, answer:''}
+              const form = { label: this.label, type: selectedType,
+                            options: this.optionList}
               this.questions.push(form)
-              this.answer = ''
+              this.label = ''
               this.optionList=[]
               this.isAdded = false
               this.selectedType = null;
@@ -138,9 +138,9 @@
             }
             } 
           else {
-            const form = { label: this.answer, type: selectedType, answer:''}
+            const form = { label: this.label, type: selectedType}
             this.questions.push(form)
-            this.answer = ''
+            this.label = ''
             this.isAdded = false
             this.selectedType = null;
             this.isFormDirty = true; // 폼이 수정됨
