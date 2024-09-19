@@ -1,4 +1,5 @@
 import surveyModule from '@/survey/store/surveyModule'
+import accountModule from '@/account/store/accountModule'
 import { createStore } from 'vuex'
 
 export default createStore({
@@ -11,6 +12,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    surveyModule
+    surveyModule,
+    accountModule,
   }
 })
