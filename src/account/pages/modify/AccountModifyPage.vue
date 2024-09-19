@@ -93,7 +93,6 @@ export default {
         this.rules.required,
         v => v.length >= 8 || 'Password must be at least 8 characters long.',
         v => /[a-z]/.test(v) || 'Password must contain at least one lowercase letter.',
-        v => /[A-Z]/.test(v) || 'Password must contain at least one uppercase letter.',
         v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Password must contain at least one special character.',
       ];
     },
@@ -155,8 +154,10 @@ export default {
       })
         .then(() => {
           this.$router.push('/account/login');
-          sessionStorage.removeItem('generalLogin');
+          sessionStorage.removeItem('loginType');
           sessionStorage.removeItem('email');
+          sessionStorage.removeItem('normalToken');
+          this.$store.state.accountModule.isAuthenticatedNormal = false;
           alert('비밀번호가 성공적으로 변경되었습니다. 다시 로그인을 진행해주세요');
         })
         .catch(err => {
