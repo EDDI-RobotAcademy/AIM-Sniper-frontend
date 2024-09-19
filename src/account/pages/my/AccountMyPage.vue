@@ -35,7 +35,7 @@
       <div v-if="menuOpen" class="floating-menu">
         <v-btn
           class="menu-item"
-          @click="$router.push({ name: 'CommunityModifyPage', params: { communityId } })"
+          @click="$router.push({ name: 'AccountModifyPage' })"
         >
           수정
         </v-btn>

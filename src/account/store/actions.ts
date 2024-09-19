@@ -8,6 +8,7 @@ export type AccountActions = {
     requestNicknameDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean>
     requestCreateNewAccountToDjango(context: ActionContext<AccountState, any>, accountInfo: { email: string, nickname: string }): Promise<void>
     requestNicknameToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
+    requestAccountCheckToDjango(context: ActionContext<AccountState, any>,payload: any): Promise<boolean>
     requestGenderToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestBirthyearToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestCheckNormalLoginToDjango(context: ActionContext<AccountState, any>,
@@ -70,6 +71,25 @@ const actions: AccountActions = {
             console.error('requestNicknameToDjango() 문제 발생:', error);
             throw error
         }
+    },
+    async requestAccountCheckToDjango(
+        context: ActionContext<AccountState, any>,
+        payload: any
+    ): Promise<boolean> {
+
+        const { email,password } = payload
+
+        return axiosInst.djangoAxiosInst.post(
+                    '/account/account-check', 
+                    { email:email,password: password }
+        )
+        .then((res) => {
+            if (res.data.isDuplicate) {
+                return true
+            } else {
+                return false
+            }
+        })
     },
     async requestGenderToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account> {
         try {

@@ -127,6 +127,7 @@ export default {
                 // 이메일과 비밀번호가 모두 일치하면 로그인 성공
                     this.login_flag = true;
                     sessionStorage.setItem('normalToken', true)
+                    sessionStorage.setItem('email',this.email)
                     sessionStorage.setItem('loginType', 'NORMAL')
                     this.$store.state.accountModule.isAuthenticatedNormal = true
                     this.goToHome();
@@ -236,6 +237,7 @@ export default {
 }
 .naver-login-btn {
     background-image: url("@/assets/images/fixed/google_login.png");
+    background-image: url("@/assets/images/fixed/naver_login.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

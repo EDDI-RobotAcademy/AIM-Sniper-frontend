@@ -12,7 +12,7 @@
       <span>COMMUNITY Board</span>
     </v-btn>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal" close-on-content-click>
+    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text">          
           <b>AI-Document</b>
@@ -29,7 +29,7 @@
       </v-list>
     </v-menu>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal" close-on-content-click>
+    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 16px">
           <b>My Page</b>
@@ -46,7 +46,7 @@
       </v-list>
     </v-menu>
 
-    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal" text @click="signIn" class="btn-text">
+    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver" text @click="signIn" class="btn-text">
       <v-icon left>mdi-login</v-icon>
       <span> &nbsp; LOGIN</span>
     </v-btn>
@@ -65,6 +65,7 @@ import { mapActions, mapState } from "vuex";
 const accountModule = "accountModule";
 const authenticationModule = "authenticationModule";
 const googleAuthenticationModule = "googleAuthenticationModule";
+const naverAuthenticationModule = "naverAuthenticationModule"
 
 export default {
   data() {
@@ -98,11 +99,12 @@ export default {
     ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal"]),
+    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
   },
   methods: {
     ...mapActions(authenticationModule, ["requestKakaoLogoutToDjango"]),
     ...mapActions(googleAuthenticationModule, ["requestGoogleLogoutToDjango"]),
-    
+    ...mapActions(naverAuthenticationModule, ["requestNaverLogoutToDjango"]),
     goToHome() {
       router.push("/");
     },    
@@ -133,6 +135,10 @@ export default {
         this.requestGoogleLogoutToDjango();
         this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = false
       }
+      if (sessionStorage.getItem('loginType') == 'NAVER') {
+        this.requestNaverLogoutToDjango();
+        this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = false
+      }
       if (sessionStorage.getItem('loginType') == 'NORMAL') {
         sessionStorage.removeItem("normalToken")
         sessionStorage.removeItem("email")
@@ -158,6 +164,11 @@ export default {
     if (googleUserToken) {
       console.log("You already has a googleUserToken!")
       this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true
+    }
+    const naverUserToken = sessionStorage.getItem("naverUserToken")
+    if (naverUserToken) {
+      console.log("You already has a naverUserToken!")
+      this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true
     }
     const normalToken = sessionStorage.getItem("normalToken")
     if (normalToken) {
