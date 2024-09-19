@@ -93,7 +93,6 @@ export default {
         this.rules.required,
         v => v.length >= 8 || 'Password must be at least 8 characters long.',
         v => /[a-z]/.test(v) || 'Password must contain at least one lowercase letter.',
-        v => /[A-Z]/.test(v) || 'Password must contain at least one uppercase letter.',
         v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Password must contain at least one special character.',
       ];
     },
