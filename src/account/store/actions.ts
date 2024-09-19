@@ -13,6 +13,14 @@ export type AccountActions = {
     requestBirthyearToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestCheckNormalLoginToDjango(context: ActionContext<AccountState, any>,
         payload: { email: string, password: string }): Promise<boolean>
+    requestNicknameModifyToDjango(
+        context: ActionContext<AccountState, any>,
+        payload: { email: string; newNickname: string }
+    ): Promise<void>;
+    requestPasswordModifyToDjango(
+        context: ActionContext<AccountState, any>,
+        payload: { email: string; newPassword: string }
+    ): Promise<void>
 }
 
 const actions: AccountActions = {
@@ -117,18 +125,28 @@ const actions: AccountActions = {
             throw error
         }
     },
-    async requestCheckNormalLoginToDjango(context: ActionContext<AccountState, any>, 
-        payload: { email: string, password: string }): Promise<boolean> {
-            try {
-                const res = await axiosInst.djangoAxiosInst.post('/account/check-normal-login', payload)
-                console.log('isEmailCollect', res.data.isEmailCollect)
-                console.log('isPasswordCollect', res.data.isPasswordCollect)
-                return res.data
-            } catch (error) {
-                console.error('requestCheckPasswordToDjango() 문제 발생:', error)
-                throw error
-            }
+    async requestPasswordModifyToDjango(
+        context: ActionContext<AccountState, any>,
+        payload: { email: string; newPassword: string }
+    ): Promise<void> {
+        try {
+            await axiosInst.djangoAxiosInst.post('/account/modify-password', { email: payload.email, newPassword: payload.newPassword });
+        } catch (error) {
+            console.error('비밀번호 변경 실패:', error);
+            throw error;
+        }
     },
+    async requestNicknameModifyToDjango(
+        context: ActionContext<AccountState, any>,
+        payload: { email: string; newNickname: string }
+    ): Promise<void> {
+        try {
+            await axiosInst.djangoAxiosInst.post('/account/modify-nickname', { email: payload.email, newNickname: payload.newNickname });
+        } catch (error) {
+            console.error('닉네임 변경 실패:', error);
+            throw error;
+        }
+    }
 };
 
 export default actions;
