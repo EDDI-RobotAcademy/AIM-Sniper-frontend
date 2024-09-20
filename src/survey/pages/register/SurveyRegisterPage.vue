@@ -139,7 +139,8 @@ export default {
       start: true,
       showTitleDescription: true,
       formCreated: false,
-      surveyId: '',
+      surveyId: null,
+      questionId: null,
       startCreateQuestion: false,
       surveyTitle: null,
       surveyDescription: null,
@@ -155,7 +156,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 'requestRegisterTitleAndDescriptionToDjango', 'requestCreateQuestionToDjango']),
+    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 
+    'requestRegisterTitleAndDescriptionToDjango', 'requestCreateQuestionToDjango', 'requestRegisterSelectionToDjango']),
 
     async createForm() {
       this.surveyId = await this.requestCreateSurveyFormToDjango()
@@ -182,7 +184,6 @@ export default {
         return;
       }
 
-      // Payload to be sent in both cases
       const payload = { 
         surveyId: this.surveyId, 
         questionTitle: this.questionTitle, 
@@ -196,12 +197,11 @@ export default {
           return;
         }
       }
-
-      // Send question to Django for both cases (text or non-text)
       this.surveyQuestions.push(payload);
-      const sendQuestions = this.requestCreateQuestionToDjango(payload);
+      this.questionId = this.requestCreateQuestionToDjango(payload);
+      console.log('question id : ', this.questionId)
       
-      if (sendQuestions) {
+      if (this.questionId !== null) {
         this.resetQuestionFields();
       }
     },
@@ -216,7 +216,7 @@ export default {
     addOption() {
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
-        const payload = {'selection': this.option}
+        const payload = { questionId: this.questionId, selection: this.option}
         // this.requestRegisterSelectionToDjango(payload)
         this.option = '';
         this.isFormDirty = true;
