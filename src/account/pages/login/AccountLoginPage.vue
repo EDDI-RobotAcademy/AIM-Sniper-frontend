@@ -84,6 +84,8 @@
                 </v-btn>
                 <v-btn color="#ffffff" class="black--text mt-2 google-login-btn" block @click="goToGoogleLogin">
                 </v-btn>
+                <v-btn color="#ffffff" class="black--text mt-2 naver-login-btn" block @click="goToNaverLogin">
+                </v-btn>
             </div>
         </div>
     </v-container>
@@ -96,6 +98,8 @@ import { useStore, mapActions, mapState } from "vuex";
 const accountModule = 'accountModule'
 const authenticationModule = 'authenticationModule'
 const googleAuthenticationModule = 'googleAuthenticationModule'
+const naverAuthenticationModule = 'naverAuthenticationModule'
+
 export default {
     data: () => ({
         form: false,
@@ -127,15 +131,24 @@ export default {
             )
             
         }
+        const goToNaverLogin = async () => {
+            sessionStorage.setItem('loginType', "NAVER")
+            await store.dispatch(
+                "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
+            )
+        }
+
         return {
             goToKakaoLogin,
             goToGoogleLogin,
+            goToNaverLogin,
         };
     },
     computed: {
     ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
     ...mapState(accountModule, ["isAuthenticatedNormal", "loginType"]),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
+    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
     },
     methods: {
         ...mapActions(accountModule, ['requestAccountCheckToDjango']),
