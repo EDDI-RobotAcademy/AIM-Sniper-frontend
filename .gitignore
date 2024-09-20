@@ -299,8 +299,3 @@ pyrightconfig.json
 /node_modules
 /.pnp
 .pnp.js
-
-# exclude images
-*.png
-*.jpg
-*.jpeg
