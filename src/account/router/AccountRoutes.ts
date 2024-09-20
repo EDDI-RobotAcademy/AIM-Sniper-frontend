@@ -2,6 +2,7 @@ import AccountLoginPage from "@/account/pages/login/AccountLoginPage.vue"
 import AccountRegisterPage from "@/account/pages/register/AccountRegisterPage.vue"
 import NomalAccountRegisterPage from "@/account/pages/register/NomalAccountRegisterPage.vue"
 import AccountMyPage from "@/account/pages/my/AccountMyPage.vue"
+import AccountWithdrawPage from "@/account/pages/withdraw/AccountWithdrawPage.vue"
 import AccountModifyPage from "@/account/pages/modify/AccountModifyPage.vue"
 
 const AccountRoutes = [
@@ -26,6 +27,10 @@ const AccountRoutes = [
         component: AccountMyPage
     },
     {
+        path: '/account/withdraw',
+        name: 'AccountWithdrawPage',
+        component: AccountWithdrawPage
+    },
     {
         path: '/account/modify',
         name: 'AccountModifyPage',
