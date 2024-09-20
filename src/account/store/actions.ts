@@ -9,10 +9,9 @@ export type AccountActions = {
     requestCreateNewAccountToDjango(context: ActionContext<AccountState, any>, accountInfo: { email: string, nickname: string }): Promise<void>
     requestNicknameToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestAccountCheckToDjango(context: ActionContext<AccountState, any>,payload: any): Promise<boolean>
+    requestWithdrawalToDjango(context: ActionContext<AccountState, unknown>, payload: { reason: string }): Promise<AxiosResponse>
     requestGenderToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestBirthyearToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
-    requestCheckNormalLoginToDjango(context: ActionContext<AccountState, any>,
-        payload: { email: string, password: string }): Promise<boolean>
     requestNicknameModifyToDjango(
         context: ActionContext<AccountState, any>,
         payload: { email: string; newNickname: string }
@@ -98,6 +97,20 @@ const actions: AccountActions = {
                 return false
             }
         })
+    },
+    async requestWithdrawalToDjango(context: ActionContext<AccountState, unknown>, payload: { reason: string }): Promise<AxiosResponse> {
+        console.log('requestWithdrawalToDjango()')
+        const userToken = sessionStorage.getItem("userToken");
+        const { reason } = payload
+        console.log('전송할 데이터:', { reason })
+        try {
+            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/account/withdraw', { reason: reason, userToken: userToken })
+            console.log('res:', res.data)
+            return res.data
+        } catch (error) {
+            alert('requestWithdrawalToDjango() 문제 발생!')
+            throw error
+        }
     },
     async requestGenderToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account> {
         try {
