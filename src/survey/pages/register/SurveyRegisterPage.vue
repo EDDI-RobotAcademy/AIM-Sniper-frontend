@@ -1,9 +1,9 @@
 <template>
   <v-container :style="{ maxWidth: '50%' }">
-    <v-btn @click="createForm">설문 생성하기</v-btn>
+    <v-btn v-if="start" @click="createForm">설문 조사 만들기</v-btn>
     <v-form v-if="formCreated" ref="form" v-model="valid">
       <v-card-title>
-        <form @submit.prevent>
+        <form v-if="showTitleDescription" @submit.prevent>
           <v-text-field 
             class="headline"
             label="설문지 이름을 작성하세요."
@@ -20,8 +20,8 @@
             :rules="[v => !!v || '설명은 필수 항목입니다']"
             aria-required=""
           ></v-text-field>
+          <v-btn @click="sendTitleAndDescription">완료</v-btn>
         </form>
-        <v-btn @click="sendTitleAndDescription">완료</v-btn>
       </v-card-title>
 
       <v-btn v-if="startCreateQuestion" @click="addQuestion">질문 추가</v-btn>
@@ -71,11 +71,9 @@
               />
               <v-btn @click="addOption"> 항목 생성하기</v-btn>
               <ul>
-                <li v-for="(option, index) in questionOptions" :key="index">{{ option }}</li>
+                <li v-for="(option, index) in selection" :key="index">{{ option }}</li>
               </ul>
-              <v-btn 
-                @click="createQuestion(questionType)"
-              > 질문 생성하기</v-btn>
+              <v-btn @click="createQuestion(questionType)"> 질문 생성</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -101,7 +99,7 @@
                 label="답변을 입력하세요"/>
 
               <v-radio-group v-if="question.questionType === 'radio'" v-model="question.answer">
-                <v-radio v-for="option in question.questionOptions"
+                <v-radio v-for="option in question.selection"
                   :key="option"
                   :label="option"
                   :value="option"/>
@@ -110,7 +108,7 @@
               <v-checkbox-group
                 v-if="question.questionType === 'checkbox'" v-model="question.answer">
                 <v-checkbox
-                  v-for="option in question.questionOptions"
+                  v-for="option in question.selection"
                   :key="option"
                   :label="option"
                   :value="option"
@@ -138,6 +136,8 @@ const surveyModule = 'surveyModule'
 export default {
   data() {
     return {
+      start: true,
+      showTitleDescription: true,
       formCreated: false,
       surveyId: '',
       startCreateQuestion: false,
@@ -147,7 +147,7 @@ export default {
       option: '',
       questionTitle: '',
       questionType: null,
-      questionOptions: [], 
+      selection: [], 
       isAdded: false,
       isEssential: false,
       generateOptions: ['text', 'radio', 'checkbox'],
@@ -155,7 +155,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 'requestRegisterTitleAndDescriptionToDjango']),
+    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 'requestRegisterTitleAndDescriptionToDjango', 'requestCreateQuestionToDjango']),
 
     async createForm() {
       this.surveyId = await this.requestCreateSurveyFormToDjango()
@@ -163,44 +163,51 @@ export default {
       
       if (this.surveyId !== '') {
         this.formCreated = true;
+        this.start = false;
       }
     },
 
     async sendTitleAndDescription() {
       const payload = {surveyId : this.surveyId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
-      const titleDesComplate = await this.requestRegisterTitleAndDescriptionToDjango(payload)
-      if (titleDesComplate) {
+      const titleDescriptionSaved = await this.requestRegisterTitleAndDescriptionToDjango(payload)
+      console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
+      if (titleDescriptionSaved) {
         this.startCreateQuestion = true
+        this.showTitleDescription = false;
       }
     },
     createQuestion(questionType) {
-      if (this.questionTitle !== '') {
-        if (questionType !== 'text') {
-          if (this.questionOptions.length !== 0) {
-            const questions = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: this.questionOptions, isEssential: this.isEssential };
-            this.surveyQuestions.push(questions);
-            // const sendQuestions = this.requestCreateQuestionsToDjango(questions)
-            // if (sendQuestions) {
-              this.resetQuestionFields();
-            // }
-          } else {
-            alert('항목을 입력해주세요.');
-          }
-        } else {
-          const questions = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: null, isEssential: this.isEssential };
-          this.surveyQuestions.push(questions);
-          // const sendQuestions = this.requestCreateQuestionsToDjango(questions)
-            // if (sendQuestions) {
-              this.resetQuestionFields();
-            // }
-        }
-      } else {
+      if (this.questionTitle === '') {
         alert('내용을 입력하세요');
+        return;
+      }
+
+      // Payload to be sent in both cases
+      const payload = { 
+        surveyId: this.surveyId, 
+        questionTitle: this.questionTitle, 
+        questionType: questionType, 
+        isEssential: this.isEssential 
+      };
+
+      if (questionType !== 'text') {
+        if (this.selection.length === 0) {
+          alert('항목을 입력해주세요.');
+          return;
+        }
+      }
+
+      // Send question to Django for both cases (text or non-text)
+      this.surveyQuestions.push(payload);
+      const sendQuestions = this.requestCreateQuestionToDjango(payload);
+      
+      if (sendQuestions) {
+        this.resetQuestionFields();
       }
     },
     resetQuestionFields() {
       this.questionTitle = '';
-      this.questionOptions = [];
+      this.selection = [];
       this.isAdded = false;
       this.questionType = null;
       this.isEssential = false;
@@ -208,7 +215,9 @@ export default {
     },
     addOption() {
       if (this.option.trim() !== '') {
-        this.questionOptions.push(this.option);
+        this.selection.push(this.option);
+        const payload = {'selection': this.option}
+        // this.requestRegisterSelectionToDjango(payload)
         this.option = '';
         this.isFormDirty = true;
       } else {
