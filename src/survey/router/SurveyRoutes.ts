@@ -5,12 +5,22 @@ const SurveyRoutes = [
     {
         path: '/survey/register',
         name: 'SurveyRegisterPage',
-        component: SurveyRegisterPage,
+        components: {
+            default: SurveyRegisterPage,
+        },
+        props: {
+            default: true
+        }
     },
     {
-        path: '/survey/read',
+        path: '/survey/read/:surveyDocumentId',
         name: 'SurveyReadPage',
-        component: SurveyReadPage,
+        components: {
+            default: SurveyReadPage,
+        },
+        props: {
+            default: true
+        }
     },
 ]
 

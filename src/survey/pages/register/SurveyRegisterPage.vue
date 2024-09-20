@@ -1,6 +1,7 @@
 <template>
   <v-container :style="{ maxWidth: '50%' }">
-    <v-form ref="form" v-model="valid">
+    <v-btn @click="createForm">설문 생성하기</v-btn>
+    <v-form v-if="formCreated" ref="form" v-model="valid">
       <v-card-title>
         <form @submit.prevent>
           <v-text-field 
@@ -20,9 +21,10 @@
             aria-required=""
           ></v-text-field>
         </form>
+        <v-btn @click="sendTitleAndDescription">설문 생성</v-btn>
       </v-card-title>
 
-      <v-btn @click="addQuestion">질문 추가</v-btn>
+      <v-btn v-if="startCreateQuestion" @click="addQuestion">질문 추가</v-btn>
       <v-select v-if="isAdded"
         v-model="questionType"
         :items="generateOptions"
@@ -129,9 +131,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
+const surveyModule = 'surveyModule'
+
 export default {
   data() {
     return {
+      formCreated: false,
+      surveyId: '',
+      startCreateQuestion: false,
       surveyTitle: null,
       surveyDescription: null,
       surveyQuestions: [],
@@ -146,20 +155,43 @@ export default {
     };
   },
   methods: {
+    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango']),
+
+    async createForm() {
+      this.surveyId = await this.requestCreateSurveyFormToDjango()
+      console.log('survey id', this.surveyId)
+      
+      if (this.surveyId !== '') {
+        this.formCreated = true;
+      }
+    },
+
+    sendTitleAndDescription() {
+      const payload = {title: this.surveyTitle, description : this.surveyDescription}
+      // if (this.surveyId !== '') {
+      //   this.startCreateQuestion = true
+      // }
+    },
     createQuestion(questionType) {
       if (this.questionTitle !== '') {
         if (questionType !== 'text') {
           if (this.questionOptions.length !== 0) {
-            const form = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: this.questionOptions, isEssential: this.isEssential };
-            this.surveyQuestions.push(form);
-            this.resetQuestionFields();
+            const questions = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: this.questionOptions, isEssential: this.isEssential };
+            this.surveyQuestions.push(questions);
+            // const sendQuestions = this.requestCreateQuestionsToDjango(questions)
+            // if (sendQuestions) {
+              this.resetQuestionFields();
+            // }
           } else {
             alert('항목을 입력해주세요.');
           }
         } else {
-          const form = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: null, isEssential: this.isEssential };
-          this.surveyQuestions.push(form);
-          this.resetQuestionFields();
+          const questions = { questionTitle: this.questionTitle, questionType: questionType, questionOptions: null, isEssential: this.isEssential };
+          this.surveyQuestions.push(questions);
+          // const sendQuestions = this.requestCreateQuestionsToDjango(questions)
+            // if (sendQuestions) {
+              this.resetQuestionFields();
+            // }
         }
       } else {
         alert('내용을 입력하세요');
@@ -190,14 +222,17 @@ export default {
     isEssentialQuestion() {
       this.isEssential = true;
     },
-    submitForm() {
+    async submitForm() {
       const payload = { surveyTitle: this.surveyTitle, surveyDescription: this.surveyDescription, surveyQuestions: this.surveyQuestions };
       console.log('제출된 질문들:', payload);
-      alert('제출 완료');
-      this.isFormDirty = false;
-      this.surveyQuestions = [];
-      this.surveyTitle = null;
-      this.surveyDescription = null;
+      // const isSubmitted = await this.requestCreateSurveyFormToDjango()
+      // if (isSubmitted){
+        alert('제출 완료');
+        this.isFormDirty = false;
+        this.surveyQuestions = [];
+        this.surveyTitle = null;
+        this.surveyDescription = null;
+      // }
     },
     formatQuestionTitle(index, question) {
         return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
