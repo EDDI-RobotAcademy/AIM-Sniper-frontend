@@ -77,6 +77,11 @@
                     회원가입
                 </v-btn>
 
+                <v-divider :thickness="3" style="margin-top: 20px; margin-bottom: 20px;"></v-divider>
+                
+
+                <v-btn color="#FEE500" class="black--text mt-2 kakao-login-btn" block @click="goToKakaoLogin">
+                </v-btn>
             </div>
         </div>
     </v-container>
@@ -87,6 +92,7 @@ import router from "@/router";
 import { useStore, mapActions, mapState } from "vuex";
 
 const accountModule = 'accountModule'
+const authenticationModule = 'authenticationModule'
 export default {
     data: () => ({
         form: false,
@@ -99,11 +105,29 @@ export default {
         isPasswordCollect: false,
     }),
 
+    setup() {
+        const store = useStore();
+
+        const goToKakaoLogin = async () => {
+            sessionStorage.setItem("loginType", "KAKAO") 
+
+            await store.dispatch(
+                "authenticationModule/requestKakaoOauthRedirectionToDjango"
+            );
+            
+
+        };
+        return {
+            goToKakaoLogin,
+        };
+    },
     computed: {
+    ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
     ...mapState(accountModule, ["isAuthenticatedNormal", "loginType"]),
     },
     methods: {
         ...mapActions(accountModule, ['requestCheckNormalLoginToDjango']),
+        ...mapActions(accountModule, ['requestAccountCheckToDjango']),
         goToHome() {
             router.push("/");
         },
@@ -120,14 +144,12 @@ export default {
             try {
                 const response = await this.checkPassword();
                 // console.log('response', response)
-                this.isEmailCollect = response.isEmailCollect
-                this.isPasswordCollect = response.isPasswordCollect
 
-                if (this.isEmailCollect && this.isPasswordCollect) {
+                if (response) {
                 // 이메일과 비밀번호가 모두 일치하면 로그인 성공
                     this.login_flag = true;
                     sessionStorage.setItem('normalToken', true)
-                    sessionStorage.setItem('email',this.email)
+                    sessionStorage.setItem('email', this.email)
                     sessionStorage.setItem('loginType', 'NORMAL')
                     this.$store.state.accountModule.isAuthenticatedNormal = true
                     this.goToHome();
@@ -168,7 +190,7 @@ export default {
                     email: this.email,
                     password: this.password
                 }
-                const response = await this.requestCheckNormalLoginToDjango(payload)
+                const response = await this.requestAccountCheckToDjango(payload)
                 return response
             } catch (error) {
                 console.error("비밀번호 확인 중 에러 발생: ", error)
@@ -236,7 +258,6 @@ export default {
     justify-content: center;
 }
 .naver-login-btn {
-    background-image: url("@/assets/images/fixed/google_login.png");
     background-image: url("@/assets/images/fixed/naver_login.png");
     background-size: contain;
     background-repeat: no-repeat;
