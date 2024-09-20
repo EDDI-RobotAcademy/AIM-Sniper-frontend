@@ -21,7 +21,7 @@
             aria-required=""
           ></v-text-field>
         </form>
-        <v-btn @click="sendTitleAndDescription">설문 생성</v-btn>
+        <v-btn @click="sendTitleAndDescription">완료</v-btn>
       </v-card-title>
 
       <v-btn v-if="startCreateQuestion" @click="addQuestion">질문 추가</v-btn>
@@ -155,7 +155,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango']),
+    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 'requestRegisterTitleAndDescriptionToDjango']),
 
     async createForm() {
       this.surveyId = await this.requestCreateSurveyFormToDjango()
@@ -166,11 +166,12 @@ export default {
       }
     },
 
-    sendTitleAndDescription() {
-      const payload = {title: this.surveyTitle, description : this.surveyDescription}
-      // if (this.surveyId !== '') {
-      //   this.startCreateQuestion = true
-      // }
+    async sendTitleAndDescription() {
+      const payload = {surveyId : this.surveyId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
+      const titleDesComplate = await this.requestRegisterTitleAndDescriptionToDjango(payload)
+      if (titleDesComplate) {
+        this.startCreateQuestion = true
+      }
     },
     createQuestion(questionType) {
       if (this.questionTitle !== '') {
