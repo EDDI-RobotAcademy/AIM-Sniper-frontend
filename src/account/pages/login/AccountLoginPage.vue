@@ -82,6 +82,8 @@
 
                 <v-btn color="#FEE500" class="black--text mt-2 kakao-login-btn" block @click="goToKakaoLogin">
                 </v-btn>
+                <v-btn color="#ffffff" class="black--text mt-2 google-login-btn" block @click="goToGoogleLogin">
+                </v-btn>
             </div>
         </div>
     </v-container>
@@ -93,6 +95,7 @@ import { useStore, mapActions, mapState } from "vuex";
 
 const accountModule = 'accountModule'
 const authenticationModule = 'authenticationModule'
+const googleAuthenticationModule = 'googleAuthenticationModule'
 export default {
     data: () => ({
         form: false,
@@ -117,16 +120,24 @@ export default {
             
 
         };
+        const goToGoogleLogin = async () => {
+            sessionStorage.setItem("loginType", "GOOGLE") 
+            await store.dispatch(
+                "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
+            )
+            
+        }
         return {
             goToKakaoLogin,
+            goToGoogleLogin,
         };
     },
     computed: {
     ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
     ...mapState(accountModule, ["isAuthenticatedNormal", "loginType"]),
+    ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     },
     methods: {
-        ...mapActions(accountModule, ['requestCheckNormalLoginToDjango']),
         ...mapActions(accountModule, ['requestAccountCheckToDjango']),
         goToHome() {
             router.push("/");
