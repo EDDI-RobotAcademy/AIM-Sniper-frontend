@@ -40,7 +40,6 @@
               <v-checkbox
                 v-model="isEssential"
                 label="이 질문을 필수 항목으로 설정합니다."
-                @change="isEssentialQuestion"
               />
               <v-text-field
                 v-model="questionTitle"
@@ -58,7 +57,6 @@
               <v-checkbox
                 v-model="isEssential"
                 label="이 질문을 필수 항목으로 설정합니다."
-                @change="isEssentialQuestion"
               />
               <v-text-field 
                 v-model="questionTitle"
@@ -189,7 +187,6 @@ export default {
       }
     },
     async createQuestion(questionType) {
-      // text 타입이면 생성 완료까지, 아니면 생성 완료 처리 안함
       if (this.questionTitle === '') {
         alert('내용을 입력하세요');
         return;
@@ -210,15 +207,6 @@ export default {
         this.resetQuestionFields();
       }
     },
-    finishCreateSelection() {
-      if (this.selection.length === 0) {
-        alert('항목을 입력해주세요.');
-        return;
-      }
-      if (this.questionId !== null) {
-      this.resetQuestionFields();
-      }
-    },
     async createSelection() { // 생성할 때 볼 수 있도록 하는 것임!! 지우지 말기
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
@@ -229,6 +217,15 @@ export default {
         this.isFormDirty = true;
       } else {
         alert('항목에 내용을 입력하세요');
+      }
+    },
+    finishCreateSelection() {
+      if (this.selection.length === 0) {
+        alert('항목을 입력해주세요.');
+        return;
+      }
+      if (this.questionId !== null) {
+      this.resetQuestionFields();
       }
     },
     addQuestion() {
@@ -245,10 +242,7 @@ export default {
       this.isFormDirty = true;
       this.readyToCreateQuestionTitle = true;
     },
-    isEssentialQuestion() {
-      this.isEssential = true;
-    },
-    async submitForm() {
+    submitForm() {
         alert('제출 완료');
         this.isFormDirty = false;
         this.surveyQuestions = [];
