@@ -7,6 +7,12 @@ export type SurveyActions = {
     requestRegisterTitleAndDescriptionToDjango(
         context: ActionContext<any, any>,
         payload: {surveyId: number, surveyTitle:string, surveyDescription: string}): Promise<AxiosResponse>
+    requestCreateQuestionToDjango(
+        context: ActionContext<any, any>,
+        payload: {surveyId: number, questionTitle: string, questionType: string, isEssential: boolean}): Promise<AxiosResponse>
+    requestRegisterSelectionToDjango(context: ActionContext<any, any>,
+        payload: {questionId: number, selection: string}): Promise<AxiosResponse>
+
 }
 
 const actions: SurveyActions = {
@@ -21,6 +27,17 @@ const actions: SurveyActions = {
         return res.data
 
     },
+    async requestCreateQuestionToDjango(
+        context: ActionContext<any, any>,
+        payload: {surveyId: number, questionTitle: string, questionType: string, isEssential: boolean}): Promise<AxiosResponse> {
+        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/survey/register-question', payload)
+        return res.data
+        },
+    async requestRegisterSelectionToDjango(context: ActionContext<any, any>,
+        payload: {questionId: number, selection: string}): Promise<AxiosResponse> {
+        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/survey/register-selection', payload)
+        return res.data           
+        }
 };
 
 export default actions;
