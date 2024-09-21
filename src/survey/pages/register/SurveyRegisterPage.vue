@@ -24,7 +24,7 @@
         </form>
       </v-card-title>
 
-      <v-btn v-if="startCreateQuestion" @click="addQuestion">질문 추가</v-btn>
+      <v-btn v-if="titleAndDescriptionCreated" @click="addQuestion">질문 추가</v-btn>
       <v-select v-if="isAdded"
         v-model="questionType"
         :items="generateOptions"
@@ -45,7 +45,7 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
-              <v-btn @click="createQuestion(questionType)"> 질문 생성</v-btn>
+              <v-btn @click="createQuestion(questionType)">완료</v-btn>
             </v-card-text>
           </v-card>
 
@@ -62,18 +62,18 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
-
-              <v-text-field 
+              <v-btn v-if="readyToCreateQuestionTitle" @click="createQuestion(questionType)">질문 생성</v-btn>
+              <v-text-field v-if="!readyToCreateQuestionTitle"
                 v-model="option" 
-                @keyup.enter="addOption" 
+                @keyup.enter="createSelection" 
                 label="항목 이름을 입력하세요"
                 required
               />
-              <v-btn @click="addOption"> 항목 생성하기</v-btn>
+              <v-btn v-if="!readyToCreateQuestionTitle" @click="createSelection"> 항목 생성</v-btn>
               <ul>
                 <li v-for="(option, index) in selection" :key="index">{{ option }}</li>
               </ul>
-              <v-btn @click="createQuestion(questionType)"> 질문 생성</v-btn>
+              <v-btn v-if="selection.length!==0" @click="finishCreateSelection">완료</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -138,10 +138,12 @@ export default {
     return {
       start: true,
       showTitleDescription: true,
+      titleAndDescriptionCreated: false,
+      readyToCreateQuestionTitle: true,
       formCreated: false,
       surveyId: null,
       questionId: null,
-      startCreateQuestion: false,
+      selectionId: null,
       surveyTitle: null,
       surveyDescription: null,
       surveyQuestions: [],
@@ -156,8 +158,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 
-    'requestRegisterTitleAndDescriptionToDjango', 'requestCreateQuestionToDjango', 'requestRegisterSelectionToDjango']),
+    ...mapActions(surveyModule, ['requestCreateSurveyFormToDjango', 'requestRegisterTitleAndDescriptionToDjango',
+                                 'requestCreateQuestionToDjango', 'requestRegisterSelectionToDjango']),
 
     async createForm() {
       this.surveyId = await this.requestCreateSurveyFormToDjango()
@@ -174,50 +176,47 @@ export default {
       const titleDescriptionSaved = await this.requestRegisterTitleAndDescriptionToDjango(payload)
       console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
       if (titleDescriptionSaved) {
-        this.startCreateQuestion = true
+        this.titleAndDescriptionCreated = true
         this.showTitleDescription = false;
       }
     },
-    createQuestion(questionType) {
+    async createQuestion(questionType) {
+      // text 타입이면 생성 완료까지, 아니면 생성 완료 처리 안함
       if (this.questionTitle === '') {
         alert('내용을 입력하세요');
         return;
       }
-
       const payload = { 
         surveyId: this.surveyId, 
         questionTitle: this.questionTitle, 
         questionType: questionType, 
         isEssential: this.isEssential 
-      };
-
-      if (questionType !== 'text') {
-        if (this.selection.length === 0) {
-          alert('항목을 입력해주세요.');
-          return;
-        }
       }
+
       this.surveyQuestions.push(payload);
-      this.questionId = this.requestCreateQuestionToDjango(payload);
+      this.questionId = await this.requestCreateQuestionToDjango(payload);
       console.log('question id : ', this.questionId)
+      this.readyToCreateQuestionTitle = false;
       
-      if (this.questionId !== null) {
+      if (this.questionId !== null && questionType === 'text') {
         this.resetQuestionFields();
       }
     },
-    resetQuestionFields() {
-      this.questionTitle = '';
-      this.selection = [];
-      this.isAdded = false;
-      this.questionType = null;
-      this.isEssential = false;
-      this.isFormDirty = true;
+    finishCreateSelection() {
+      if (this.selection.length === 0) {
+        alert('항목을 입력해주세요.');
+        return;
+      }
+      if (this.questionId !== null) {
+      this.resetQuestionFields();
+      }
     },
-    addOption() {
+    async createSelection() { // 생성할 때 볼 수 있도록 하는 것임!! 지우지 말기
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
         const payload = { questionId: this.questionId, selection: this.option}
-        // this.requestRegisterSelectionToDjango(payload)
+        this.selectionId = await this.requestRegisterSelectionToDjango(payload)
+        console.log('selectionId 저장됨 : ', this.selectionId)
         this.option = '';
         this.isFormDirty = true;
       } else {
@@ -229,14 +228,19 @@ export default {
       this.questionType = null;
       this.isFormDirty = true; 
     },
+    resetQuestionFields() {
+      this.questionTitle = '';
+      this.selection = [];
+      this.isAdded = false;
+      this.questionType = null;
+      this.isEssential = false;
+      this.isFormDirty = true;
+      this.readyToCreateQuestionTitle = true;
+    },
     isEssentialQuestion() {
       this.isEssential = true;
     },
     async submitForm() {
-      const payload = { surveyTitle: this.surveyTitle, surveyDescription: this.surveyDescription, surveyQuestions: this.surveyQuestions };
-      console.log('제출된 질문들:', payload);
-      // const isSubmitted = await this.requestCreateSurveyFormToDjango()
-      // if (isSubmitted){
         alert('제출 완료');
         this.isFormDirty = false;
         this.surveyQuestions = [];
@@ -280,13 +284,13 @@ export default {
 }
 
 .survey-subtitle {
-  max-width: 600px; /* 서브타이틀의 최대 너비를 설정 */
-  overflow-wrap: break-word; /* 긴 단어 줄바꿈 */
-  word-break: break-all; /* 단어가 길 경우 중간에 자르기 */
+  max-width: 600px;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .essential {
-  font-size: 0.8em; /* 크기를 작게 설정 */
-  color: orange; /* 주황색으로 설정 */
+  font-size: 0.8em;
+  color: rgb(255, 123, 0);
 }
 </style>
