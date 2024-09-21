@@ -1,6 +1,6 @@
 <template>
   <v-container :style="{ maxWidth: '50%' }">
-    <v-btn v-if="start" @click="createForm">설문 조사 만들기</v-btn>
+    <v-btn v-if="start" @click="createForm">설문 조사 제작하기</v-btn>
     <v-form v-if="formCreated" ref="form" v-model="valid">
       <v-card-title>
         <form v-if="showTitleDescription" @submit.prevent>
@@ -20,7 +20,10 @@
             :rules="[v => !!v || '설명은 필수 항목입니다']"
             aria-required=""
           ></v-text-field>
-          <v-btn @click="sendTitleAndDescription">완료</v-btn>
+          <v-btn 
+          :disabled="surveyTitle === null || surveyTitle === '' || 
+            surveyDescription === null || surveyDescription ===''" 
+          @click="sendTitleAndDescription">완료</v-btn>
         </form>
       </v-card-title>
 
@@ -37,7 +40,6 @@
               <v-checkbox
                 v-model="isEssential"
                 label="이 질문을 필수 항목으로 설정합니다."
-                @change="isEssentialQuestion"
               />
               <v-text-field
                 v-model="questionTitle"
@@ -45,7 +47,8 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
-              <v-btn @click="createQuestion(questionType)">완료</v-btn>
+              <v-btn :disabled="questionTitle === null || questionTitle === ''" 
+              @click="createQuestion(questionType)">완료</v-btn>
             </v-card-text>
           </v-card>
 
@@ -54,7 +57,6 @@
               <v-checkbox
                 v-model="isEssential"
                 label="이 질문을 필수 항목으로 설정합니다."
-                @change="isEssentialQuestion"
               />
               <v-text-field 
                 v-model="questionTitle"
@@ -62,7 +64,9 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
-              <v-btn v-if="readyToCreateQuestionTitle" @click="createQuestion(questionType)">질문 생성</v-btn>
+              <v-btn v-if="readyToCreateQuestionTitle" 
+              :disabled="questionTitle === null || questionTitle === ''" 
+              @click="createQuestion(questionType)">질문 생성</v-btn>
               <v-text-field v-if="!readyToCreateQuestionTitle"
                 v-model="option" 
                 @keyup.enter="createSelection" 
@@ -70,18 +74,20 @@
                 required
               />
               <v-btn v-if="!readyToCreateQuestionTitle" @click="createSelection"> 항목 생성</v-btn>
-              <ul>
-                <li v-for="(option, index) in selection" :key="index">{{ option }}</li>
-              </ul>
+              <br>
+              <ul><br>
+                <li class="li-margin" v-for="(option, index) in selection" :key="index">{{ option }}</li>
+              </ul><br>
               <v-btn v-if="selection.length!==0" @click="finishCreateSelection">완료</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
-      <br><br><br>
+      <br><br><br><br><br>
+      <hr class="tuning-hr" v-if="surveyQuestions.length !== 0"><br>
       <v-row v-if="surveyQuestions.length !== 0">
         <v-card-title>
-          <span>설문 폼 미리보기</span><br><br>
+          <span>설문 폼 미리보기</span><br><br><br>
           <span class="headline">{{ surveyTitle }}</span>
           <v-card-subtitle class="survey-subtitle">
             <span>{{ surveyDescription }}</span>
@@ -181,7 +187,6 @@ export default {
       }
     },
     async createQuestion(questionType) {
-      // text 타입이면 생성 완료까지, 아니면 생성 완료 처리 안함
       if (this.questionTitle === '') {
         alert('내용을 입력하세요');
         return;
@@ -202,15 +207,6 @@ export default {
         this.resetQuestionFields();
       }
     },
-    finishCreateSelection() {
-      if (this.selection.length === 0) {
-        alert('항목을 입력해주세요.');
-        return;
-      }
-      if (this.questionId !== null) {
-      this.resetQuestionFields();
-      }
-    },
     async createSelection() { // 생성할 때 볼 수 있도록 하는 것임!! 지우지 말기
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
@@ -221,6 +217,15 @@ export default {
         this.isFormDirty = true;
       } else {
         alert('항목에 내용을 입력하세요');
+      }
+    },
+    finishCreateSelection() {
+      if (this.selection.length === 0) {
+        alert('항목을 입력해주세요.');
+        return;
+      }
+      if (this.questionId !== null) {
+      this.resetQuestionFields();
       }
     },
     addQuestion() {
@@ -237,16 +242,12 @@ export default {
       this.isFormDirty = true;
       this.readyToCreateQuestionTitle = true;
     },
-    isEssentialQuestion() {
-      this.isEssential = true;
-    },
-    async submitForm() {
+    submitForm() {
         alert('제출 완료');
         this.isFormDirty = false;
         this.surveyQuestions = [];
         this.surveyTitle = null;
         this.surveyDescription = null;
-      // }
     },
     formatQuestionTitle(index, question) {
         return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
@@ -292,5 +293,13 @@ export default {
 .essential {
   font-size: 0.8em;
   color: rgb(255, 123, 0);
+}
+
+.li-margin {
+  margin-left: 4%;
+}
+.tuning-hr {
+  border: none;
+  border-top: 1px solid #d1d1d1;
 }
 </style>
