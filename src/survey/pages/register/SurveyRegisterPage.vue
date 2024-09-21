@@ -100,13 +100,12 @@
         <v-col cols="12">
           <v-card outlined>
             <v-card-text>
-              <h4 v-html="formatQuestionTitle(index, question)"></h4>
-
+              <h4 v-html="formatQuestionTitle(index, question)"></h4><br>
               <v-text-field
                 v-if="question.questionType === 'text'"
-                label="답변을 입력하세요"/>
-
-              <v-radio-group v-if="question.questionType === 'radio'" v-model="question.answer">
+                label="답변을 입력하세요"
+              />
+              <v-radio-group v-if="question.questionType==='radio'">
                 <v-radio v-for="option in question.selection"
                   :key="option"
                   :label="option"
@@ -114,7 +113,7 @@
               </v-radio-group>
 
               <v-checkbox-group
-                v-if="question.questionType === 'checkbox'" v-model="question.answer">
+                v-if="question.questionType==='checkbox'">
                 <v-checkbox
                   v-for="option in question.selection"
                   :key="option"
@@ -200,13 +199,13 @@ export default {
         questionType: questionType, 
         isEssential: this.isEssential 
       }
-
-      this.surveyQuestions.push(payload);
       this.questionId = await this.requestCreateQuestionToDjango(payload);
       console.log('question id : ', this.questionId)
       this.readyToCreateQuestionTitle = false;
       
       if (this.questionId !== null && questionType === 'text') {
+        const preForm = {questionTitle: this.questionTitle, questionType: questionType, isEssential: this.isEssential }
+        this.surveyQuestions.push(preForm);
         this.resetQuestionFields();
       }
     },
@@ -227,8 +226,10 @@ export default {
         alert('항목을 입력해주세요.');
         return;
       }
-      if (this.questionId !== null) {
-      this.resetQuestionFields();
+      if (this.questionId !== null && this.selectionId !== null) {
+        const preForm = {questionTitle: this.questionTitle, questionType: this.questionType, isEssential: this.isEssential, selection: this.selection }
+        this.surveyQuestions.push(preForm);
+        this.resetQuestionFields();
       }
     },
     addQuestion() {
@@ -250,7 +251,12 @@ export default {
         router.push("/survey/created");
     },
     formatQuestionTitle(index, question) {
+      if (question.questionType === 'checkbox') {
+        return `${index +1}. ${question.questionTitle} (중복 선택 가능) <span class="essential"> ${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+      }
+      else {
         return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+      }
       },
     disableEnter(event) {
       event.preventDefault();
