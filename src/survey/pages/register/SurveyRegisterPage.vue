@@ -1,6 +1,8 @@
 <template>
   <v-container :style="{ maxWidth: '50%' }">
-    <v-btn v-if="start" @click="createForm">설문 조사 제작하기</v-btn>
+    <v-container v-if="start" align="center">
+      <v-btn @click="createForm">설문 조사 제작하기</v-btn>
+    </v-container>
     <v-form v-if="formCreated" ref="form" v-model="valid">
       <v-card-title>
         <form v-if="showTitleDescription" @submit.prevent>
@@ -136,6 +138,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import router from "@/router";
 
 const surveyModule = 'surveyModule'
 
@@ -207,7 +210,7 @@ export default {
         this.resetQuestionFields();
       }
     },
-    async createSelection() { // 생성할 때 볼 수 있도록 하는 것임!! 지우지 말기
+    async createSelection() {
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
         const payload = { questionId: this.questionId, selection: this.option}
@@ -244,10 +247,7 @@ export default {
     },
     submitForm() {
         alert('제출 완료');
-        this.isFormDirty = false;
-        this.surveyQuestions = [];
-        this.surveyTitle = null;
-        this.surveyDescription = null;
+        router.push("/survey/created");
     },
     formatQuestionTitle(index, question) {
         return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
