@@ -1,16 +1,18 @@
 export interface SurveyState {
-    surveyList: Survey[]
-    survey: Survey | null
+    surveyTitleList: Survey[]
+    surveyForm: Survey | null
 }
 
 export interface Survey {
     surveyDocumentId: number
-    title: string
+    surveyTitle: string
+    surveyDescription: string
+    surveyQuestions: []
 }
 
 const state: SurveyState = {
-    surveyList: [],
-    survey: null
+    surveyTitleList: [],
+    surveyForm: null
 }
 
 export default state

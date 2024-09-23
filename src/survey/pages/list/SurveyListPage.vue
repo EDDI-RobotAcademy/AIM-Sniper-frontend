@@ -12,7 +12,7 @@
             item-value="surveyDocumentId"/>
         <v-pagination
             v-model="pagination.page"
-            :length="Math.ceil(surveyList.length / perPage)"
+            :length="Math.ceil(surveyTitleList.length / perPage)"
             color="primary"
             @input="updateItems"/>
     </v-container>
@@ -34,7 +34,7 @@ export default {
                     key: 'surveyDocumentId',
                     width: '50px'
                 },
-                { title: '제목', align: 'start', key: 'title' },
+                { surveyTitle: '제목', align: 'start', key: 'surveyTitle' },
             ],
             perPage: 5,
             pagination: {
@@ -42,15 +42,12 @@ export default {
             },
         }
     },
-    components: {
-        // RouterLink
-    },
     computed: {
-        ...mapState(surveyModule, ['surveyList']),
+        ...mapState(surveyModule, ['surveyTitleList']),
         pagedItems () {
             const startIdx = (this.pagination.page - 1) * this.perPage
             const endIdx = startIdx + this.perPage
-            return this.surveyList.slice(startIdx, endIdx)
+            return this.surveyTitleList.slice(startIdx, endIdx)
         }
     },
     mounted () {
