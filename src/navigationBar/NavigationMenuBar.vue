@@ -8,25 +8,24 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <v-btn text @click="goToCommunityList" class="btn-text">
-      <span>COMMUNITY Board</span>
+    <v-btn text @click="goToProductList" class="btn-text">
+      <span>product</span>
     </v-btn>
 
     <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text">          
-          <b>AI-Document</b>
+        <v-btn v-bind="props" class="btn-text" @click="goToCart">          
+          <b>cart</b>
         </v-btn>
       </template>
-      <v-list>
-        <v-list-item
-          v-for="(item, index) in myDocumentItems"
-          :key="index"
-          @click="item.action"
-        >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
+    </v-menu>
+
+    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" class="btn-text" @click="goToOrder">          
+          <b>order</b>
+        </v-btn>
+      </template>
     </v-menu>
 
     <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
@@ -108,16 +107,16 @@ export default {
     goToHome() {
       router.push("/");
     },    
-    goToCommunityList() {
-      router.push("/community/list");
+    goToProductList() {
+      router.push("/product/list");
     },
 
-    goToDocumentList() {
-      router.push("/document/list");
+    goToCart() {
+      router.push("/cart/list");
     },
-    // goToDocumentSummaryList() {
-    //   router.push("/documentSummary/list");
-    // },
+    goToOrder() {
+      router.push("/order/list");
+    },
 
     goToMyPage() {
       router.push("/account/mypage");
