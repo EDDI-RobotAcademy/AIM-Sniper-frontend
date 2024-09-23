@@ -4,7 +4,7 @@ export interface SurveyState {
 }
 
 export interface Survey {
-    surveyDocumentId: number
+    surveyId: number
     surveyTitle: string
     surveyDescription: string
     surveyQuestions: []

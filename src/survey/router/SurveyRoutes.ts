@@ -10,7 +10,7 @@ const SurveyRoutes = [
         component: SurveyRegisterPage
     },
     {
-        path: '/survey/read/:surveyDocumentId',
+        path: '/survey/read/:surveyId',
         name: 'SurveyReadPage',
         components: {
             default: SurveyReadPage,
