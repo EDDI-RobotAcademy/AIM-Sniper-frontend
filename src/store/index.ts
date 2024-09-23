@@ -4,6 +4,7 @@ import authenticationModule from '@/authentication/store/authenticationModule'
 import googleAuthenticationModule from '@/googleAuthentication/store/googleAuthenticationModule'
 import { createStore } from 'vuex'
 import naverAuthenticationModule from '@/naverAuthentication/store/naverAuthenticationModule'
+import productModule from '@/product/store/productModule'
 
 export default createStore({
   state: {
@@ -20,5 +21,6 @@ export default createStore({
     authenticationModule,    
     googleAuthenticationModule,
     naverAuthenticationModule,
+    productModule,
   }
 })
