@@ -149,7 +149,7 @@ export default {
       titleAndDescriptionCreated: false,
       readyToCreateQuestionTitle: true,
       formCreated: false,
-      surveyId: null,
+      surveyDocumentId: null,
       questionId: null,
       selectionId: null,
       surveyTitle: null,
@@ -170,17 +170,17 @@ export default {
                                  'requestCreateQuestionToDjango', 'requestRegisterSelectionToDjango']),
 
     async createForm() {
-      this.surveyId = await this.requestCreateSurveyFormToDjango()
-      console.log('survey id', this.surveyId)
+      this.surveyDocumentId = await this.requestCreateSurveyFormToDjango()
+      console.log('survey id', this.surveyDocumentId)
       
-      if (this.surveyId !== '') {
+      if (this.surveyDocumentId !== '') {
         this.formCreated = true;
         this.start = false;
       }
     },
 
     async sendTitleAndDescription() {
-      const payload = {surveyId : this.surveyId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
+      const payload = {surveyDocumentId : this.surveyDocumentId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
       const titleDescriptionSaved = await this.requestRegisterTitleAndDescriptionToDjango(payload)
       console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
       if (titleDescriptionSaved) {
@@ -194,7 +194,7 @@ export default {
         return;
       }
       const payload = { 
-        surveyId: this.surveyId, 
+        surveyDocumentId: this.surveyDocumentId, 
         questionTitle: this.questionTitle, 
         questionType: questionType, 
         isEssential: this.isEssential 
