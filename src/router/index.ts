@@ -6,6 +6,7 @@ import GoogleAuthenticationRoutes from '@/googleAuthentication/router/GoogleAuth
 import HomeRoutes from '@/home/router/HomeRoutes'
 import NaverAuthenticationRoutes from '@/naverAuthentication/router/NaverAuthenticationRoutes'
 import ProductRoutes from '@/product/router/ProductRoutes'
+import CartRoutes from '@/cart/router/CartRoutes'
 
 const routes: Array<RouteRecordRaw> = [
   ...HomeRoutes,
@@ -15,6 +16,7 @@ const routes: Array<RouteRecordRaw> = [
   ...NaverAuthenticationRoutes,
   ...SurveyRoutes,
   ...ProductRoutes,
+  ...CartRoutes,
 ]
 
 const router = createRouter({
