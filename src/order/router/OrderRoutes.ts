@@ -7,6 +7,15 @@ const OrderRoutes = [
         name: 'OrderListPage',
         component: OrderListPage,
     },
+    {
+        path: '/order/read/:ordersId',
+        name: 'OrderReadPage',
+        components: {
+            default: OrderReadPage,
+        },
+        props: {
+            default: true
+        }
     },
 ]
 
