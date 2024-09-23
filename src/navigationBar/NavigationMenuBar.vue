@@ -7,6 +7,10 @@
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
+    
+    <v-btn text @click="goToSurveyListPage" class="btn-text">
+      <span>survey</span>
+    </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
       <span>product</span>
@@ -120,6 +124,9 @@ export default {
 
     goToMyPage() {
       router.push("/account/mypage");
+    },
+    goToSurveyListPage() {
+      router.push("/survey/list");
     },
 
     signIn() {
