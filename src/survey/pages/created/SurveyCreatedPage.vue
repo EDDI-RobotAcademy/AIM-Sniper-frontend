@@ -6,6 +6,8 @@
         </v-card-text>
         <br>
         <v-btn @click="goToSurveyRegisterPage">다른 설문 제작하기</v-btn>
+        <br><br>
+        <v-btn @click="goToSurveyListPage">제작한 설문 보기</v-btn>
     </v-container>
 </template>
 <script>
@@ -15,6 +17,9 @@ export default {
     methods: {
         goToSurveyRegisterPage() {
             router.push("/survey/register");
+        },
+        goToSurveyListPage() {
+            router.push("/survey/list")
         }
     }
 }
