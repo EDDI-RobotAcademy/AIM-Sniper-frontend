@@ -12,6 +12,10 @@ export type ProductActions = {
     requestProductListToDjango(
         context: ActionContext<ProductState, any>
     ): Promise<void>
+    requestCreateProductToDjango(
+        context: ActionContext<ProductState, unknown>, 
+        imageFormData: FormData
+    ): Promise<AxiosResponse>
 }
 
 const actions: ProductActions = {
@@ -40,6 +44,22 @@ const actions: ProductActions = {
             console.error('Error fetching product list:', error);
             throw error
         }
+    },
+    async requestCreateProductToDjango(context: ActionContext<ProductState, unknown>, imageFormData: FormData): Promise<AxiosResponse> {
+        try {
+                console.log('requestCreateProductToDjango()')
+                const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/product/register', imageFormData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                console.log('응답 데이터 : ', res.data)
+                alert('이모티콘을 성공적으로 등록하셨습니다.');
+                return res
+            } catch (error) {
+                console.log('requestCreateProductToDjango(): ', error)
+                throw error
+            }
     },
 };
 
