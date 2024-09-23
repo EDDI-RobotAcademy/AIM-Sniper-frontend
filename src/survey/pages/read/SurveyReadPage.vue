@@ -71,6 +71,7 @@
   
   <script>
 import { mapActions, mapState } from 'vuex'
+import router from "@/router";
 const surveyModule = 'surveyModule'
 
 export default {
@@ -163,6 +164,7 @@ export default {
           const isSubmitted = await this.requestSubmitSurveyToDjango(payload)
           if (isSubmitted) {
             alert('제출이 완료되었습니다.');
+            router.push("/survey/submitted");
           }
           this.submitForm = [];
         }
