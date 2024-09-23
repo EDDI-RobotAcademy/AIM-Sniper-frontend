@@ -22,6 +22,22 @@ export type OrderActions = {
             productId: number,
             productPrice: number,
         }
+    ): Promise<void>;
+    requestMyOrderListToDjango(
+        context: ActionContext<OrderState, any>,
+        userToken: string
+    ): Promise<void>
+    requestMyOrderItemListToDjango(
+        context: ActionContext<OrderState, any>, 
+        ordersId: number
+    ): Promise<void>
+    requestOrderItemDuplicationCheckToDjango(
+        context: ActionContext<OrderState, any>,
+        payload: { 
+            userToken: string,
+            productId: number,
+        }
+    ): Promise<void>
 }
 
 const actions: OrderActions = {
@@ -67,6 +83,39 @@ const actions: OrderActions = {
             console.error('상품 페이지에서 상품 구매 시 에러 발생:', error)
             throw error
         }
+    },
+    async requestMyOrderListToDjango(context: ActionContext<OrderState, any>, userToken: string): Promise<void> {
+        try {
+            const token = sessionStorage.getItem("userToken")
+            const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/orders/list/', { userToken: token });
+            console.log('data:', res)
+            const data: Order[] = res.data;
+            console.log('data:', data)
+            context.commit('REQUEST_MY_ORDER_LIST_TO_DJANGO', data);
+        } catch (error) {
+            console.error('나의 주문 내역 출력 과정 중 에러 발생:', error);
+            throw error
+        }
+    },
+    async requestMyOrderItemListToDjango(context: ActionContext<OrderState, any>, ordersId: number): Promise<void> {
+        try {
+            const res: AxiosResponse<OrderItem> = await axiosInst.djangoAxiosInst.post(`/orders/read/${ordersId}`);
+            console.log('order item list data:', res.data)
+            context.commit('REQUEST_MY_ORDER_ITEM_LIST_TO_DJANGO', res.data);
+        } catch (error) {
+            console.error('requestMyOrderItemListToDjango() 문제 발생:', error);
+            throw error
+        }
+    },
+    async requestOrderItemDuplicationCheckToDjango(
+        context: ActionContext<OrderState, any>,
+        payload: {
+            userToken: string, productId: number
+        }): Promise<void> {
+        const { userToken, productId } = payload
+        const res = await axiosInst.djangoAxiosInst
+        .post('/orders/order-item-duplication-check', { payload })
+        return res.data
     },
 }
 
