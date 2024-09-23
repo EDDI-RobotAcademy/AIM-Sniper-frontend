@@ -17,19 +17,19 @@
   
                     <v-text-field
                       v-if="question.questionType === 'text'"
-                      v-model="surveyForm.surveyQuestions[index].answer"
+                      v-model="question.answer"
                       label="답변을 입력하세요"
-                      :rules="question.isEssential ? [rules.textRequired] : []"
-                      @input="updateSubmitForm(index, surveyForm.surveyQuestions[index].answer)"
+                      :rules="question.essential ? [rules.textRequired] : []"
+                      @input="updateSubmitForm(question.questionType, question.questionId, question.answer, null)"
                     />
   
                     <v-radio-group
                       v-if="question.questionType === 'radio'"
-                      v-model="surveyForm.surveyQuestions[index].answer"
-                      :rules="question.isEssential ? [rules.radioRequired] : []"
-                      @change="updateSubmitForm(index, surveyForm.surveyQuestions[index].answer)"
+                      v-model="question.answer"
+                      :rules="question.essential ? [rules.radioRequired] : []"
+                      @change="updateSubmitForm(question.questionType, question.questionId, question.answer, question.selection)"
                     >
-                      <v-radio
+                    <v-radio
                         v-for="option in question.selection"
                         :key="option"
                         :label="option"
@@ -45,7 +45,7 @@
                         :label="option"
                         :value="option"
                         :input-value="isChecked(index, option)"
-                        @change="toggleCheckbox(index, option)"
+                        @change="toggleCheckbox(question.questionType, question.questionId, question.answer, option, question.selection)"
                       />
                     </v-checkbox-group>
                   </v-card-text>
@@ -75,7 +75,7 @@ const surveyModule = 'surveyModule'
 
 export default {
     props: {
-        surveyDocumentId: {
+        surveyId: {
             type: String,
             required: true,
         }
@@ -94,51 +94,62 @@ export default {
         ...mapState(surveyModule, ['surveyForm'])
     },
     created () {
-        this.requestSurveyFormToDjango(this.surveyDocumentId)
+        this.requestSurveyFormToDjango(this.surveyId)
     },
     methods: {
-      ...mapActions(surveyModule, ['requestSurveyFormToDjango']),
+        
+      ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango']),
 
-      isChecked(index, option) {
-        return this.surveyForm.surveyQuestions[index].answer.includes(option);
+      isChecked(index, selection) {
+        return this.surveyForm.surveyQuestions[index].answer.includes(selection);
       },
   
-      toggleCheckbox(index, option) {
-        const answerArray = this.surveyForm.surveyQuestions[index].answer;
-        const optionIndex = answerArray.indexOf(option);
-        if (optionIndex === -1) {
-          answerArray.push(option);
+      toggleCheckbox(questionType, questionId, answer, option, selection) {
+        const answerArray = answer.indexOf(option);
+        if (answerArray === -1) {
+          answer.push(option);
         } else {
-          answerArray.splice(optionIndex, 1);
+          answer.splice(answerArray, 1);
         }
   
-        this.updateCheckboxSubmitForm(index);
+        this.updateCheckboxSubmitForm(questionType, questionId, answer, selection);
       },
   
-      updateCheckboxSubmitForm(index) {
-        const answerArray = [...this.surveyForm.surveyQuestions[index].answer];
-        this.submitForm = this.submitForm.filter((item) => item.index !== index);
-        this.submitForm.push({ index, answer: answerArray });
+      updateCheckboxSubmitForm(questionType, questionId, answer, selection) {
+        const answerArray = [...answer];
+        const selectionIdArray = []
+        for (const answer of answerArray) {
+            selectionIdArray.push(selection.indexOf(answer) + 1);
+        }
+        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
+        this.submitForm.push({ questionId, selectionIdArray, questionType });
       },
   
-      updateSubmitForm(index, answer) {
-        this.submitForm = this.submitForm.filter((item) => item.index !== index);
-        this.submitForm.push({ index, answer });
+      updateSubmitForm(questionType, questionId, answer, selection) {
+        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
+        if (selection !== null) {
+            const selectionId = selection.indexOf(answer) + 1;
+            this.submitForm.push({ questionId, selectionId, questionType});
+        }
+        else {
+            this.submitForm.push({ questionId, answer, questionType });
+        }
       },
   
       formatQuestionTitle(index, question) {
         if (question.questionType === 'checkbox') {
-        return `${index +1}. ${question.questionTitle} (중복 선택 가능) <span class="essential"> ${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+        return `${index +1}. ${question.questionTitle} (중복 선택 가능) <span class="essential"> ${question.essential ? '* 필수' : '* 선택'}</span>`;
         }
         else {
-            return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+            return `${index +1}. ${question.questionTitle} <span class="essential">${question.essential ? '* 필수' : '* 선택'}</span>`;
         }
       },
   
       async onSubmit() {
+        console.log("surveyForm : ", this.surveyForm)
         let isValid = true;
         this.surveyForm.surveyQuestions.forEach((question, index) => {
-          if (question.isEssential && question.questionType === 'checkbox' && question.answer.length === 0) {
+          if (question.essential && question.questionType === 'checkbox' && question.answer.length === 0) {
             isValid = false;
             alert('필수 작성 항목을 점검해주세요.');
           }
@@ -148,7 +159,11 @@ export default {
   
         if (isValid) {
           console.log('전달될 데이터', this.submitForm);
-          alert('제출이 완료되었습니다.');
+          const payload = {submitForm: this.submitForm}
+          const isSubmitted = await this.requestSubmitSurveyToDjango(payload)
+          if (isSubmitted) {
+            alert('제출이 완료되었습니다.');
+          }
           this.submitForm = [];
         }
       }

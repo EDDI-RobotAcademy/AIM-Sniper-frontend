@@ -9,7 +9,7 @@
             v-model:pagination="pagination"
             class="elevation-1"
             @click:row="readRow"
-            item-value="surveyDocumentId"/>
+            item-value="surveyId"/>
         <v-pagination
             v-model="pagination.page"
             :length="Math.ceil(surveyTitleList.length / perPage)"
@@ -31,7 +31,7 @@ export default {
                     title: 'No',
                     align: 'start',
                     sortable: true,
-                    key: 'surveyDocumentId',
+                    key: 'surveyId',
                     width: '50px'
                 },
                 { surveyTitle: '제목', align: 'start', key: 'surveyTitle' },
@@ -58,7 +58,7 @@ export default {
         readRow (event, { item }) {
             this.$router.push({
                 name: 'SurveyReadPage',
-                params: { surveyDocumentId: item['surveyDocumentId'].toString() 
+                params: { surveyId: item['surveyId'].toString() 
                 }
             })
         },
