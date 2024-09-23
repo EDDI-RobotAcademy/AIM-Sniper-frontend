@@ -6,6 +6,7 @@ import { createStore } from 'vuex'
 import naverAuthenticationModule from '@/naverAuthentication/store/naverAuthenticationModule'
 import productModule from '@/product/store/productModule'
 import cartModule from '@/cart/store/cartModule'
+import orderModule from '@/order/store/orderModule'
 
 export default createStore({
   state: {
@@ -24,5 +25,6 @@ export default createStore({
     naverAuthenticationModule,
     productModule,
     cartModule,
+    orderModule
   }
 })
