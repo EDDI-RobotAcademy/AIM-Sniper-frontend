@@ -21,7 +21,7 @@
                         outlined
                     ></v-text-field>
                 </v-col>
-                <v-col cols="auto" class="text-right">
+                <v-col v-if="isAdmin" cols="auto" class="text-right">
                     <v-btn
                         :to="{ name: 'ProductRegisterPage' }"
                         class="register-btn"
@@ -60,7 +60,7 @@
 
             <v-row v-else-if="allProductsVisible">
                 <v-col cols="12" class="text-center">
-                    <v-alert type="info">등록된 전체 이모티콘이 없습니다!</v-alert>
+                    <v-alert type="info">등록된 전체 보고서가 없습니다!</v-alert>
                 </v-col>
             </v-row>
 
@@ -79,10 +79,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+const authenticationModule = 'authenticationModule'
 
 export default {
     computed: {
         ...mapState('productModule', ['products']),
+        ...mapState(authenticationModule, ["isAdmin"]),
         paginatedProducts() {
             const startIndex = (this.currentPage - 1) * this.itemsPerPage;
             return this.filteredProducts.slice(startIndex, startIndex + this.itemsPerPage);

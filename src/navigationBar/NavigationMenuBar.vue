@@ -8,7 +8,7 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     
-    <v-btn text @click="goToSurveyListPage" class="btn-text">
+    <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
       <span>survey</span>
     </v-btn>
 
@@ -49,7 +49,7 @@
       </v-list>
     </v-menu>
 
-    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver" text @click="signIn" class="btn-text">
+    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver && !isAdmin" text @click="signIn" class="btn-text">
       <v-icon left>mdi-login</v-icon>
       <span> &nbsp; LOGIN</span>
     </v-btn>
@@ -99,7 +99,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao","isAdmin"]),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal"]),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
@@ -128,7 +128,6 @@ export default {
     goToSurveyListPage() {
       router.push("/survey/list");
     },
-
     signIn() {
       router.push("/account/login");
     },
@@ -136,6 +135,7 @@ export default {
       if (sessionStorage.getItem('loginType') == 'KAKAO') {
         this.requestKakaoLogoutToDjango();
         this.$store.state.authenticationModule.isAuthenticatedKakao = false
+        this.$store.state.authenticationModule.isAdmin = false
       }
       if (sessionStorage.getItem('loginType') == 'GOOGLE') {
         this.requestGoogleLogoutToDjango();
@@ -165,7 +165,11 @@ export default {
       console.log("You already has a userToken!");
       this.$store.state.authenticationModule.isAuthenticatedKakao = true
     }
-    
+    const adminToken = sessionStorage.getItem("adminToken");
+    if (adminToken){
+      console.log("You already has a adminToken!");
+      this.$store.state.authenticationModule.isAdmin = true
+    }
     const googleUserToken = sessionStorage.getItem("googleUserToken")
     if (googleUserToken) {
       console.log("You already has a googleUserToken!")

@@ -74,8 +74,13 @@ const actions: AuthenticationActions = {
             console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("accessToken")
-            sessionStorage.setItem("userToken", response.data.userToken)
-            commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', true);
+            if (email=="aim-sniper@kakao.com"){
+                sessionStorage.setItem("adminToken", response.data.userToken)
+                commit("REQUEST_IS_ADMIN_TO_DJANGO",true)
+            }else{
+                sessionStorage.setItem("userToken", response.data.userToken)
+                commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', true);
+            }
             return response.data;
         } catch (error) {
             console.error('Error adding redis access token:', error);
@@ -88,7 +93,8 @@ const actions: AuthenticationActions = {
     ): Promise<void> {
         try {
             const userToken = sessionStorage.getItem("userToken")
-
+            const adminToken = sessionStorage.getItem("adminToken")
+            if (userToken){
             const res =
                 await axiosInst.djangoAxiosInst.post('/kakao_oauth/logout', {
                     userToken: userToken
@@ -97,12 +103,23 @@ const actions: AuthenticationActions = {
             console.log('res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
                 context.commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', false)
+                }
+            }else{
+                const res =
+                await axiosInst.djangoAxiosInst.post('/kakao_oauth/logout', {
+                    userToken: adminToken
+                })
+            console.log('res:', res.data.isSuccess)
+            if (res.data.isSuccess === true) {
+                context.commit('REQUEST_IS_ADMIN_TO_DJANGO', false)
+                }
             }
         } catch (error) {
             console.error('requestKakaoLogoutToDjango() 중 에러 발생:', error)
             throw error
         }
         sessionStorage.removeItem("userToken")
+        sessionStorage.removeItem('adminToken')
         sessionStorage.removeItem("email")
         sessionStorage.removeItem("loginType")
         if (sessionStorage.getItem("fileKey")) {
