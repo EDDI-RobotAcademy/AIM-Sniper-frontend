@@ -147,9 +147,6 @@ export default {
     async created () {
         await this.requestUserInfo()
         this.loginType = sessionStorage.getItem("loginType")
-        // this.email = sessionStorage.getItem("email")
-        // console.log("emailddd:", this.email)
-        console.log("loginType:", this.loginType)
     },
     computed: {
         ...mapState(accountModule, ["loginType"]),
@@ -206,6 +203,7 @@ export default {
             if (this.$refs.form.validate()) {
                 if (this.loginType === 'KAKAO') {
                     this.email = this.kakaoEmail;
+                }
                 } else if (this.loginType === 'NAVER') {
                     this.email = this.naverEmail;
                 } else if (this.loginType === 'GOOGLE') {
@@ -255,14 +253,11 @@ export default {
                         accessToken: accessToken,
                     });
                 }
-
                 sessionStorage.setItem('email', accountInfo.email);
                 this.$router.push('/');
+                }
             }
         }
-
-    }
-}
 </script>
 
 
