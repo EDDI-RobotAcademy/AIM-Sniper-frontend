@@ -5,7 +5,7 @@ import axiosInst from "@/utility/axiosInstance"
 import { REQUEST_SURVEY_LIST_TO_DJANGO, REQUEST_SURVEY_FORM_TO_DJANGO } from "./mutation-types"
 
 export type SurveyActions = {
-    requestCreateSurveyFormToDjango(context: ActionContext<any, any>): Promise<AxiosResponse>
+    requestCreateSurveyFormToDjango(context: ActionContext<any, any>, randomString: string): Promise<AxiosResponse>
     requestRegisterTitleAndDescriptionToDjango(
         context: ActionContext<any, any>,
         payload: {surveyId: number, surveyTitle:string, surveyDescription: string}): Promise<AxiosResponse>
@@ -15,13 +15,13 @@ export type SurveyActions = {
     requestRegisterSelectionToDjango(context: ActionContext<any, any>,
         payload: {questionId: number, selection: string}): Promise<AxiosResponse>
     requestSurveyListToDjango(context: ActionContext<SurveyState, any>): Promise<void>
-    requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, surveyId: number): Promise<void>
+    requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, randomString: string): Promise<void>
     requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse>
 }
 
 const actions: SurveyActions = {
-    async requestCreateSurveyFormToDjango(context: ActionContext<any, any>): Promise<AxiosResponse> {
-        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/survey/creat-form')
+    async requestCreateSurveyFormToDjango(context: ActionContext<any, any>, randomString: string): Promise<AxiosResponse> {
+        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/survey/creat-form', randomString)
         return res.data
     },
     async requestRegisterTitleAndDescriptionToDjango(
@@ -46,8 +46,9 @@ const actions: SurveyActions = {
             const data: Survey[] = res.data.surveyTitleList;
             context.commit(REQUEST_SURVEY_LIST_TO_DJANGO, data);
     },
-    async requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, surveyId: number): Promise<void> {
-        const res: AxiosResponse<Survey> = await axiosInst.djangoAxiosInst.get(`/survey/read-survey-form/${surveyId}`);
+    async requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, randomString: string): Promise<void> {
+
+        const res: AxiosResponse<Survey> = await axiosInst.djangoAxiosInst.get(`/survey/read-survey-form/${randomString}`);
         context.commit(REQUEST_SURVEY_FORM_TO_DJANGO, res.data);
     },
     async requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse> {

@@ -65,8 +65,7 @@ export default {
         readRow (event, { item }) {
             this.$router.push({
                 name: 'SurveyReadPage',
-                params: { surveyId: item['surveyId'].toString() 
-                }
+                params: { randomString: item['randomString'].toString() }
             })
         },
         goToSurveyRegisterPage() {

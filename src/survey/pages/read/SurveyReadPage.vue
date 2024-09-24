@@ -76,10 +76,10 @@ const surveyModule = 'surveyModule'
 
 export default {
     props: {
-        surveyId: {
-            type: String,
-            required: true,
-        }
+      randomString: {
+          type: String,
+          required: true,
+      }
     },
     data() {
       return {
@@ -95,7 +95,7 @@ export default {
         ...mapState(surveyModule, ['surveyForm'])
     },
     created () {
-        this.requestSurveyFormToDjango(this.surveyId)
+      this.requestSurveyFormToDjango(this.randomString);
     },
     methods: {
         

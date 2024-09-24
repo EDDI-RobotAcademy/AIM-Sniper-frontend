@@ -8,6 +8,7 @@ export interface Survey {
     surveyTitle: string
     surveyDescription: string
     surveyQuestions: []
+    randomString: string
 }
 
 const state: SurveyState = {
