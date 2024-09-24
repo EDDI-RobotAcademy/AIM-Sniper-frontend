@@ -15,12 +15,19 @@
             :length="Math.ceil(surveyTitleList.length / perPage)"
             color="primary"
             @input="updateItems"/>
+        <v-container align="end">
+            <v-btn
+                class="ml-2"
+                color="primary"
+                @click="goToSurveyRegisterPage">설문조사 만들기
+            </v-btn>
+        </v-container>
     </v-container>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
-
+import router from "@/router";
 const surveyModule = 'surveyModule'
 
 export default {
@@ -62,6 +69,12 @@ export default {
                 }
             })
         },
+        goToSurveyRegisterPage() {
+           router.push("/survey/register");
+        },
+
+        
+    
     },
 }
 </script>
