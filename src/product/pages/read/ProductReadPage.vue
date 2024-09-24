@@ -234,9 +234,9 @@ export default {
                 this.isNicknameValid = false
             }
         },
-        getProductImageUrl(imageName) {
-            return require(`@/assets/images/uploadImages/${imageName}`)
-        },
+        // getProductImageUrl(imageName) {
+        //     return require(`@/assets/images/uploadImages/${imageName}`)
+        // },
         confirmCheckout() {
             this.isCheckoutDialogVisible = true;
         },
