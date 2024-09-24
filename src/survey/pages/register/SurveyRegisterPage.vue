@@ -162,7 +162,8 @@ export default {
       isAdded: false,
       isEssential: false,
       generateOptions: ['text', 'radio', 'checkbox'],
-      isFormDirty: false
+      isFormDirty: false,
+      randomString: '',
     };
   },
   methods: {
@@ -170,8 +171,15 @@ export default {
                                  'requestCreateQuestionToDjango', 'requestRegisterSelectionToDjango']),
 
     async createForm() {
-      this.surveyId = await this.requestCreateSurveyFormToDjango()
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const charactersLength = characters.length;
+      for (let i = 0; i < 32; i++) {
+        this.randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+    
+      this.surveyId = await this.requestCreateSurveyFormToDjango({ randomString: this.randomString })
       console.log('survey id', this.surveyId)
+      console.log('randomString: ', this.randomString)
       
       if (this.surveyId !== '') {
         this.formCreated = true;

@@ -23,8 +23,8 @@ const env: Env = {
     }
 }
 
-if (!env.s3.AWS_REGION || !env.s3.AWS_S3_IDENTITY_POOL_ID){
-    throw new Error("Missing requried Enviroment Variables for AWS configuration");
-}
+// if (!env.s3.AWS_REGION || !env.s3.AWS_S3_IDENTITY_POOL_ID){
+//     throw new Error("Missing requried Enviroment Variables for AWS configuration");
+// }
 
 export default env
