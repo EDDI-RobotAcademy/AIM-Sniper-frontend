@@ -126,9 +126,9 @@ export default {
     methods: {
         ...mapActions(cartModule, ["requestCartListToDjango", "requestDeleteCartItemToDjango"]),
         ...mapActions(orderModule, ["requestCartToAddOrderToDjango"]),
-        getImageUrl(imageName) {
-            return require(`@/assets/images/uploadImages/${imageName}`);
-        },
+        // getImageUrl(imageName) {
+        //     return require(`@/assets/images/uploadImages/${imageName}`);
+        // },
         async removeItem(item) {
             try {
                 await this.requestDeleteCartItemToDjango({ CartItemId: [item.cartItemId] });

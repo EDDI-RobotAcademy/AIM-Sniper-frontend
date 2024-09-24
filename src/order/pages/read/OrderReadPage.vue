@@ -73,9 +73,9 @@ export default {
     },
     methods: {
         ...mapActions(orderModule, ["requestMyOrderItemListToDjango"]),
-        getImageUrl(imageName) {
-            return require(`@/assets/images/uploadImages/${imageName}`);
-        },
+        // getImageUrl(imageName) {
+        //     return require(`@/assets/images/uploadImages/${imageName}`);
+        // },
         goToLastPage() {
             this.$router.go(-1)
         }
