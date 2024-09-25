@@ -157,7 +157,7 @@ export default {
         },
 
         goToSignUp() {
-            router.push("/account/register"); 
+            router.push("/account/register/normal"); 
         },
 
         async onSubmit() {

@@ -2,8 +2,8 @@
   <v-app-bar color="rgba(0, 0, 0, 1)" app dark height="64">
     <v-toolbar-title class="navbar-title">
       <v-btn text @click="goToHome" class="navbar-title-btn">        
-        <v-icon class="home-icon"> mdi-console </v-icon>
-        <span> &nbsp; Text Chat Prompt</span>
+        <v-icon class="home-icon"> mdi-bullseye-arrow </v-icon>
+        <span> &nbsp; AICORP INSIGHT MARKET</span>
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -164,11 +164,6 @@ export default {
     if (userToken) {
       console.log("You already has a userToken!");
       this.$store.state.authenticationModule.isAuthenticatedKakao = true
-    }
-    const adminToken = sessionStorage.getItem("adminToken");
-    if (adminToken){
-      console.log("You already has a adminToken!");
-      this.$store.state.authenticationModule.isAdmin = true
     }
     const googleUserToken = sessionStorage.getItem("googleUserToken")
     if (googleUserToken) {

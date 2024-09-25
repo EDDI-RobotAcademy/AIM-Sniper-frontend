@@ -3,25 +3,21 @@
     <img :src="imageSrc" alt="Home Image" class="home-image" />
 
     <div class="text-container">
-      <h2 class="title">"We make positive movement in Korean running culture."</h2>
-      <div style="margin-top: 60px; margin-bottom: 20px"></div>
+      <h2 class="title">AICORP-INSIGHT-MARKET</h2>
       <p class="subtitle">SINCE 2024</p>
-      <div style="margin-bottom: 10px"></div>
       <p class="description">
-        잇슈는 양질의 컨텐츠로 러닝의 즐거움과 감동을 <br />
-        보다 많은 사람들과 공유할 수 있도록 최선을 다 할 것입니다.
+        AIM <br/>
       </p>
+
+      <!-- Buttons -->
       <div class="buttons">
         <button class="goToProduct-button" @click="goToProductList">
-          러닝화 상품 구경하기
+          회사 분석 상품 구경하기
         </button>
-        <button class="goToCommunity-button" @click="goToCommunityList">
-          커뮤니티 이동하기
-        </button>
-        <button class="goToReview-button" @click="goToReviewList">별점 리뷰 달기</button>
       </div>
     </div>
 
+    <!-- Footer -->
     <div class="footer-container">
       <p class="company-info">
         법인명(상호): AIM-SNIPER 대표자(성명): 민경원 사업자 등록번호 안내:
@@ -41,7 +37,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import imageSrc from "@/assets/images/homeImages/image1.jpg";
+import imageSrc from "@/assets/images/homeImages/back3.png";
 import router from "@/router";
 import { mapActions, mapState } from "vuex";
 const authenticationModule = "authenticationModule";
@@ -74,88 +70,87 @@ export default defineComponent({
 
 <style scoped>
 .home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
 }
 
 .home-image {
   width: 100%;
   height: auto;
-  margin: auto;
-  display: block;
+  max-height: 500px;
   object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 20px;
 }
 
 .text-container {
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .subtitle {
-  font-size: 35px;
-  font-weight: bold;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+  margin-top: 10px;
 }
 
 .title {
-  font-size: 30px;
+  font-size: 36px;
   font-weight: bold;
-  margin: 10px 0;
+  color: #4caf50;
+  margin-bottom: 10px;
 }
 
 .description {
   font-size: 18px;
-  color: #777;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 30px;
 }
 
 .buttons {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .goToProduct-button,
 .goToCommunity-button,
 .goToReview-button {
-  background-color: black;
-  color: #fff;
+  background-color: #4caf50;
+  color: white;
   border: none;
-  padding: 10px 20px;
-  margin: 20px;
-  cursor: pointer;
+  padding: 12px 25px;
   border-radius: 10px;
-  font-size: 20px;
-  width: 300px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .goToProduct-button:hover,
 .goToCommunity-button:hover,
 .goToReview-button:hover {
-  background-color: rgba(87, 133, 57, 0.908);
+  background-color: #45a049;
 }
 
 .footer-container {
-  text-align: left;
-  margin-top: 50px;
+  text-align: center;
   padding: 20px;
-  background-color: #000000;
+  background-color: #333;
+  color: #ccc;
+  margin-top: 40px;
+  width: 100%;
+  border-radius: 10px;
 }
 
 .footer-container p {
-  color: #9b9b9b;
-  font-size: 13px;
-}
-
-.company-info,
-.contact-info,
-.privacy-info,
-.additional-links {
-  margin: 10px 0;
-  color: #555;
-}
-
-.social-media {
-  margin-top: 20px;
-}
-
-.social-icon {
-  width: 30px;
-  height: 30px;
-  margin: 0 10px;
+  margin: 5px 0;
+  font-size: 14px;
 }
 </style>
