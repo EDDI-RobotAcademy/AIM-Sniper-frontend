@@ -4,6 +4,7 @@ import { AxiosResponse } from "axios"
 import axiosInst from "@/utility/axiosInstance"
 
 export type AccountActions = {
+    requestAccountIdToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestEmailDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean>
     requestNicknameDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean>
     requestCreateNewAccountToDjango(context: ActionContext<AccountState, any>, accountInfo: { email: string, nickname: string }): Promise<void>
@@ -23,6 +24,10 @@ export type AccountActions = {
 }
 
 const actions: AccountActions = {
+    async requestAccountIdToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account> {
+        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/account/get-account-id', { email })
+        return res.data.accountId
+    },
     async requestEmailDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean> {
         const { email } = payload
         
