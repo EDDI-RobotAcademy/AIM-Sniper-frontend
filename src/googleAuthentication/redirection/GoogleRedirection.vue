@@ -31,7 +31,6 @@ export default {
             console.log('email: ', email)
 
             const isEmailDuplication = await this.requestEmailDuplicationCheckToDjango({ email })
-            sessionStorage.setItem('email', email)
             if (isEmailDuplication === true) {
                 console.log('기존 가입 고객입니다.')
                 const accessToken = sessionStorage.getItem("googleAccessToken");

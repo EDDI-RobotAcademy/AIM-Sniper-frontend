@@ -162,15 +162,15 @@ export default {
         ...mapActions(naverAuthenticationModule, ['requestNaverUserInfoToDjango', 'requestAddNaverRedisAccessTokenToDjango']),
         async requestUserInfo () {
             try {
-                if (sessionStorage.getItem('loginType') == 'KAKAO') {
+                if (sessionStorage.getItem('loginType') === 'KAKAO') {
                     const kakaoUserInfo = await this.requestUserInfoToDjango()
                     this.kakaoEmail = kakaoUserInfo.kakao_account.email
                 }
-                if (sessionStorage.getItem('loginType') == 'GOOGLE') {
+                else if (sessionStorage.getItem('loginType') === 'GOOGLE') {
                     const googleUserInfo = await this.requestGoogleUserInfoToDjango()
                     this.googleEmail = googleUserInfo.email
                 }
-                if (sessionStorage.getItem('loginType') == 'NAVER') {
+                else if (sessionStorage.getItem('loginType') === 'NAVER') {
                     const NaverUserInfo = await this.requestNaverUserInfoToDjango()
                     this.naverEmail = NaverUserInfo.response.email
                 }      
@@ -178,7 +178,6 @@ export default {
                 console.error('에러:', error)
                 alert('사용자 정보를 가져오는데 실패하였습니다!')
             }   
-         
         },
         async checkNicknameDuplication () {
             console.log('닉네임 중복 검사 누름')
@@ -199,25 +198,28 @@ export default {
             }
         },
         async submitForm() {
-            console.log('회원가입 하기 누름');
-            if (this.$refs.form.validate()) {
-                if (this.loginType === 'KAKAO') {
-                    this.email = this.kakaoEmail;
-                }
-                } else if (this.loginType === 'NAVER') {
-                    this.email = this.naverEmail;
-                } else if (this.loginType === 'GOOGLE') {
-                    this.email = this.googleEmail;
-                } else {
-                    console.error('Unknown loginType:', this.loginType);
-                    this.email = null; // 이메일을 빈 값으로 설정하지 않도록 방지
-                }
+    console.log('회원가입 하기 누름');
+    
+    if (this.$refs.form.validate()) {
+        // loginType별 이메일 설정
+        if (this.loginType === 'KAKAO') {
+            this.email = this.kakaoEmail;
+        } else if (this.loginType === 'NAVER') {
+            this.email = this.naverEmail;
+        } else if (this.loginType === 'GOOGLE') {
+            this.email = this.googleEmail;
+        } else {
+            console.error('Unknown loginType:', this.loginType);
+            alert('알 수 없는 로그인 타입입니다. 다시 시도해 주세요.');
+            return;
+        }
 
-                if (!this.email) {
-                    console.error('이메일이 설정되지 않았습니다.');
-                    alert('이메일이 설정되지 않았습니다. 다시 시도해 주세요.');
-                    return;
-                }
+        // 이메일이 설정되지 않은 경우 처리
+        if (!this.email) {
+            console.error('이메일이 설정되지 않았습니다.');
+            alert('이메일이 설정되지 않았습니다. 다시 시도해 주세요.');
+            return;
+        }
 
                 const accountInfo = {
                     email: this.email,
@@ -230,34 +232,33 @@ export default {
                 await this.requestCreateNewAccountToDjango(accountInfo);
                 console.log('전송한 데이터:', accountInfo);
 
-                let accessToken;
-                if (this.loginType === 'KAKAO') {
-                    accessToken = sessionStorage.getItem('accessToken');
-                    console.log('accessToken', accessToken);
-                    await this.requestAddRedisAccessTokenToDjango({
-                        email: accountInfo.email,
-                        accessToken: accessToken,
-                    });
-                } else if (this.loginType === 'GOOGLE') {
-                    accessToken = sessionStorage.getItem('googleAccessToken');
-                    console.log('accessToken', accessToken);
-                    await this.requestAddGoogleRedisAccessTokenToDjango({
-                        email: accountInfo.email,
-                        accessToken: accessToken,
-                    });
-                } else if (this.loginType === 'NAVER') {
-                    accessToken = sessionStorage.getItem('naverAccessToken');
-                    console.log('accessToken', accessToken);
-                    await this.requestAddNaverRedisAccessTokenToDjango({
-                        email: accountInfo.email,
-                        accessToken: accessToken,
-                    });
-                }
-                sessionStorage.setItem('email', accountInfo.email);
-                this.$router.push('/');
-                }
+        // Django로 회원가입 요청 전송
+        await this.requestCreateNewAccountToDjango(accountInfo);
+        console.log('전송한 데이터:', accountInfo);
+
+        // 각 loginType에 따른 Redis에 AccessToken 저장 처리
+        let accessToken;
+        if (this.loginType === 'KAKAO') {
+            accessToken = sessionStorage.getItem('accessToken');
+        } else if (this.loginType === 'GOOGLE') {
+            accessToken = sessionStorage.getItem('googleAccessToken');
+        } else if (this.loginType === 'NAVER') {
+            accessToken = sessionStorage.getItem('naverAccessToken');
+        }
+
+        if (accessToken) {
+            await this.requestAddRedisAccessTokenToDjango({ email: accountInfo.email, accessToken });
+        } else {
+            console.error('AccessToken is missing');
+        }
+
+        sessionStorage.setItem('email', accountInfo.email);
+        this.$router.push('/');
             }
         }
+    }
+}
+
 </script>
 
 
