@@ -17,7 +17,7 @@ const AccountRoutes = [
         component: AccountRegisterPage
     },
     {
-        path: '/account/register',
+        path: '/account/register/normal',
         name: 'NomalAccountRegisterPage',
         component: NomalAccountRegisterPage
     },

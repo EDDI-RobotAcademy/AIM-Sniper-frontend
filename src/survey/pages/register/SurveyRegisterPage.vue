@@ -92,6 +92,7 @@
           <span>설문 폼 미리보기</span><br><br><br>
           <span class="headline">{{ surveyTitle }}</span>
           <v-card-subtitle class="survey-subtitle">
+            <br>
             <span>{{ surveyDescription }}</span>
           </v-card-subtitle>
         </v-card-title>
