@@ -111,6 +111,8 @@ jobs:
             cd /home/ec2-user/aim/vue-frontend
             cp -r /home/ec2-user/aim/actions-frontend/dist/* ./html/
 
+            docker-compose down
+
             docker image prune -f
             docker logout
 
