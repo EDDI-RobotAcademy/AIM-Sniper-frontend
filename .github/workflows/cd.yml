@@ -42,10 +42,13 @@ jobs:
       run: |
         npm ci --legacy-peer-deps
 
-    - name: Create .env development for CD
+    - name: Create .env file for CD
       run: |
-        pwd
-        echo "${{ secrets.ENV_DEVELOPMENT }}" > .env.development
+        echo "VUE_APP_BASE_URL=${{ secrets.VUE_APP_BASE_URL }}" >> .env
+        echo "VUE_APP_AI_BASE_URL=${{ secrets.VUE_APP_AI_BASE_URL }}" >> .env
+        echo "VUE_APP_AWS_REGION=${{ secrets.VUE_APP_AWS_REGION }}" >> .env
+        echo "VUE_APP_AWS_S3_IDENTITY_POOL_ID=${{ secrets.VUE_APP_AWS_S3_IDENTITY_POOL_ID }}" >> .env
+        echo "VUE_APP_AWS_S3_BUCKET_NAME=${{ secrets.VUE_APP_AWS_S3_BUCKET_NAME }}" >> .env
 
     - name: Build
       run: |
