@@ -36,6 +36,7 @@ const actions: GoogleAuthenticationActions = {
                 const response = await axiosInst.djangoAxiosInst.post(
                     'google_oauth/google/access-token', { code })
                 sessionStorage.setItem("googleAccessToken", response.data.accessToken.access_token)
+                sessionStorage.setItem("loginType","GOOGLE")
             } catch (error) {
                 console.log('Google Access Token 요청 중 문제 발생:', error)
                 throw error
@@ -71,7 +72,7 @@ const actions: GoogleAuthenticationActions = {
             console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("googleAccessToken")
-            sessionStorage.setItem("googleUserToken", response.data.userToken)
+            sessionStorage.setItem("googleUserToken",response.data.userToken)
             commit('REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO', true)
             return response.data
             
