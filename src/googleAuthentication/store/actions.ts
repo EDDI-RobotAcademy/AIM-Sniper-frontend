@@ -30,7 +30,7 @@ const actions: GoogleAuthenticationActions = {
         context: ActionContext<GoogleAuthenticationState, any>,
         payload: { code: string }): Promise<void> {
             try {
-                console.log('requestGoogleAccessTokenToDjangoRedirection()')
+                // console.log('requestGoogleAccessTokenToDjangoRedirection()')
                 const { code } = payload
                 
                 const response = await axiosInst.djangoAxiosInst.post(
@@ -69,7 +69,7 @@ const actions: GoogleAuthenticationActions = {
                 accessToken: accessToken
             })
 
-            console.log('userToken:', response.data.userToken)
+            // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("googleAccessToken")
             sessionStorage.setItem("googleUserToken",response.data.userToken)
@@ -90,7 +90,7 @@ const actions: GoogleAuthenticationActions = {
                 await axiosInst.djangoAxiosInst.post('/google_oauth/logout', {
                     userToken: userToken
                 })
-            console.log('googleOauth logout res:', res.data.isSuccess)
+            // console.log('googleOauth logout res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
                 context.commit('REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO', false)
             }

@@ -125,17 +125,19 @@ export default {
 
         };
         const goToGoogleLogin = async () => {
-            sessionStorage.setItem("loginType", "GOOGLE") 
-            await store.dispatch(
-                "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
-            )
+            alert("현재 로그인 검수중입니다.")
+            // sessionStorage.setItem("loginType", "GOOGLE") 
+            // await store.dispatch(
+            //     "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
+            // )
             
         }
         const goToNaverLogin = async () => {
-            sessionStorage.setItem('loginType', "NAVER")
-            await store.dispatch(
-                "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
-            )
+            alert("현재 로그인 검수중입니다.")
+            // sessionStorage.setItem('loginType', "NAVER")
+            // await store.dispatch(
+            //     "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
+            // )
         }
 
         return {
@@ -167,7 +169,6 @@ export default {
 
             try {
                 const response = await this.checkPassword();
-                // console.log('response', response)
 
                 if (response) {
                 // 이메일과 비밀번호가 모두 일치하면 로그인 성공
@@ -209,7 +210,6 @@ export default {
         },
         async checkPassword() {
             try {
-                console.log("이메일, 비밀번호 확인")
                 const payload = {
                     email: this.email,
                     password: this.password

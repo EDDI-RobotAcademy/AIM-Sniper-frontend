@@ -159,20 +159,20 @@ export default {
   },
 
   mounted() {
-    console.log("navigation bar mounted()");
+    // console.log("navigation bar mounted()");
     const userToken = sessionStorage.getItem("userToken");
     if (userToken) {
-      console.log("You already has a userToken!");
+      // console.log("You already has a userToken!");
       this.$store.state.authenticationModule.isAuthenticatedKakao = true
     }
     const googleUserToken = sessionStorage.getItem("googleUserToken")
     if (googleUserToken) {
-      console.log("You already has a googleUserToken!")
+      // console.log("You already has a googleUserToken!")
       this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true
     }
     const naverUserToken = sessionStorage.getItem("naverUserToken")
     if (naverUserToken) {
-      console.log("You already has a naverUserToken!")
+      // console.log("You already has a naverUserToken!")
       this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true
     }
     const normalToken = sessionStorage.getItem("normalToken")

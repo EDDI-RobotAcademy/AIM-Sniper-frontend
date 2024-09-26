@@ -48,7 +48,7 @@ const actions: OrderActions = {
                 throw new Error('User token not found')
             }
             
-            console.log('payload:', payload)
+            // console.log('payload:', payload)
             const requestData = { 
                 userToken,
                 items: payload.items.map(item => ({
@@ -59,7 +59,7 @@ const actions: OrderActions = {
             }
 
             const response = await axiosInst.djangoAxiosInst.post('/orders/cart', requestData)
-            console.log('response data:', response.data)
+            // console.log('response data:', response.data)
             
             return response.data
         } catch (error) { 
@@ -73,10 +73,10 @@ const actions: OrderActions = {
         try {
             const { userToken, productId, productPrice } = payload
             
-            console.log('payload:', payload)
+            // console.log('payload:', payload)
 
             const response = await axiosInst.djangoAxiosInst.post('/orders/product', payload )
-            console.log('response data:', response.data)
+            // console.log('response data:', response.data)
             
             return response.data
         } catch (error) { 
@@ -86,11 +86,11 @@ const actions: OrderActions = {
     },
     async requestMyOrderListToDjango(context: ActionContext<OrderState, any>, userToken: string): Promise<void> {
         try {
-            const token = sessionStorage.getItem("userToken")
-            const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/orders/list/', { userToken: token });
-            console.log('data:', res)
+            const email = sessionStorage.getItem("email")
+            const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/orders/list/', { email: email });
+            // console.log('data:', res)
             const data: Order[] = res.data;
-            console.log('data:', data)
+            // console.log('data:', data)
             context.commit('REQUEST_MY_ORDER_LIST_TO_DJANGO', data);
         } catch (error) {
             console.error('나의 주문 내역 출력 과정 중 에러 발생:', error);
@@ -100,7 +100,7 @@ const actions: OrderActions = {
     async requestMyOrderItemListToDjango(context: ActionContext<OrderState, any>, ordersId: number): Promise<void> {
         try {
             const res: AxiosResponse<OrderItem> = await axiosInst.djangoAxiosInst.post(`/orders/read/${ordersId}`);
-            console.log('order item list data:', res.data)
+            // console.log('order item list data:', res.data)
             context.commit('REQUEST_MY_ORDER_ITEM_LIST_TO_DJANGO', res.data);
         } catch (error) {
             console.error('requestMyOrderItemListToDjango() 문제 발생:', error);

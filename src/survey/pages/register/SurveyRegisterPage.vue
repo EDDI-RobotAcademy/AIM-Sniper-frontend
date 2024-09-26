@@ -179,8 +179,8 @@ export default {
       }
     
       this.surveyId = await this.requestCreateSurveyFormToDjango({ randomString: this.randomString })
-      console.log('survey id', this.surveyId)
-      console.log('randomString: ', this.randomString)
+      // console.log('survey id', this.surveyId)
+      // console.log('randomString: ', this.randomString)
       
       if (this.surveyId !== '') {
         this.formCreated = true;
@@ -191,7 +191,7 @@ export default {
     async sendTitleAndDescription() {
       const payload = {surveyId : this.surveyId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
       const titleDescriptionSaved = await this.requestRegisterTitleAndDescriptionToDjango(payload)
-      console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
+      // console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
       if (titleDescriptionSaved) {
         this.titleAndDescriptionCreated = true
         this.showTitleDescription = false;
@@ -209,7 +209,7 @@ export default {
         isEssential: this.isEssential 
       }
       this.questionId = await this.requestCreateQuestionToDjango(payload);
-      console.log('question id : ', this.questionId)
+      // console.log('question id : ', this.questionId)
       this.readyToCreateQuestionTitle = false;
       
       if (this.questionId !== null && questionType === 'text') {
@@ -223,7 +223,7 @@ export default {
         this.selection.push(this.option);
         const payload = { questionId: this.questionId, selection: this.option}
         this.selectionId = await this.requestRegisterSelectionToDjango(payload)
-        console.log('selectionId 저장됨 : ', this.selectionId)
+        // console.log('selectionId 저장됨 : ', this.selectionId)
         this.option = '';
         this.isFormDirty = true;
       } else {
