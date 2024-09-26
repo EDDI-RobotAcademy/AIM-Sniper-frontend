@@ -30,7 +30,10 @@
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
-      <b>companyReport</b>
+      <b>Company Report</b>
+    </v-btn>
+    <v-btn text @click="goToAiInterviewPage" class="btn-text">
+      <b>AI Interview</b>
     </v-btn>
 
     <v-menu
@@ -179,6 +182,9 @@ export default {
     },
     goToSurveyListPage() {
       router.push("/survey/list");
+    },
+    goToAiInterviewPage() {
+      router.push("/ai-interview")
     },
     signIn() {
       router.push("/account/login");

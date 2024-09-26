@@ -13,12 +13,13 @@
             :key="index"
             :class="['message', message.type]"
           >
-            <div v-if="message.type === 'user'" class="avatar user-avatar"></div>
-            <div v-else class="avatar ai-avatar">
-              <v-icon>mdi-account-tie</v-icon>
-            </div>
+          <div v-if="message.type === 'user'" class="avatar user-avatar"></div>
+              <div v-else class="avatar ai-avatar">
+                <v-icon>mdi-account-tie</v-icon>
+              </div>
             <div class="message-content" v-html="renderMessageContent(message)"></div>
           </div>
+
 
           <div v-if="isLoading" class="message ai">
             <v-icon>mdi:account-tie</v-icon>
@@ -48,9 +49,6 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import router from "@/router";
-import { mapActions, mapState } from "vuex";
 import markdownIt from 'markdown-it'
 import '@mdi/font/css/materialdesignicons.css'
 
@@ -160,7 +158,7 @@ export default ({
         }, 1000)
       }
     },
-  }
+  },
 });
 </script>
 
@@ -244,11 +242,6 @@ export default ({
 .ai .avatar {
   font-size: 30px; /* 아이콘 크기 조정 */
   color: black; /* 아이콘 색상 조정 */
-  margin: 15px 20px;
-  margin-top: 25px;   /* 위쪽 여백 */
-  margin-bottom: 5px; /* 아래쪽 여백 */
-  margin-left: 10px;  /* 왼쪽 여백 */
-  margin-right: 10px; /* 오른쪽 여백 */
 }
 
 .user .avatar {
@@ -261,13 +254,15 @@ export default ({
   margin-right: 5px; /* 오른쪽 여백 */
 }
 
-
 /* 메시지 내용 스타일 */
 .message-content {
-  padding: 10px 15px;
-  border-radius: 18px;
-  max-width: 50%;  /* 말풍선의 최대 가로 너비를 50%로 제한 */
-  background-color: rgba(0, 0, 0, 0.1); /* 밝은 배경색 */
+  background-color: #f0f0f0; /* 말풍선 배경 색상 */
+  border-radius: 10px; /* 말풍선 모서리 둥글게 */
+  padding: 10px; /* 말풍선 내부 여백 */
+  max-width: 300px; /* 말풍선 최대 너비 */
+  margin-left: 0; /* 왼쪽 여백 제거 */
+  position: relative; /* 부모 요소 기준으로 절대 위치 설정 가능 */
+  bottom: 0; /* 말풍선이 아이콘의 높이와 정렬되도록 설정 */
 }
 
 .user .message-content {
@@ -280,7 +275,7 @@ export default ({
 .ai .message-content {
   background-color: #dde7f0; /* AI 말풍선 색상 변경 */
   color: black;
-  border-radius: 20px 20px 20px 0px;
+  border-radius: 20px;
   max-width: 100%;  /* AI 말풍선도 50%로 제한 */
 }
 
@@ -314,7 +309,7 @@ textarea {
 
 .send-button {
   padding: 10px 12px; /* 버튼 내부 여백 */
-  background-color: #474c52; /* 버튼 배경색 */
+  background-color: black; /* 버튼 배경색 */
   color: white; /* 버튼 텍스트 색상 */
   border: none;
   border-radius: 20px; /* 둥근 모서리 */
@@ -324,7 +319,7 @@ textarea {
 
 /* 전송 버튼 스타일 */
 button {
-  background-color: #474c52; /* 버튼 배경을 파란색으로 변경 */
+  background-color: #1c1d1e; /* 버튼 배경을 파란색으로 변경 */
   color: white; /* 버튼 텍스트 색상 변경 */
   border: none;
   padding: 10px;
@@ -332,10 +327,6 @@ button {
   cursor: pointer;
   border-radius: 20px;
   font-size: 16px;
-}
-
-button + button {
-  margin-left: 10px; /* 파일 선택 버튼과 전송 버튼 사이의 간격 */
 }
 
 /* ... 로딩 말풍선 */
