@@ -20,7 +20,7 @@
       <span>survey</span>
     </v-btn>
 
-    <v-btn text @click="goToCompanyReportList" class="btn-text">
+    <v-btn text @click="goToProductList" class="btn-text">
       <span>companyReport</span>
     </v-btn>
 
@@ -154,7 +154,7 @@ export default {
     goToHome() {
       router.push("/");
     },
-    goToCompanyReportList() {
+    goToProductList() {
       router.push("/companyReport/list");
     },
 
@@ -204,6 +204,7 @@ export default {
   mounted() {
     // console.log("navigation bar mounted()");
     const userToken = sessionStorage.getItem("userToken");
+    const adminToken = sessionStorage.getItem("adminToken")
     if (userToken) {
       // console.log("You already has a userToken!");
       this.$store.state.authenticationModule.isAuthenticatedKakao = true;
@@ -221,6 +222,9 @@ export default {
     const normalToken = sessionStorage.getItem("normalToken");
     if (normalToken) {
       this.$store.state.accountModule.isAuthenticatedNormal = true;
+    }
+    if (adminToken){
+      this.$store.state.authenticationModule.isAdmin = true
     }
   },
 };

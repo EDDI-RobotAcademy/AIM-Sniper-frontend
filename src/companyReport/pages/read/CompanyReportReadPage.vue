@@ -81,7 +81,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" md="5">
+            <v-col cols="12" md="12">
               <v-textarea
                 class="custom-text-field"
                 v-model="companyReport.content"
@@ -194,9 +194,9 @@ export default {
       this.isCheckoutDialogVisible = false;
       // console.log('이모티콘 구매')
       try {
-        const userToken = sessionStorage.getItem("userToken");
+        const email = sessionStorage.getItem("email");
         const payload = {
-          userToken: userToken,
+            email: email,
           companyReportId: this.companyReport.companyReportId,
         };
         // console.log('payload:', payload)
@@ -207,9 +207,9 @@ export default {
           alert("이미 구매하신 상품입니다.");
         } else {
           try {
-            const userToken = sessionStorage.getItem("userToken");
+            const email = sessionStorage.getItem("email");
             const payload = {
-              userToken,
+                email,
               companyReportId: this.companyReport.companyReportId,
               companyReportPrice: this.companyReport.companyReportPrice,
             };
@@ -237,9 +237,9 @@ export default {
     async onAddToCartAndAsk() {
       // console.log('장바구니에 추가 버튼 눌렀음')
       try {
-        const userToken = sessionStorage.getItem("userToken");
+        const email = sessionStorage.getItem("email");
         const payload = {
-          userToken: userToken,
+            email: email,
           companyReportId: this.companyReport.companyReportId,
         };
         // console.log('payload:', payload)
@@ -290,9 +290,9 @@ export default {
         this.isNicknameValid = false;
       }
     },
-    // getCompanyReportImageUrl(imageName) {
-    //     return require(`@/assets/images/uploadImages/${imageName}`)
-    // },
+    getCompanyReportImageUrl(imageName) {
+        return require(`@/assets/images/uploadImages/${imageName}`)
+    },
     confirmCheckout() {
       this.isCheckoutDialogVisible = true;
     },

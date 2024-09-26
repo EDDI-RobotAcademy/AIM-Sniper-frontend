@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-text-field
           v-model="companyReportName"
-          label="상품 이름"
+          label="기업 분석 보고서 제목"
           data-testid="input-companyReport-name"
         />
       </v-col>
@@ -13,7 +13,7 @@
       <v-col cols="12">
         <v-text-field
           v-model="companyReportPrice"
-          label="상품 가격"
+          label="가격"
           data-testid="input-companyReport-price"
         />
       </v-col>
@@ -34,7 +34,7 @@
       <v-col cols="12">
         <v-textarea
           v-model="content"
-          label="상품 상세 설명"
+          label="기업 보고서"
           auto-grow
           data-testid="input-companyReport-description"
         />
@@ -44,7 +44,7 @@
       <v-col cols="12">
         <v-file-input
           v-model="companyReportTitleImage"
-          label="상품 대표 사진"
+          label="회사 사진"
           prepend-icon="mdi-camera"
           data-testid="input-companyReport-title-image"
         />
