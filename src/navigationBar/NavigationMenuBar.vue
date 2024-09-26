@@ -1,9 +1,17 @@
 <template>
-  <v-app-bar color="rgba(0, 0, 0, 1)" app dark height="64">
-    <v-toolbar-title class="navbar-title">
-      <v-btn text @click="goToHome" class="navbar-title-btn">
-        <v-icon class="home-icon"> mdi-bullseye-arrow </v-icon>
-        <span> &nbsp; AICORP INSIGHT MARKET</span>
+  <v-app-bar color="#E3E5E8" app dark height="64"> 
+    <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
+      <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center;">
+        <v-img
+          class="home-icon"
+          src="@/assets/images/fixed/AiM_BI_Basic.png"
+          alt="AIM LOGO"
+          contain
+          height="83" 
+          width="64" 
+          cover
+        ></v-img>
+        <p style="font-size: 16px; font-weight: bold;">&nbsp; AI company Insight Market</p> <!-- 텍스트도 중앙 정렬 -->
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -222,32 +230,21 @@ export default {
 .navbar-title {
   font-size: 24px;
   font-weight: bold;
-  color: white;
+  color: black;
+  display: flex;
+  align-items: center; /* 수직 정렬 */
 }
 
 .navbar-title-btn {
-  color: white;
-}
-
-.v-icon.home-icon {
-  font-size: 32px;
-  margin-right: 0px;
-  color: rgb(0, 255, 0);
-}
-
-.mdi-icon {
-  font-size: 32px;
-  margin-right: 8px;
+  color: black;
+  display: flex;
+  align-items: center; /* 로고와 텍스트 수직 정렬 */
 }
 
 .btn-text {
   font-size: 14px;
   margin-right: 16px;
-  color: white;
-}
-
-.v-btn {
-  text-transform: uppercase;
+  color: black;
 }
 
 .v-btn:hover {
