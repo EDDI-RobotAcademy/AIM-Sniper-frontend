@@ -101,12 +101,12 @@ export default {
     async mounted() {
       this.email = sessionStorage.getItem("email");
       if (this.email) {
-        console.log("Logged In");
+        // console.log("Logged In");
         this.accountId = await this.requestAccountIdToDjango(this.email)
-        console.log('accountID: ', this.accountId)
+        // console.log('accountID: ', this.accountId)
       }
       else {
-        console.log('비회원 유저')
+        // console.log('비회원 유저')
       }
     },
     created () {

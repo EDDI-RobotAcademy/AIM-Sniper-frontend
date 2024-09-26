@@ -25,14 +25,14 @@ export default {
                 console.error('userInfo is undefined.')
                 return
             }
-            console.log('googleUserInfo:', googleUserInfo)
+            // console.log('googleUserInfo:', googleUserInfo)
 
             const email = googleUserInfo.email
-            console.log('email: ', email)
+            // console.log('email: ', email)
 
             const isEmailDuplication = await this.requestEmailDuplicationCheckToDjango({ email })
             if (isEmailDuplication === true) {
-                console.log('기존 가입 고객입니다.')
+                // console.log('기존 가입 고객입니다.')
                 const accessToken = sessionStorage.getItem("googleAccessToken");
                 
                 if (accessToken) {
@@ -45,7 +45,7 @@ export default {
                 sessionStorage.setItem('email', email)
                 this.$router.push('/')
             } else {
-                console.log('신규 가입 고객입니다.')
+                // console.log('신규 가입 고객입니다.')
                 this.$router.push('/account/register')
             }
         }

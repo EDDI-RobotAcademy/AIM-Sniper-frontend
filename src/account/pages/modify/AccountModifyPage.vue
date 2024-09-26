@@ -180,13 +180,13 @@ export default {
       }
     },
     async checkNicknameDuplication() {
-      console.log('닉네임 중복 검사');
+      // console.log('닉네임 중복 검사');
 
       try {
         const isDuplicate = await this.requestNicknameDuplicationCheckToDjango({
           newNickname: this.newNickname.trim()
         });
-        console.log(isDuplicate);
+        // console.log(isDuplicate);
         if (isDuplicate) {
           this.nicknameErrorMessages = ['이 nickname은 이미 사용중입니다!'];
           this.isNicknameValid = false;

@@ -25,14 +25,14 @@ export default {
                 console.error('userInfo is undefined.')
                 return
             }
-            console.log('naverUserInfo:', naverUserInfo)
+            // console.log('naverUserInfo:', naverUserInfo)
 
             const email = naverUserInfo.response.email
-            console.log('email: ', email)
+            // console.log('email: ', email)
 
             const isEmailDuplication = await this.requestEmailDuplicationCheckToDjango({ email })
             if (isEmailDuplication === true) {
-                console.log('기존 가입 고객입니다.')
+                // console.log('기존 가입 고객입니다.')
                 const accessToken = sessionStorage.getItem("naverAccessToken");
                 
                 if (accessToken) {
@@ -45,7 +45,7 @@ export default {
                 sessionStorage.setItem('email', email)
                 this.$router.push('/')
             } else {
-                console.log('신규 가입 고객입니다.')
+                // console.log('신규 가입 고객입니다.')
                 this.$router.push('/account/register')
             }
         }

@@ -47,13 +47,13 @@ const actions: ProductActions = {
     },
     async requestCreateProductToDjango(context: ActionContext<ProductState, unknown>, imageFormData: FormData): Promise<AxiosResponse> {
         try {
-                console.log('requestCreateProductToDjango()')
+                // console.log('requestCreateProductToDjango()')
                 const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/product/register', imageFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                console.log('응답 데이터 : ', res.data)
+                // console.log('응답 데이터 : ', res.data)
                 alert('이모티콘을 성공적으로 등록하셨습니다.');
                 return res
             } catch (error) {

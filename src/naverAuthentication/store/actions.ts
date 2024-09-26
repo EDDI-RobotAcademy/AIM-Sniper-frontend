@@ -30,7 +30,7 @@ const actions: NaverAuthenticationActions = {
         context: ActionContext<NaverAuthenticationState, any>,
         payload: { code: string }): Promise<void> {
             try {
-                console.log('requestNaverAccessTokenToDjangoRedirection()')
+                // console.log('requestNaverAccessTokenToDjangoRedirection()')
                 const { code } = payload
                 
                 const response = await axiosInst.djangoAxiosInst.post(
@@ -69,7 +69,7 @@ const actions: NaverAuthenticationActions = {
                 accessToken: accessToken
             })
 
-            console.log('userToken:', response.data.userToken)
+            // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("naverAccessToken")
             sessionStorage.setItem("naverUserToken",response.data.userToken)
@@ -90,7 +90,7 @@ const actions: NaverAuthenticationActions = {
                 await axiosInst.djangoAxiosInst.post('/naver_oauth/logout', {
                     userToken: userToken
                 })
-            console.log('naverOauth logout res:', res.data.isSuccess)
+            // console.log('naverOauth logout res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
                 context.commit('REQUEST_IS_NAVER_AUTHENTICATED_TO_DJANGO', false)
             }

@@ -76,7 +76,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/nickname', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_NICKNAME_TO_DJANGO', res.data);
             return res.data
         } catch (error) {
@@ -104,13 +104,13 @@ const actions: AccountActions = {
         })
     },
     async requestWithdrawalToDjango(context: ActionContext<AccountState, unknown>, payload: { reason: string }): Promise<AxiosResponse> {
-        console.log('requestWithdrawalToDjango()')
+        // console.log('requestWithdrawalToDjango()')
         const userToken = sessionStorage.getItem("userToken");
         const { reason } = payload
-        console.log('전송할 데이터:', { reason })
+        // console.log('전송할 데이터:', { reason })
         try {
             const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/account/withdraw', { reason: reason, userToken: userToken })
-            console.log('res:', res.data)
+            // console.log('res:', res.data)
             return res.data
         } catch (error) {
             alert('requestWithdrawalToDjango() 문제 발생!')
@@ -122,7 +122,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/gender', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_GENDER_TO_DJANGO', res.data);
             return res.data
         } catch (error) {
@@ -135,7 +135,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/birthyear', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_BIRTHYEAR_TO_DJANGO', res.data);
             return res.data
         } catch (error) {

@@ -22,11 +22,11 @@ export default {
             await this.requestAccessTokenToDjangoRedirection({ code })
             const userInfo = await this.requestUserInfoToDjango()
             const email = userInfo.kakao_account.email
-            console.log('email: ', email)
+            // console.log('email: ', email)
 
             const isEmailDuplication = await this.requestEmailDuplicationCheckToDjango({ email })
             if (isEmailDuplication === true) {
-                console.log('기존 가입 고객입니다.')
+                // console.log('기존 가입 고객입니다.')
                 const accessToken = sessionStorage.getItem("accessToken");
                 
                 if (accessToken) {
@@ -39,7 +39,7 @@ export default {
 
                 this.$router.push('/')
             } else {
-                console.log('신규 가입 고객입니다.')
+                // console.log('신규 가입 고객입니다.')
                 this.$router.push('/account/register')
             }
         }

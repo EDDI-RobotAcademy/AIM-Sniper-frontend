@@ -71,7 +71,7 @@ export default {
   async created() {
     try {
       const email = sessionStorage.getItem("email");
-      console.log('email:', email)
+      // console.log('email:', email)
       const nickname = await this.requestNicknameToDjango(email);      
       const gender = await this.requestGenderToDjango(email);
       const birthyear = await this.requestBirthyearToDjango(email);

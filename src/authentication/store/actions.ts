@@ -31,13 +31,12 @@ const actions: AuthenticationActions = {
         payload: { code: string }): Promise<void> {
 
         try {
-            console.log('requestAccessTokenToDjangoRedirection()')
+            // console.log('requestAccessTokenToDjangoRedirection()')
             const { code } = payload
 
             const response = await axiosInst.djangoAxiosInst.post(
                 '/kakao_oauth/kakao/access-token', { code })
             sessionStorage.setItem("accessToken", response.data.accessToken.access_token)
-            sessionStorage.setItem("loginType","KAKAO")
         } catch (error) {
             console.log('Access Token 요청 중 문제 발생:', error)
             throw error
@@ -72,7 +71,7 @@ const actions: AuthenticationActions = {
                 accessToken: accessToken
             });
 
-            console.log('userToken:', response.data.userToken)
+            // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("accessToken")
             if (email=="aim-sniper@kakao.com"){
@@ -101,7 +100,7 @@ const actions: AuthenticationActions = {
                     userToken: userToken
                 })
 
-            console.log('res:', res.data.isSuccess)
+            // console.log('res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
                 context.commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', false)
                 }
@@ -110,7 +109,7 @@ const actions: AuthenticationActions = {
                 await axiosInst.djangoAxiosInst.post('/kakao_oauth/logout', {
                     userToken: adminToken
                 })
-            console.log('res:', res.data.isSuccess)
+            // console.log('res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
                 context.commit('REQUEST_IS_ADMIN_TO_DJANGO', false)
                 }
