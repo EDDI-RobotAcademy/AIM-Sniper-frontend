@@ -7,6 +7,7 @@ import naverAuthenticationModule from '@/naverAuthentication/store/naverAuthenti
 import companyReportModule from "@/companyReport/store/companyReportModule"
 import cartModule from '@/cart/store/cartModule'
 import orderModule from '@/order/store/orderModule'
+import userLogModule from "@/userLog/store/userLogModule"
 
 export default createStore({
   state: {
@@ -26,5 +27,6 @@ export default createStore({
     companyReportModule,
     cartModule,
     orderModule,
+    userLogModule,
   }
 })
