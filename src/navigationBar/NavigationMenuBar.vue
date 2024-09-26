@@ -1,38 +1,62 @@
 <template>
   <v-app-bar color="rgba(0, 0, 0, 1)" app dark height="64">
     <v-toolbar-title class="navbar-title">
-      <v-btn text @click="goToHome" class="navbar-title-btn">        
+      <v-btn text @click="goToHome" class="navbar-title-btn">
         <v-icon class="home-icon"> mdi-bullseye-arrow </v-icon>
         <span> &nbsp; AICORP INSIGHT MARKET</span>
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    
+
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
       <span>survey</span>
     </v-btn>
 
-    <v-btn text @click="goToProductList" class="btn-text">
-      <span>product</span>
+    <v-btn text @click="goToCompanyReportList" class="btn-text">
+      <span>companyReport</span>
     </v-btn>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToCart">          
+        <v-btn v-bind="props" class="btn-text" @click="goToCart">
           <b>cart</b>
         </v-btn>
       </template>
     </v-menu>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToOrder">          
+        <v-btn v-bind="props" class="btn-text" @click="goToOrder">
           <b>order</b>
         </v-btn>
       </template>
     </v-menu>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 16px">
           <b>My Page</b>
@@ -49,7 +73,18 @@
       </v-list>
     </v-menu>
 
-    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver && !isAdmin" text @click="signIn" class="btn-text">
+    <v-btn
+      v-if="
+        !isAuthenticatedKakao &&
+        !isAuthenticatedGoogle &&
+        !isAuthenticatedNormal &&
+        !isAuthenticatedNaver &&
+        !isAdmin
+      "
+      text
+      @click="signIn"
+      class="btn-text"
+    >
       <v-icon left>mdi-login</v-icon>
       <span> &nbsp; LOGIN</span>
     </v-btn>
@@ -68,7 +103,7 @@ import { mapActions, mapState } from "vuex";
 const accountModule = "accountModule";
 const authenticationModule = "authenticationModule";
 const googleAuthenticationModule = "googleAuthenticationModule";
-const naverAuthenticationModule = "naverAuthenticationModule"
+const naverAuthenticationModule = "naverAuthenticationModule";
 
 export default {
   data() {
@@ -85,7 +120,7 @@ export default {
         //   action: () => {
         //     this.goToDocumentSummaryList();
         //   },
-        // },        
+        // },
       ],
       myPageItems: [
         {
@@ -93,13 +128,13 @@ export default {
           action: () => {
             this.goToMyPage();
           },
-        },        
+        },
       ],
-      isUserAuthenticated: sessionStorage.getItem('isUserAuthenticated'),
+      isUserAuthenticated: sessionStorage.getItem("isUserAuthenticated"),
     };
   },
   computed: {
-    ...mapState(authenticationModule, ["isAuthenticatedKakao","isAdmin"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal"]),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
@@ -110,9 +145,9 @@ export default {
     ...mapActions(naverAuthenticationModule, ["requestNaverLogoutToDjango"]),
     goToHome() {
       router.push("/");
-    },    
-    goToProductList() {
-      router.push("/product/list");
+    },
+    goToCompanyReportList() {
+      router.push("/companyReport/list");
     },
 
     goToCart() {
@@ -132,30 +167,30 @@ export default {
       router.push("/account/login");
     },
     signOut() {
-      if (sessionStorage.getItem('loginType') == 'KAKAO') {
+      if (sessionStorage.getItem("loginType") == "KAKAO") {
         this.requestKakaoLogoutToDjango();
-        this.$store.state.authenticationModule.isAuthenticatedKakao = false
-        this.$store.state.authenticationModule.isAdmin = false
+        this.$store.state.authenticationModule.isAuthenticatedKakao = false;
+        this.$store.state.authenticationModule.isAdmin = false;
       }
-      if (sessionStorage.getItem('loginType') == 'GOOGLE') {
+      if (sessionStorage.getItem("loginType") == "GOOGLE") {
         this.requestGoogleLogoutToDjango();
-        this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = false
+        this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = false;
       }
-      if (sessionStorage.getItem('loginType') == 'NAVER') {
+      if (sessionStorage.getItem("loginType") == "NAVER") {
         this.requestNaverLogoutToDjango();
-        this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = false
+        this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = false;
       }
-      if (sessionStorage.getItem('loginType') == 'NORMAL') {
-        sessionStorage.removeItem("normalToken")
-        sessionStorage.removeItem("email")
-        sessionStorage.removeItem("loginType")
-        if (sessionStorage.getItem("fileKey")){
-          sessionStorage.removeItem("fileKey")
+      if (sessionStorage.getItem("loginType") == "NORMAL") {
+        sessionStorage.removeItem("normalToken");
+        sessionStorage.removeItem("email");
+        sessionStorage.removeItem("loginType");
+        if (sessionStorage.getItem("fileKey")) {
+          sessionStorage.removeItem("fileKey");
         }
         this.$store.state.accountModule.isAuthenticatedNormal = false;
       }
       router.push("/");
-    },    
+    },
   },
 
   mounted() {
@@ -163,21 +198,21 @@ export default {
     const userToken = sessionStorage.getItem("userToken");
     if (userToken) {
       // console.log("You already has a userToken!");
-      this.$store.state.authenticationModule.isAuthenticatedKakao = true
+      this.$store.state.authenticationModule.isAuthenticatedKakao = true;
     }
-    const googleUserToken = sessionStorage.getItem("googleUserToken")
+    const googleUserToken = sessionStorage.getItem("googleUserToken");
     if (googleUserToken) {
       // console.log("You already has a googleUserToken!")
-      this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true
+      this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true;
     }
-    const naverUserToken = sessionStorage.getItem("naverUserToken")
+    const naverUserToken = sessionStorage.getItem("naverUserToken");
     if (naverUserToken) {
       // console.log("You already has a naverUserToken!")
-      this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true
+      this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true;
     }
-    const normalToken = sessionStorage.getItem("normalToken")
+    const normalToken = sessionStorage.getItem("normalToken");
     if (normalToken) {
-      this.$store.state.accountModule.isAuthenticatedNormal = true
+      this.$store.state.accountModule.isAuthenticatedNormal = true;
     }
   },
 };
@@ -197,7 +232,7 @@ export default {
 .v-icon.home-icon {
   font-size: 32px;
   margin-right: 0px;
-  color: rgb(0, 255, 0);;
+  color: rgb(0, 255, 0);
 }
 
 .mdi-icon {
@@ -243,5 +278,4 @@ export default {
 .v-list-item:hover {
   background-color: rgba(0, 255, 55, 0.25);
 }
-
 </style>

@@ -6,9 +6,9 @@ export interface OrderState {
 }
 
 export interface OrderItem {
-    productId: number
-    productName: string
-    productPrice: number
+    companyReportId: number
+    companyReportName: string
+    companyReportPrice: number
 }
 
 export interface Order {

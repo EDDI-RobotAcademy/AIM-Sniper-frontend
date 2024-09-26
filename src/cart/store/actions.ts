@@ -20,7 +20,7 @@ export type CartActions = {
         context: ActionContext<CartState, any>,
         payload: { 
             email: string,
-            productId: number,
+            companyReportId: number,
         }
     ): Promise<void>
 }
@@ -72,9 +72,9 @@ const actions: CartActions = {
     async requestCartItemDuplicationCheckToDjango(
         context: ActionContext<CartState, any>,
         payload: {
-            email: string, productId: number
+            email: string, companyReportId: number
         }): Promise<void> {
-        const { email, productId } = payload
+        const { email, companyReportId } = payload
         const res = await axiosInst.djangoAxiosInst
         .post('/cart/cart-item-duplication-check', { payload })
         return res.data
