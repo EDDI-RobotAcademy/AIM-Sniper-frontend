@@ -8,6 +8,7 @@ import NaverAuthenticationRoutes from '@/naverAuthentication/router/NaverAuthent
 import CompanyReportRoutes from '@/companyReport/router/companyReportRoutes'
 import CartRoutes from '@/cart/router/CartRoutes'
 import OrderRoutes from '@/order/router/OrderRoutes'
+import AiInterviewRoutes from '@/aiInterview/router/AiInterviewRoutes'
 
 const routes: Array<RouteRecordRaw> = [
   ...HomeRoutes,
@@ -18,7 +19,8 @@ const routes: Array<RouteRecordRaw> = [
   ...SurveyRoutes,
   ...CompanyReportRoutes,
   ...CartRoutes,
-  ...OrderRoutes
+  ...OrderRoutes,
+  ...AiInterviewRoutes,
 ]
 
 const router = createRouter({
