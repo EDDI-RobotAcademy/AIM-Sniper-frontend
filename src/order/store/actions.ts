@@ -15,12 +15,12 @@ export type OrderActions = {
             }[]
         }
     ): Promise<AxiosResponse>;
-    requestProductReadToAddOrderToDjango(
+    requestCompanyReportReadToAddOrderToDjango(
         context: ActionContext<OrderState, any>,
         payload: {
             userToken: string,
-            productId: number,
-            productPrice: number,
+            companyReportId: number,
+            companyReportPrice: number,
         }
     ): Promise<void>;
     requestMyOrderListToDjango(
@@ -35,7 +35,7 @@ export type OrderActions = {
         context: ActionContext<OrderState, any>,
         payload: { 
             userToken: string,
-            productId: number,
+            companyReportId: number,
         }
     ): Promise<void>
 }
@@ -67,15 +67,15 @@ const actions: OrderActions = {
             throw error
         }
     },
-    async requestProductReadToAddOrderToDjango(context: ActionContext<OrderState, any>, payload: {
-        userToken: string, productId: number, productPrice: number}
+    async requestCompanyReportReadToAddOrderToDjango(context: ActionContext<OrderState, any>, payload: {
+        userToken: string, companyReportId: number, companyReportPrice: number}
         ): Promise<void> {
         try {
-            const { userToken, productId, productPrice } = payload
+            const { userToken, companyReportId, companyReportPrice } = payload
             
             // console.log('payload:', payload)
 
-            const response = await axiosInst.djangoAxiosInst.post('/orders/product', payload )
+            const response = await axiosInst.djangoAxiosInst.post('/orders/companyReport', payload )
             // console.log('response data:', response.data)
             
             return response.data
@@ -110,9 +110,9 @@ const actions: OrderActions = {
     async requestOrderItemDuplicationCheckToDjango(
         context: ActionContext<OrderState, any>,
         payload: {
-            userToken: string, productId: number
+            userToken: string, companyReportId: number
         }): Promise<void> {
-        const { userToken, productId } = payload
+        const { userToken, companyReportId } = payload
         const res = await axiosInst.djangoAxiosInst
         .post('/orders/order-item-duplication-check', { payload })
         return res.data

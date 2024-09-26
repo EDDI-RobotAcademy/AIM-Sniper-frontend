@@ -232,10 +232,6 @@ export default {
                 await this.requestCreateNewAccountToDjango(accountInfo);
                 // console.log('전송한 데이터:', accountInfo);
 
-        // Django로 회원가입 요청 전송
-        await this.requestCreateNewAccountToDjango(accountInfo);
-        // console.log('전송한 데이터:', accountInfo);
-
         // 각 loginType에 따른 Redis에 AccessToken 저장 처리
         let accessToken;
         if (this.loginType === 'KAKAO') {

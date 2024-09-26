@@ -5,7 +5,7 @@ import AuthenticationRoutes from '@/authentication/router/AuthenticationRoutes'
 import GoogleAuthenticationRoutes from '@/googleAuthentication/router/GoogleAuthenticationRoutes'
 import HomeRoutes from '@/home/router/HomeRoutes'
 import NaverAuthenticationRoutes from '@/naverAuthentication/router/NaverAuthenticationRoutes'
-import ProductRoutes from '@/product/router/ProductRoutes'
+import CompanyReportRoutes from '@/companyReport/router/companyReportRoutes'
 import CartRoutes from '@/cart/router/CartRoutes'
 import OrderRoutes from '@/order/router/OrderRoutes'
 
@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
   ...GoogleAuthenticationRoutes, 
   ...NaverAuthenticationRoutes,
   ...SurveyRoutes,
-  ...ProductRoutes,
+  ...CompanyReportRoutes,
   ...CartRoutes,
   ...OrderRoutes
 ]
