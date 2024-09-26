@@ -1,5 +1,8 @@
 <template>
-  <v-app-bar color="#E3E5E8" app dark height="64"> 
+  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="64" style="backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
+  -webkit-backdrop-filter: blur(10px) saturate(180%); /* 사파리 호환성 */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); /* 유리 느낌을 주기 위한 테두리 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */"> 
     <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
       <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center;">
         <v-img
@@ -227,7 +230,11 @@ export default {
 </script>
 
 <style scoped>
+
 .navbar-title {
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
   font-size: 24px;
   font-weight: bold;
   color: black;
@@ -236,13 +243,19 @@ export default {
 }
 
 .navbar-title-btn {
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
   color: black;
   display: flex;
   align-items: center; /* 로고와 텍스트 수직 정렬 */
 }
 
 .btn-text {
-  font-size: 14px;
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
+  font-size: 16px;
   margin-right: 16px;
   color: black;
 }
