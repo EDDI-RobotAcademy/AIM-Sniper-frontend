@@ -43,14 +43,14 @@ export type OrderActions = {
 const actions: OrderActions = {
     async requestCartToAddOrderToDjango({ state }, payload) {
         try {
-            const userToken = sessionStorage.getItem('userToken')
-            if (!userToken) {
+            const email = sessionStorage.getItem('email')
+            if (!email) {
                 throw new Error('User token not found')
             }
             
             // console.log('payload:', payload)
             const requestData = { 
-                userToken,
+                email,
                 items: payload.items.map(item => ({
                     cartItemId: item.cartItemId,
                     quantity: item.quantity,
@@ -75,7 +75,7 @@ const actions: OrderActions = {
             
             // console.log('payload:', payload)
 
-            const response = await axiosInst.djangoAxiosInst.post('/orders/companyReport', payload )
+            const response = await axiosInst.djangoAxiosInst.post('/orders/company_report', payload )
             // console.log('response data:', response.data)
             
             return response.data

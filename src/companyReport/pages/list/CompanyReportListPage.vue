@@ -160,9 +160,9 @@ export default {
     changePage(page) {
       this.currentPage = page;
     },
-    // getImageUrl(imageName) {
-    //     return require(`@/assets/images/uploadImages/${imageName}`);
-    // },
+    getImageUrl(imageName) {
+        return require(`@/assets/images/uploadImages/${imageName}`);
+    },
   },
   mounted() {
     this.requestCompanyReportListToDjango();
