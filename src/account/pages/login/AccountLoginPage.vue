@@ -2,9 +2,7 @@
     <v-container class="container">
         <div class="login-wrapper">
             <div>                
-                <span style="color: red;"> ● &nbsp;</span>
-                <span style="color: yellow;"> ● &nbsp;</span>
-                <span style="color: green;"> ● &nbsp;</span>
+                
 
                 <div :style="{ marginBottom: login_flag ? '20px' : '10px', textAlign: 'center', fontSize: '25px'}">
                         LOGIN
@@ -235,7 +233,7 @@ export default {
     display: flex;                  /* Flexbox 사용하여 가운데 정렬 */
     justify-content: center;        /* 수평 가운데 정렬 */
     align-items: center;            /* 수직 가운데 정렬 */
-    padding: 0;
+    padding: 10%;
     background: url("@/assets/images/fixed/login_bg.png") no-repeat center center; /* 배경 이미지 설정 */
     background-size: cover;                                                     /* 배경 이미지 크기 조정 */
 }
