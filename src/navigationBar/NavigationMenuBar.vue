@@ -1,30 +1,36 @@
 <template>
-  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="64" style="backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
+  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="90" style="backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
   -webkit-backdrop-filter: blur(10px) saturate(180%); /* 사파리 호환성 */
   border-top: 1px solid rgba(255, 255, 255, 0.3); /* 유리 느낌을 주기 위한 테두리 */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */"> 
     <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
-      <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center;">
+      <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center; height: auto">
         <v-img
           class="home-icon"
           src="@/assets/images/fixed/AiM_BI_Basic.png"
           alt="AIM LOGO"
           contain
-          height="83" 
-          width="64" 
+          height="125" 
+          width="75" 
           cover
         ></v-img>
-        <p style="font-size: 16px; font-weight: bold;">&nbsp; AI company Insight Market</p> <!-- 텍스트도 중앙 정렬 -->
+        
+        <p style="font-size: 16px; font-weight: bold; text-transform: none;">
+          &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
+          <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
+          <span style="color: blue; font-weight: bold;">M</span>arket
+        </p>
+
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
-      <span>survey</span>
+      <b>survey</b>
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
-      <span>companyReport</span>
+      <b>companyReport</b>
     </v-btn>
 
     <v-menu
@@ -101,7 +107,7 @@
     </v-btn>
     <v-btn v-else text @click="signOut" class="btn-text">
       <v-icon left>mdi-logout</v-icon>
-      <span> &nbsp; LOGOUT</span>
+      <b> &nbsp; LOGOUT</b>
     </v-btn>
   </v-app-bar>
 </template>
