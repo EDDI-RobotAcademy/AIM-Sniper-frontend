@@ -22,7 +22,7 @@
           <b>기업 분석 보고서</b> 구경하기
         </button>
         <button class="goToSurvey-button" @click="goToSurveyList">
-          설문조사 해주세요
+          <b>설문조사</b> 해주세요
         </button>
       </div>
     </div>
@@ -128,6 +128,7 @@ html, body {
 }
 
 .goToProduct-button,
+.goToSurvey-button,
 .goToCommunity-button,
 .goToReview-button {
   background-color: black;
@@ -142,6 +143,7 @@ html, body {
 }
 
 .goToProduct-button:hover,
+.goToSurvey-button:hover,
 .goToCommunity-button:hover,
 .goToReview-button:hover {
   background-color: rgba(87, 133, 57, 0.908);
