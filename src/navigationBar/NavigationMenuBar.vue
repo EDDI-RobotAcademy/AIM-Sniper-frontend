@@ -1,8 +1,5 @@
 <template>
-  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="90" style="backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
-  -webkit-backdrop-filter: blur(10px) saturate(180%); /* 사파리 호환성 */
-  border-top: 1px solid rgba(255, 255, 255, 0.3); /* 유리 느낌을 주기 위한 테두리 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */"> 
+  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="90" style="backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"> 
     <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
       <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center; height: auto">
         <v-img
@@ -19,6 +16,7 @@
           &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
           <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
           <span style="color: blue; font-weight: bold;">M</span>arket
+          <span v-if="isAdmin" style="color: cyan; font-weight: bold;">(Admin Page)</span>          
         </p>
 
       </v-btn>
@@ -26,7 +24,7 @@
     <v-spacer></v-spacer>
 
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
-      <b>survey</b>
+      <b>survey(관리자용)</b>
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
