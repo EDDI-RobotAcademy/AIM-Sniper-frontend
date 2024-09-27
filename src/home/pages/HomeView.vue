@@ -65,12 +65,29 @@ export default defineComponent({
     goToReviewList() {
       router.push("/review/list");
     },
+    goToProductList(){
+      router.push("/CompanyReport/list")
+    },
     async goToSurveyList() {
-      const randomString = await this.requestRandomStringToDjango(this.surveyId)
-      this.$router.push({
-                name: 'SurveyReadPage',
-                params: { randomString: randomString.toString() }
-            })
+      try {
+        // requestRandomStringToDjango에서 randomString 요청
+        const randomString = await this.requestRandomStringToDjango(this.surveyId);
+        
+        // randomString이 존재하면 SurveyReadPage로 이동
+        if (randomString) {
+          this.$router.push({
+            name: 'SurveyReadPage',
+            params: { randomString: randomString.toString() }
+          });
+        } else {
+          // randomString이 없으면 alert
+          alert("질문지가 아직 등록되지 않았습니다.");
+        }
+      } catch (error) {
+        // 에러 발생 시 메시지 처리
+        console.error("질문지 정보를 불러오는 중 에러가 발생했습니다:", error);
+        alert("질문지를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
     }
   },
 });

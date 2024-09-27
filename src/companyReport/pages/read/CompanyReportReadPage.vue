@@ -110,7 +110,7 @@
                 </v-btn>
             </router-link>
         </v-col>
-        <button class="Btn" @click="deleteCompanyReport">
+        <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
             <div class="sign">
                 <svg
                 viewBox="0 0 16 16"
@@ -127,7 +127,7 @@
             </div>
             <div class="text">Delete</div>
         </button>
-        <button class="pushable" @click="goToModifyPage">
+        <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
             <span class="shadow"></span>
             <span class="edge"></span>
             <span class="front"> Modify </span>
@@ -178,6 +178,7 @@ import userLogModule from "@/userLog/store/userLogModule";
 const companyReportModule = "companyReportModule";
 const cartModule = "cartModule";
 const orderModule = "orderModule";
+const authenticationModule = "authenticationModule"
 
 export default {
   props: {
@@ -199,6 +200,7 @@ export default {
   },
   computed: {
     ...mapState(companyReportModule, ["companyReport", "companyReports"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
   },
   methods: {
     ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango"]),
@@ -358,6 +360,12 @@ export default {
       immediate: true,
     },
   },
+  mounted(){
+    const adminToken = sessionStorage.getItem("adminToken")
+    if (adminToken){
+      this.$store.state.authenticationModule.isAdmin = true
+    }
+  }
 };
 </script>
 
@@ -392,7 +400,6 @@ export default {
 }
 
 .action-button {
-  margin: 10px 10px 0 0;
   font-weight: bold;
 }
 
@@ -408,5 +415,162 @@ export default {
 .category-text {
   color: rgb(183, 100, 93);
   font-size: 18px; /* 원하는 크기로 조정 */
+}
+/* From Uiverse.io by Tsiangana */ 
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background: rgb(255, 135, 65);
+  background: linear-gradient(
+    250deg,
+    rgba(255, 135, 65, 1) 15%,
+    rgba(255, 65, 65, 1) 65%
+  );
+}
+
+/* plus sign */
+.sign {
+  width: 100%;
+  transition-duration: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign svg {
+  width: 17px;
+}
+
+.sign svg path {
+  fill: white;
+}
+/* text */
+.text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: 0.3s;
+}
+/* hover effect on button width */
+.Btn:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: 0.3s;
+}
+
+.Btn:hover .sign {
+  width: 30%;
+  transition-duration: 0.3s;
+  padding-left: 20px;
+}
+/* hover effect button's text */
+.Btn:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: 0.3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.Btn:active {
+  transform: translate(2px, 2px);
+}
+/* From Uiverse.io by PriyanshuGupta28 */ 
+.pushable {
+  position: relative;
+  background: transparent;
+  padding: 0px;
+  border: none;
+  cursor: pointer;
+  outline-offset: 4px;
+  outline-color: deeppink;
+  transition: filter 250ms;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: hsl(226, 25%, 69%);
+  border-radius: 8px;
+  filter: blur(2px);
+  will-change: transform;
+  transform: translateY(2px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(
+    to right,
+    hsl(248, 39%, 39%) 0%,
+    hsl(248, 39%, 49%) 8%,
+    hsl(248, 39%, 39%) 92%,
+    hsl(248, 39%, 29%) 100%
+  );
+}
+
+.front {
+  display: block;
+  position: relative;
+  border-radius: 8px;
+  background: hsl(248, 53%, 58%);
+  padding: 16px 32px;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1rem;
+  transform: translateY(-4px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.pushable:hover {
+  filter: brightness(110%);
+}
+
+.pushable:hover .front {
+  transform: translateY(-6px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+
+.pushable:hover .shadow {
+  transform: translateY(4px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .shadow {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+
+.pushable:focus:not(:focus-visible) {
+  outline: none;
 }
 </style>
