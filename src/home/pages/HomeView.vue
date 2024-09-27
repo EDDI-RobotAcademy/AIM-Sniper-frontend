@@ -3,43 +3,38 @@
     <img :src="imageSrc" alt="Home Image" class="home-image" />
 
     <div class="text-container">
-      <h2 class="title">AICORP-INSIGHT-MARKET</h2>
+      <h2 class="title">
+        <p style="font-size: 50px; font-weight: bold; text-transform: none;">
+          &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
+          <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
+          <span style="color: blue; font-weight: bold;">M</span>arket
+        </p>
+      </h2>
+      <div style="margin-bottom: 20px"></div>
       <p class="subtitle">SINCE 2024</p>
-      <p class="description">AIM <br /></p>
-
-      <!-- Buttons -->
+      <div style="margin-bottom: 20px"></div>
+      <p class="description">
+        AIM은 한국 IT 기업 분석 보고서와 AI 모의면접 서비스를 제공하여 <br />
+        보다 많은 사람들에게 양질의 정보를 공유하고 도움을 드릴 수 있도록 최선을 다하겠습니다.
+      </p>
       <div class="buttons">
-        <button class="goToCompanyReport-button" @click="goToCompanyReportList">
-          회사 분석 상품 구경하기
+        <button class="goToProduct-button" @click="goToProductList">
+          <b>기업 분석 보고서</b> 구경하기
         </button>
+        <!-- <button class="goToCommunity-button" @click="goToCommunityList">커뮤니티 이동하기</button>
+        <button class="goToReview-button" @click="goToReviewList">별점 리뷰 달기</button> -->
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer-container">
-      <p class="company-info">
-        법인명(상호): AIM-SNIPER 대표자(성명): 민경원 사업자 등록번호 안내:
-        [123-41241-3]
-      </p>
-      <p class="contact-info">
-        통신판매업 신고 제 2019-플레이데이터-072호 주소: 서울특별시 금천구
-        가산디지털1로 25 플레이데이터18층<br />
-        이메일: issueissue@kakao.com 전화: 02-1234-5678 입금계좌: 우리은행
-        3123-6243-029458 (주) AIM-SNIPER
-      </p>
-      <p class="privacy-info">
-        개인정보보호책임자: 잇슈컴퍼니(issueissue@kakao.com)
-      </p>
-      <p class="reserved-info">
-        2024 IssueIssue Korea LLC. All Rights Reserved.
-      </p>
+      <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import imageSrc from "@/assets/images/homeImages/back3.png";
+import imageSrc from "@/assets/images/homeImages/home_bg.png";
 import router from "@/router";
 import { mapActions, mapState } from "vuex";
 const authenticationModule = "authenticationModule";
@@ -57,7 +52,7 @@ export default defineComponent({
   methods: {
     ...mapActions(authenticationModule, ["requestLogoutToDjango"]),
 
-    goToCompanyReportList() {
+    goToProductList() {
       router.push("/companyReport/list");
     },
     goToCommunityList() {
@@ -71,88 +66,88 @@ export default defineComponent({
 </script>
 
 <style scoped>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   text-align: center;
-  padding: 20px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
 .home-image {
+  margin-top: 2.5%;
   width: 100%;
-  height: auto;
-  max-height: 500px;
-  object-fit: cover;
-  border-radius: 15px;
-  margin-bottom: 20px;
+  height: 60vh; /* 화면의 높이를 100%로 설정 */  
 }
 
 .text-container {
-  margin-top: 30px;
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
 }
 
 .subtitle {
-  font-size: 24px;
-  color: #333;
-  font-weight: 600;
-  margin-top: 10px;
+  font-size: 35px;
+  font-weight: bold;
 }
 
 .title {
-  font-size: 36px;
+  font-size: 30px;
   font-weight: bold;
-  color: #4caf50;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 .description {
   font-size: 18px;
-  color: #555;
-  line-height: 1.5;
-  margin-bottom: 30px;
+  color: grey;
 }
 
 .buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  margin-top: 20px;
 }
 
-.goToCompanyReport-button,
+.goToProduct-button,
 .goToCommunity-button,
 .goToReview-button {
-  background-color: #4caf50;
-  color: white;
+  background-color: black;
+  color: #fff;
   border: none;
-  padding: 12px 25px;
-  border-radius: 10px;
-  font-size: 18px;
+  padding: 10px 20px;
+  margin: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 10px;
+  font-size: 20px;
+  width: 300px;
 }
 
-.goToCompanyReport-button:hover,
+.goToProduct-button:hover,
 .goToCommunity-button:hover,
 .goToReview-button:hover {
-  background-color: #45a049;
+  background-color: rgba(87, 133, 57, 0.908);
 }
 
 .footer-container {
+  background-color: rgba(82, 82, 82, 0.3); /* 유리 효과를 위한 반투명 배경 */
+  color: #333; /* 텍스트 색상을 어두운 색으로 설정 */
+  font-size: 13px;
   text-align: center;
-  padding: 20px;
-  background-color: #333;
-  color: #ccc;
-  margin-top: 40px;
+  padding: 10px;
+  position: fixed;
   width: 100%;
-  border-radius: 10px;
-}
-
-.footer-container p {
-  margin: 5px 0;
-  font-size: 14px;
+  bottom: 0;
+  backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
+  -webkit-backdrop-filter: blur(10px) saturate(180%); /* 사파리 호환성 */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); /* 유리 느낌을 주기 위한 테두리 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
 }
 </style>
