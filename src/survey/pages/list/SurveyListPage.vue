@@ -8,13 +8,31 @@
             :items="pagedItems"
             v-model:pagination="pagination"
             class="elevation-1"
-            @click:row="readRow"
-            item-value="surveyId"/>
+        >
+            <template v-slot:item="{ item }">
+                <tr @click="readRow(item)">
+                    <td>
+                        {{ item.surveyId }}
+                    </td>
+                    <td>
+                        <span @click.stop="readRow(item)">
+                            {{ item.surveyTitle }}
+                        </span>
+                    </td>
+                    <td>
+                        <v-btn @click.stop="goToSurveyResultPage(item)">
+                            응답 확인
+                        </v-btn>
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
         <v-pagination
             v-model="pagination.page"
             :length="Math.ceil(surveyTitleList.length / perPage)"
             color="primary"
-            @input="updateItems"/>
+            @input="updateItems"
+        />
         <v-container align="end">
             <v-btn
                 class="ml-2"
@@ -26,9 +44,9 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
 import router from "@/router";
-const surveyModule = 'surveyModule'
+const surveyModule = 'surveyModule';
 
 export default {
     data () {
@@ -41,39 +59,46 @@ export default {
                     key: 'surveyId',
                     width: '50px'
                 },
-                { surveyTitle: '제목', align: 'start', key: 'surveyTitle' },
+                { title: '제목', align: 'start', key: 'surveyTitle' },
+                { title: '설문 응답 확인', align: 'start', key: 'actions', sortable: false },
             ],
             perPage: 5,
             pagination: {
                 page: 1,
             },
-        }
+        };
     },
     computed: {
         ...mapState(surveyModule, ['surveyTitleList']),
         pagedItems () {
-            const startIdx = (this.pagination.page - 1) * this.perPage
-            const endIdx = startIdx + this.perPage
-            return this.surveyTitleList.slice(startIdx, endIdx)
+            const startIdx = (this.pagination.page - 1) * this.perPage;
+            const endIdx = startIdx + this.perPage;
+            return this.surveyTitleList.slice(startIdx, endIdx);
         }
     },
     mounted () {
-        this.requestSurveyListToDjango()
+        this.requestSurveyListToDjango();
     },
     methods: {
         ...mapActions(surveyModule, ['requestSurveyListToDjango']),
-        readRow (event, { item }) {
+        readRow(item) {
             this.$router.push({
                 name: 'SurveyReadPage',
-                params: { randomString: item['randomString'].toString() }
-            })
+                params: { randomString: item.randomString.toString() }
+            });
+        },
+        goToSurveyResultPage(item) {
+            this.$router.push({
+                name: 'SurveyResultPage',
+                params: { surveyId: item.surveyId }
+            });
         },
         goToSurveyRegisterPage() {
-           router.push("/survey/register");
+            router.push("/survey/register");
         },
-
-        
-    
+        updateItems() {
+            // 페이지 변경 시 실행할 함수
+        }
     },
-}
+};
 </script>
