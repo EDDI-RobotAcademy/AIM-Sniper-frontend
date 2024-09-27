@@ -4,13 +4,13 @@
 
     <div class="text-container">
       <h2 class="title">
-        <p style="font-size: 50px; font-weight: bold; text-transform: none;">
+        <p style="font-size: 30px; font-weight: bold; text-transform: none;">
           &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
           <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
           <span style="color: blue; font-weight: bold;">M</span>arket
         </p>
       </h2>
-      <div style="margin-bottom: 20px"></div>
+      <div style="margin-bottom: 10px"></div>
       <p class="subtitle">SINCE 2024</p>
       <div style="margin-bottom: 20px"></div>
       <p class="description">
@@ -98,6 +98,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%; /* 전체 너비 설정 */
+  overflow: hidden; /* 전체 페이지의 오버플로우 비활성화 */
 }
 
 .home-container {
@@ -107,7 +109,7 @@ html, body {
   width: 100%;
   height: 100%;
   text-align: center;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .home-image {
@@ -117,31 +119,26 @@ html, body {
 }
 
 .text-container {
-  position: absolute;
-  top: 80%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 80%; /* 너비를 80%로 조정 */
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 20px 0; /* 패딩 추가 */
   color: black;
 }
 
-.subtitle {
-  font-size: 35px;
-  font-weight: bold;
-}
-
 .title {
-  font-size: 30px;
+  font-size: 20px;
   font-weight: bold;
   margin: 10px 0;
 }
 
-.description {
-  font-size: 18px;
-  color: grey;
+.subtitle {
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.buttons {
-  margin-top: 20px;
+.description {
+  font-size: 15px;
+  color: grey;
 }
 
 .goToProduct-button,
@@ -155,7 +152,7 @@ html, body {
   margin: 20px;
   cursor: pointer;
   border-radius: 10px;
-  font-size: 20px;
+  font-size: 15px;
   width: 300px;
 }
 
@@ -167,9 +164,9 @@ html, body {
 }
 
 .footer-container {
-  background-color: rgba(82, 82, 82, 0.3); /* 유리 효과를 위한 반투명 배경 */
+  background-color: rgba(82, 82, 82, 0.2); /* 유리 효과를 위한 반투명 배경 */
   color: #333; /* 텍스트 색상을 어두운 색으로 설정 */
-  font-size: 13px;
+  font-size: 14px;
   text-align: center;
   padding: 10px;
   position: fixed;
@@ -177,7 +174,7 @@ html, body {
   bottom: 0;
   backdrop-filter: blur(10px) saturate(180%); /* 블러와 채도를 높여 유리 효과 추가 */
   -webkit-backdrop-filter: blur(10px) saturate(180%); /* 사파리 호환성 */
-  border-top: 1px solid rgba(255, 255, 255, 0.3); /* 유리 느낌을 주기 위한 테두리 */
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* 유리 느낌을 주기 위한 테두리 */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="90" style="backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"> 
-    <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
-      <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center; height: auto">
+  <v-app-bar color="rgba(82,82,82,0.2)" app dark height="75" style="backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"> 
+    <v-toolbar-title class="navbar-title" style="display: flex; align-items: center; width: auto;">
+      <v-btn text @click="goToHome" class="navbar-title-btn" style="width: 100%; display: flex; align-items: center; height: auto">
         <v-img
           class="home-icon"
           src="@/assets/images/fixed/AiM_BI_Basic.png"
@@ -12,7 +12,7 @@
           cover
         ></v-img>
         
-        <p style="font-size: 16px; font-weight: bold; text-transform: none;">
+        <p style="font-size: 14px; font-weight: bold; text-transform: none; width: auto;">
           &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
           <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
           <span style="color: blue; font-weight: bold;">M</span>arket
@@ -79,7 +79,7 @@
       close-on-content-click
     >
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" style="margin-right: 16px">
+        <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
           <b>My Page</b>
         </v-btn>
       </template>
@@ -107,7 +107,7 @@
       class="btn-text"
     >
       <v-icon left>mdi-login</v-icon>
-      <span> &nbsp; LOGIN</span>
+      <b> &nbsp; LOGIN</b>
     </v-btn>
     <v-btn v-else text @click="signOut" class="btn-text">
       <v-icon left>mdi-logout</v-icon>
@@ -260,8 +260,7 @@ export default {
 .navbar-title {
   font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
   font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
-  letter-spacing: 0.3px;
-  font-size: 24px;
+  letter-spacing: 0.3px;  
   font-weight: bold;
   color: black;
   display: flex;
@@ -281,8 +280,8 @@ export default {
   font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
   font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
   letter-spacing: 0.3px;
-  font-size: 16px;
-  margin-right: 16px;
+  font-size: 14px;
+  margin-right: 14px;
   color: black;
 }
 
