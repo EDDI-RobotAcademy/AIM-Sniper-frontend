@@ -17,6 +17,7 @@ export type SurveyActions = {
     requestSurveyListToDjango(context: ActionContext<SurveyState, any>): Promise<void>
     requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, randomString: string): Promise<void>
     requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse>
+    requestRandomStringToDjango(context: ActionContext<SurveyState,any>,px: number): Promise<any>
 }
 
 const actions: SurveyActions = {
@@ -54,8 +55,11 @@ const actions: SurveyActions = {
     async requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse> {
         const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/survey/submit-survey', payload);
         return res.data
+    },
+    async requestRandomStringToDjango(context: ActionContext<any,any>,surveyId: number): Promise<any>{
+        const res: AxiosResponse<any,any> = await axiosInst.djangoAxiosInst.post('/survey/randomstring',{'surveyId':surveyId});
+        return res.data
     }
-
 };
 
 export default actions;

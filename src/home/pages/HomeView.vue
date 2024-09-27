@@ -21,8 +21,9 @@
         <button class="goToProduct-button" @click="goToProductList">
           <b>기업 분석 보고서</b> 구경하기
         </button>
-        <!-- <button class="goToCommunity-button" @click="goToCommunityList">커뮤니티 이동하기</button>
-        <button class="goToReview-button" @click="goToReviewList">별점 리뷰 달기</button> -->
+        <button class="goToSurvey-button" @click="goToSurveyList">
+          설문조사 해주세요
+        </button>
       </div>
     </div>
 
@@ -37,13 +38,16 @@ import { defineComponent } from "vue";
 import imageSrc from "@/assets/images/homeImages/home_bg.png";
 import router from "@/router";
 import { mapActions, mapState } from "vuex";
+
 const authenticationModule = "authenticationModule";
+const surveyModule = "surveyModule"
 
 export default defineComponent({
   name: "HomeView",
   data() {
     return {
       imageSrc,
+      surveyId:1,
     };
   },
   computed: {
@@ -51,8 +55,8 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(authenticationModule, ["requestLogoutToDjango"]),
-
-    goToProductList() {
+    ...mapActions(surveyModule,['requestRandomStringToDjango']),
+    goToCompanyReportList() {
       router.push("/companyReport/list");
     },
     goToCommunityList() {
@@ -61,6 +65,13 @@ export default defineComponent({
     goToReviewList() {
       router.push("/review/list");
     },
+    async goToSurveyList() {
+      const randomString = await this.requestRandomStringToDjango(this.surveyId)
+      this.$router.push({
+                name: 'SurveyReadPage',
+                params: { randomString: randomString.toString() }
+            })
+    }
   },
 });
 </script>
