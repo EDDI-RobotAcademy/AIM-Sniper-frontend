@@ -24,11 +24,11 @@
     <v-spacer></v-spacer>
 
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
-      <b>survey(관리자용)</b>
-    </v-btn>
-    <v-btn text @click="goToSurvey" class="btn-text">
       <b>survey</b>
     </v-btn>
+    <v-btn v-if="!isAdmin" text @click="goToSurvey" class="btn-text">
+      <b>survey</b>
+    </v-btn> 
     <v-btn text @click="goToProductList" class="btn-text">
       <b>Company Report</b>
     </v-btn>    
