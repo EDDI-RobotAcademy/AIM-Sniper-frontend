@@ -20,14 +20,14 @@
                       v-model="question.answer"
                       label="답변을 입력하세요"
                       :rules="question.essential ? [rules.textRequired] : []"
-                      @input="updateSubmitForm(question.questionType, question.questionId, question.answer, null)"
+                      @input="updateSubmitForm(question.questionType, question.questionId, question.answer)"
                     />
   
                     <v-radio-group
                       v-if="question.questionType === 'radio'"
                       v-model="question.answer"
                       :rules="question.essential ? [rules.radioRequired] : []"
-                      @change="updateSubmitForm(question.questionType, question.questionId, question.answer, question.selection)"
+                      @change="updateSubmitForm(question.questionType, question.questionId, question.answer)"
                     >
                     <v-radio
                         v-for="option in question.selection"
@@ -45,7 +45,7 @@
                         :label="option"
                         :value="option"
                         :input-value="isChecked(index, option)"
-                        @change="toggleCheckbox(question.questionType, question.questionId, question.answer, option, question.selection)"
+                        @change="toggleCheckbox(index, option, question.questionType, question.questionId)"
                       />
                     </v-checkbox-group>
                   </v-card-text>
@@ -117,40 +117,30 @@ export default {
       ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango']),
       ...mapActions(accountModule, ['requestAccountIdToDjango']),
 
-      isChecked(index, selection) {
-        return this.surveyForm.surveyQuestions[index].answer.includes(selection);
+      isChecked(index, option) {
+        return this.surveyForm.surveyQuestions[index].answer.includes(option);
       },
   
-      toggleCheckbox(questionType, questionId, answer, option, selection) {
-        const answerArray = answer.indexOf(option);
-        if (answerArray === -1) {
-          answer.push(option);
+      toggleCheckbox(index, option, questionType, questionId) {
+        const answerArray = this.surveyForm.surveyQuestions[index].answer
+        const optionIndex = answerArray.indexOf(option);
+        if (optionIndex === -1) {
+          answerArray.push(option);
         } else {
-          answer.splice(answerArray, 1);
+
+          answerArray.splice(optionIndex, 1);
         }
   
-        this.updateCheckboxSubmitForm(questionType, questionId, answer, selection);
+        this.updateCheckboxSubmitForm(answerArray, questionType, questionId);
+      },
+      updateCheckboxSubmitForm(answerArray, questionType, questionId) {
+        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
+        this.submitForm.push({ questionId, answer: answerArray, questionType });
       },
   
-      updateCheckboxSubmitForm(questionType, questionId, answer, selection) {
-        const answerArray = [...answer];
-        const selectionIdArray = []
-        for (const answer of answerArray) {
-            selectionIdArray.push(selection.indexOf(answer) + 1);
-        }
+      updateSubmitForm(questionType, questionId, answer) {
         this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
-        this.submitForm.push({ questionId, selectionIdArray, questionType });
-      },
-  
-      updateSubmitForm(questionType, questionId, answer, selection) {
-        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
-        if (selection !== null) {
-            const selectionId = selection.indexOf(answer) + 1;
-            this.submitForm.push({ questionId, selectionId, questionType});
-        }
-        else {
-            this.submitForm.push({ questionId, answer, questionType });
-        }
+          this.submitForm.push({ questionId, answer, questionType });
       },
   
       formatQuestionTitle(index, question) {
