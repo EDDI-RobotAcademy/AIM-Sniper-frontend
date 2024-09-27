@@ -98,6 +98,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%; /* 전체 너비 설정 */
+  overflow: hidden; /* 전체 페이지의 오버플로우 비활성화 */
 }
 
 .home-container {
@@ -107,7 +109,7 @@ html, body {
   width: 100%;
   height: 100%;
   text-align: center;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .home-image {
@@ -117,10 +119,9 @@ html, body {
 }
 
 .text-container {
-  position: absolute;
-  top: 82%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 80%; /* 너비를 80%로 조정 */
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 20px 0; /* 패딩 추가 */
   color: black;
 }
 
