@@ -29,10 +29,7 @@
 
     <v-btn text @click="goToProductList" class="btn-text">
       <b>Company Report</b>
-    </v-btn>
-    <v-btn text @click="goToAiInterviewPage" class="btn-text">
-      <b>AI Interview</b>
-    </v-btn>
+    </v-btn>    
 
     <v-menu
       v-if="
@@ -65,6 +62,10 @@
         </v-btn>
       </template>
     </v-menu>
+
+    <v-btn text @click="goToAiInterviewPage" class="btn-text">
+      <b>AI Interview</b>
+    </v-btn>
 
     <v-menu
       v-if="
