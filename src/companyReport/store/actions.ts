@@ -16,6 +16,7 @@ export type CompanyReportActions = {
         context: ActionContext<CompanyReportState, unknown>, 
         imageFormData: FormData
     ): Promise<AxiosResponse>
+    requestDeleteCompanyReportToDjango(context: ActionContext<CompanyReportState, unknown>, companyReportId: number): Promise<void>
 }
 
 const actions: CompanyReportActions = {
@@ -54,12 +55,21 @@ const actions: CompanyReportActions = {
                     }
                 })
                 // console.log('응답 데이터 : ', res.data)
-                alert('이모티콘을 성공적으로 등록하셨습니다.');
+                alert('보고서을 성공적으로 등록하셨습니다.');
                 return res
             } catch (error) {
                 console.log('requestCreateCompanyReportToDjango(): ', error)
                 throw error
             }
+    },
+    async requestDeleteCompanyReportToDjango(context: ActionContext<CompanyReportState, unknown>, companyReportId: number): Promise<void> {
+        try {
+            // console.log('requestDeleteCompanyReportToDjango()')
+            await axiosInst.djangoAxiosInst.delete(`/company_report/delete/${companyReportId}`)
+        } catch (error) {
+            console.log('requestDeleteBoardToDjango() 과정에서 문제 발생')
+            throw error
+        }
     },
 };
 
