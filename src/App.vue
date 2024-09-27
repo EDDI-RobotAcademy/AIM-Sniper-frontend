@@ -26,7 +26,6 @@ export default defineComponent({
 
 
 <style>
-
 * {
   margin: 0;
   padding: 0;
@@ -119,5 +118,25 @@ body {
 p.description {
     line-height: 1.5; 
 }
+/* 창 크기가 768px 이하일 때 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* 수직 레이아웃 */
+  }
 
+  .navigation-menu-bar {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+}
+
+/* 창 크기가 1024px 이하일 때 */
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px;
+  }
+}
 </style>

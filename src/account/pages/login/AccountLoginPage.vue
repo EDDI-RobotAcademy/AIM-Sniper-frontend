@@ -2,9 +2,7 @@
     <v-container class="container">
         <div class="login-wrapper">
             <div>                
-                <span style="color: red;"> ● &nbsp;</span>
-                <span style="color: yellow;"> ● &nbsp;</span>
-                <span style="color: green;"> ● &nbsp;</span>
+                
 
                 <div :style="{ marginBottom: login_flag ? '20px' : '10px', textAlign: 'center', fontSize: '25px'}">
                         LOGIN
@@ -125,17 +123,19 @@ export default {
 
         };
         const goToGoogleLogin = async () => {
-            sessionStorage.setItem("loginType", "GOOGLE") 
-            await store.dispatch(
-                "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
-            )
+            alert("현재 로그인 검수중입니다.")
+            // sessionStorage.setItem("loginType", "GOOGLE") 
+            // await store.dispatch(
+            //     "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
+            // )
             
         }
         const goToNaverLogin = async () => {
-            sessionStorage.setItem('loginType', "NAVER")
-            await store.dispatch(
-                "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
-            )
+            alert("현재 로그인 검수중입니다.")
+            // sessionStorage.setItem('loginType', "NAVER")
+            // await store.dispatch(
+            //     "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
+            // )
         }
 
         return {
@@ -157,7 +157,7 @@ export default {
         },
 
         goToSignUp() {
-            router.push("/account/register"); 
+            router.push("/account/register/normal"); 
         },
 
         async onSubmit() {
@@ -167,7 +167,6 @@ export default {
 
             try {
                 const response = await this.checkPassword();
-                // console.log('response', response)
 
                 if (response) {
                 // 이메일과 비밀번호가 모두 일치하면 로그인 성공
@@ -209,7 +208,6 @@ export default {
         },
         async checkPassword() {
             try {
-                console.log("이메일, 비밀번호 확인")
                 const payload = {
                     email: this.email,
                     password: this.password
@@ -235,7 +233,7 @@ export default {
     display: flex;                  /* Flexbox 사용하여 가운데 정렬 */
     justify-content: center;        /* 수평 가운데 정렬 */
     align-items: center;            /* 수직 가운데 정렬 */
-    padding: 0;
+    padding: 10%;
     background: url("@/assets/images/fixed/login_bg.png") no-repeat center center; /* 배경 이미지 설정 */
     background-size: cover;                                                     /* 배경 이미지 크기 조정 */
 }

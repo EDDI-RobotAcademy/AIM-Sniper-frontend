@@ -4,9 +4,9 @@ export interface CartState {
 }
 
 export interface CartItem {
-    productId: number
-    productName: string
-    productPrice: number
+    companyReportId: number
+    companyReportName: string
+    companyReportPrice: number
 }
 
 const state: CartState = {

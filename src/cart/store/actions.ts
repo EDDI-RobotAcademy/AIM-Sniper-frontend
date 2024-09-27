@@ -19,8 +19,8 @@ export type CartActions = {
     requestCartItemDuplicationCheckToDjango(
         context: ActionContext<CartState, any>,
         payload: { 
-            userToken: string,
-            productId: number,
+            email: string,
+            companyReportId: number,
         }
     ): Promise<void>
 }
@@ -28,18 +28,15 @@ export type CartActions = {
 const actions: CartActions = {
     async requestAddCartToDjango({ commit }, cartData: CartItem) {
         try {
-            const userToken = sessionStorage.getItem('userToken');
-            if (!userToken) {
+            const email = sessionStorage.getItem('email');
+            if (!email) {
                 throw new Error('User token not found');
             }
 
             const requestData = {
                 ...cartData,
-                userToken
+                email
             };
-
-            console.log('requestData:', requestData);
-
             const response = await axiosInst.djangoAxiosInst.post('/cart/register', requestData);
             return response.data;
         } catch (error) {
@@ -49,17 +46,14 @@ const actions: CartActions = {
     },
     async requestCartListToDjango({ commit }) {
         try {
-            const userToken = sessionStorage.getItem('userToken');
-            if (!userToken) {
+            const email = sessionStorage.getItem('email');
+            if (!email) {
                 throw new Error('User token not found');
             }
 
             const requestData = {
-                userToken
+                email
             };
-
-            console.log('requestCartListToDjango requestData:', requestData);
-
             const response = await axiosInst.djangoAxiosInst.post('/cart/list', requestData);
             return response.data;
         } catch (error) {
@@ -69,7 +63,6 @@ const actions: CartActions = {
     },
     async requestDeleteCartItemToDjango(context: ActionContext<CartState, any>, cartItemId: number[]): Promise<void> {
         try {
-            console.log('requestDeleteCartItemToDjango()')
             await axiosInst.djangoAxiosInst.delete('/cart/delete', { data: cartItemId })
         } catch (error) {
             console.log('requestDeleteCartItemToDjango() 과정에서 문제 발생')
@@ -79,9 +72,9 @@ const actions: CartActions = {
     async requestCartItemDuplicationCheckToDjango(
         context: ActionContext<CartState, any>,
         payload: {
-            userToken: string, productId: number
+            email: string, companyReportId: number
         }): Promise<void> {
-        const { userToken, productId } = payload
+        const { email, companyReportId } = payload
         const res = await axiosInst.djangoAxiosInst
         .post('/cart/cart-item-duplication-check', { payload })
         return res.data

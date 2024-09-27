@@ -30,13 +30,13 @@ const actions: NaverAuthenticationActions = {
         context: ActionContext<NaverAuthenticationState, any>,
         payload: { code: string }): Promise<void> {
             try {
-                console.log('requestNaverAccessTokenToDjangoRedirection()')
+                // console.log('requestNaverAccessTokenToDjangoRedirection()')
                 const { code } = payload
                 
                 const response = await axiosInst.djangoAxiosInst.post(
                     'naver_oauth/naver/access-token', { code })
                 sessionStorage.setItem("naverAccessToken", response.data.accessToken.access_token)
-                console.log(sessionStorage.getItem("naverAccessToken"))
+                sessionStorage.setItem("loginType","NAVER")
             } catch (error) {
                 console.log('Naver Access Token 요청 중 문제 발생:', error)
                 throw error
@@ -69,10 +69,10 @@ const actions: NaverAuthenticationActions = {
                 accessToken: accessToken
             })
 
-            console.log('userToken:', response.data.userToken)
+            // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("naverAccessToken")
-            sessionStorage.setItem("naverUserToken", response.data.userToken)
+            sessionStorage.setItem("naverUserToken",response.data.userToken)
             commit('REQUEST_IS_NAVER_AUTHENTICATED_TO_DJANGO', true)
             return response.data
             
@@ -90,9 +90,9 @@ const actions: NaverAuthenticationActions = {
                 await axiosInst.djangoAxiosInst.post('/naver_oauth/logout', {
                     userToken: userToken
                 })
-            console.log('naverOauth logout res:', res.data.isSuccess)
+            // console.log('naverOauth logout res:', res.data.isSuccess)
             if (res.data.isSuccess === true) {
-                context.commit('REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO', false)
+                context.commit('REQUEST_IS_NAVER_AUTHENTICATED_TO_DJANGO', false)
             }
         } catch (error) {
             console.error('requestNaverLogoutToDjango() 중 에러 발생:', error)

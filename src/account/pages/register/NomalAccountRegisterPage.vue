@@ -204,7 +204,7 @@ export default {
     },
     async checkEmailDuplication() {
       this.isEmailValid = false;
-      console.log("이메일 중복 검사 누름");
+      // console.log("이메일 중복 검사 누름");
       try {
         const isDuplicatedEmail = await this.requestEmailDuplicationCheckToDjango({
           email: this.email.trim(),
@@ -223,7 +223,7 @@ export default {
     },
     async checkNicknameDuplication() {
       this.isNicknameValid = false;
-      console.log("닉네임 중복 검사 누름");
+      // console.log("닉네임 중복 검사 누름");
       try {
         const isDuplicatedNickname = await this.requestNicknameDuplicationCheckToDjango({
           newNickname: this.nickname.trim(),
@@ -241,7 +241,7 @@ export default {
       }
     },
     async submitForm() {
-      console.log("회원가입 하기 누름");
+      // console.log("회원가입 하기 누름");
       if (this.$refs.form.validate()) {
         const accountInfo = {
           email: this.email,
@@ -252,7 +252,7 @@ export default {
           loginType: this.loginType
         };
         await this.requestCreateNewAccountToDjango(accountInfo);
-        console.log("전송한 데이터:", accountInfo);
+        // console.log("전송한 데이터:", accountInfo);
         this.$store.state.accountModule.loginType = 'NORMAL';
         this.$router.push("/account/login");
       }

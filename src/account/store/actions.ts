@@ -4,6 +4,7 @@ import { AxiosResponse } from "axios"
 import axiosInst from "@/utility/axiosInstance"
 
 export type AccountActions = {
+    requestAccountIdToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account>
     requestEmailDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean>
     requestNicknameDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean>
     requestCreateNewAccountToDjango(context: ActionContext<AccountState, any>, accountInfo: { email: string, nickname: string }): Promise<void>
@@ -23,6 +24,10 @@ export type AccountActions = {
 }
 
 const actions: AccountActions = {
+    async requestAccountIdToDjango(context: ActionContext<AccountState, any>, email: string): Promise<Account> {
+        const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/account/get-account-id', { email })
+        return res.data.accountId
+    },
     async requestEmailDuplicationCheckToDjango(context: ActionContext<AccountState, any>, payload: any): Promise<boolean> {
         const { email } = payload
         
@@ -71,7 +76,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/nickname', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_NICKNAME_TO_DJANGO', res.data);
             return res.data
         } catch (error) {
@@ -99,13 +104,13 @@ const actions: AccountActions = {
         })
     },
     async requestWithdrawalToDjango(context: ActionContext<AccountState, unknown>, payload: { reason: string }): Promise<AxiosResponse> {
-        console.log('requestWithdrawalToDjango()')
+        // console.log('requestWithdrawalToDjango()')
         const userToken = sessionStorage.getItem("userToken");
         const { reason } = payload
-        console.log('전송할 데이터:', { reason })
+        // console.log('전송할 데이터:', { reason })
         try {
             const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/account/withdraw', { reason: reason, userToken: userToken })
-            console.log('res:', res.data)
+            // console.log('res:', res.data)
             return res.data
         } catch (error) {
             alert('requestWithdrawalToDjango() 문제 발생!')
@@ -117,7 +122,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/gender', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_GENDER_TO_DJANGO', res.data);
             return res.data
         } catch (error) {
@@ -130,7 +135,7 @@ const actions: AccountActions = {
             // const userToken = sessionStorage.getItem("userToken");
             const res: AxiosResponse<Account> =
                 await axiosInst.djangoAxiosInst.post('/account/birthyear', { email });
-            console.log('data:', res.data)
+            // console.log('data:', res.data)
             context.commit('REQUEST_BIRTHYEAR_TO_DJANGO', res.data);
             return res.data
         } catch (error) {

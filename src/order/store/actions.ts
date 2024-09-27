@@ -15,12 +15,12 @@ export type OrderActions = {
             }[]
         }
     ): Promise<AxiosResponse>;
-    requestProductReadToAddOrderToDjango(
+    requestCompanyReportReadToAddOrderToDjango(
         context: ActionContext<OrderState, any>,
         payload: {
             userToken: string,
-            productId: number,
-            productPrice: number,
+            companyReportId: number,
+            companyReportPrice: number,
         }
     ): Promise<void>;
     requestMyOrderListToDjango(
@@ -35,7 +35,7 @@ export type OrderActions = {
         context: ActionContext<OrderState, any>,
         payload: { 
             userToken: string,
-            productId: number,
+            companyReportId: number,
         }
     ): Promise<void>
 }
@@ -43,14 +43,14 @@ export type OrderActions = {
 const actions: OrderActions = {
     async requestCartToAddOrderToDjango({ state }, payload) {
         try {
-            const userToken = sessionStorage.getItem('userToken')
-            if (!userToken) {
+            const email = sessionStorage.getItem('email')
+            if (!email) {
                 throw new Error('User token not found')
             }
             
-            console.log('payload:', payload)
+            // console.log('payload:', payload)
             const requestData = { 
-                userToken,
+                email,
                 items: payload.items.map(item => ({
                     cartItemId: item.cartItemId,
                     quantity: item.quantity,
@@ -59,7 +59,7 @@ const actions: OrderActions = {
             }
 
             const response = await axiosInst.djangoAxiosInst.post('/orders/cart', requestData)
-            console.log('response data:', response.data)
+            // console.log('response data:', response.data)
             
             return response.data
         } catch (error) { 
@@ -67,16 +67,16 @@ const actions: OrderActions = {
             throw error
         }
     },
-    async requestProductReadToAddOrderToDjango(context: ActionContext<OrderState, any>, payload: {
-        userToken: string, productId: number, productPrice: number}
+    async requestCompanyReportReadToAddOrderToDjango(context: ActionContext<OrderState, any>, payload: {
+        userToken: string, companyReportId: number, companyReportPrice: number}
         ): Promise<void> {
         try {
-            const { userToken, productId, productPrice } = payload
+            const { userToken, companyReportId, companyReportPrice } = payload
             
-            console.log('payload:', payload)
+            // console.log('payload:', payload)
 
-            const response = await axiosInst.djangoAxiosInst.post('/orders/product', payload )
-            console.log('response data:', response.data)
+            const response = await axiosInst.djangoAxiosInst.post('/orders/company_report', payload )
+            // console.log('response data:', response.data)
             
             return response.data
         } catch (error) { 
@@ -86,11 +86,11 @@ const actions: OrderActions = {
     },
     async requestMyOrderListToDjango(context: ActionContext<OrderState, any>, userToken: string): Promise<void> {
         try {
-            const token = sessionStorage.getItem("userToken")
-            const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/orders/list/', { userToken: token });
-            console.log('data:', res)
+            const email = sessionStorage.getItem("email")
+            const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/orders/list/', { email: email });
+            // console.log('data:', res)
             const data: Order[] = res.data;
-            console.log('data:', data)
+            // console.log('data:', data)
             context.commit('REQUEST_MY_ORDER_LIST_TO_DJANGO', data);
         } catch (error) {
             console.error('나의 주문 내역 출력 과정 중 에러 발생:', error);
@@ -100,7 +100,7 @@ const actions: OrderActions = {
     async requestMyOrderItemListToDjango(context: ActionContext<OrderState, any>, ordersId: number): Promise<void> {
         try {
             const res: AxiosResponse<OrderItem> = await axiosInst.djangoAxiosInst.post(`/orders/read/${ordersId}`);
-            console.log('order item list data:', res.data)
+            // console.log('order item list data:', res.data)
             context.commit('REQUEST_MY_ORDER_ITEM_LIST_TO_DJANGO', res.data);
         } catch (error) {
             console.error('requestMyOrderItemListToDjango() 문제 발생:', error);
@@ -110,9 +110,9 @@ const actions: OrderActions = {
     async requestOrderItemDuplicationCheckToDjango(
         context: ActionContext<OrderState, any>,
         payload: {
-            userToken: string, productId: number
+            userToken: string, companyReportId: number
         }): Promise<void> {
-        const { userToken, productId } = payload
+        const { userToken, companyReportId } = payload
         const res = await axiosInst.djangoAxiosInst
         .post('/orders/order-item-duplication-check', { payload })
         return res.data

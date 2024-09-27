@@ -1,38 +1,83 @@
 <template>
-  <v-app-bar color="rgba(0, 0, 0, 1)" app dark height="64">
-    <v-toolbar-title class="navbar-title">
-      <v-btn text @click="goToHome" class="navbar-title-btn">        
-        <v-icon class="home-icon"> mdi-console </v-icon>
-        <span> &nbsp; Text Chat Prompt</span>
+  <v-app-bar color="rgba(82,82,82,0.3)" app dark height="90" style="backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"> 
+    <v-toolbar-title class="navbar-title" style="display: flex; align-items: center;">
+      <v-btn text @click="goToHome" class="navbar-title-btn" style="display: flex; align-items: center; height: auto">
+        <v-img
+          class="home-icon"
+          src="@/assets/images/fixed/AiM_BI_Basic.png"
+          alt="AIM LOGO"
+          contain
+          height="125" 
+          width="75" 
+          cover
+        ></v-img>
+        
+        <p style="font-size: 16px; font-weight: bold; text-transform: none;">
+          &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
+          <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
+          <span style="color: blue; font-weight: bold;">M</span>arket
+          <span v-if="isAdmin" style="color: cyan; font-weight: bold;">(Admin Page)</span>          
+        </p>
+
       </v-btn>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    
+
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
-      <span>survey</span>
+      <b>survey</b>
     </v-btn>
-
+    <v-btn v-if="!isAdmin" text @click="goToSurvey" class="btn-text">
+      <b>survey</b>
+    </v-btn> 
     <v-btn text @click="goToProductList" class="btn-text">
-      <span>product</span>
-    </v-btn>
+      <b>Company Report</b>
+    </v-btn>    
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToCart">          
+        <v-btn v-bind="props" class="btn-text" @click="goToCart">
           <b>cart</b>
         </v-btn>
       </template>
     </v-menu>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToOrder">          
+        <v-btn v-bind="props" class="btn-text" @click="goToOrder">
           <b>order</b>
         </v-btn>
       </template>
     </v-menu>
 
-    <v-menu v-if="isAuthenticatedKakao || isAuthenticatedGoogle || isAuthenticatedNormal || isAuthenticatedNaver" close-on-content-click>
+    <v-btn text @click="goToAiInterviewPage" class="btn-text">
+      <b>AI Interview</b>
+    </v-btn>
+
+    <v-menu
+      v-if="
+        isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        isAuthenticatedNormal ||
+        isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 16px">
           <b>My Page</b>
@@ -49,13 +94,24 @@
       </v-list>
     </v-menu>
 
-    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver && !isAdmin" text @click="signIn" class="btn-text">
+    <v-btn
+      v-if="
+        !isAuthenticatedKakao &&
+        !isAuthenticatedGoogle &&
+        !isAuthenticatedNormal &&
+        !isAuthenticatedNaver &&
+        !isAdmin
+      "
+      text
+      @click="signIn"
+      class="btn-text"
+    >
       <v-icon left>mdi-login</v-icon>
       <span> &nbsp; LOGIN</span>
     </v-btn>
     <v-btn v-else text @click="signOut" class="btn-text">
       <v-icon left>mdi-logout</v-icon>
-      <span> &nbsp; LOGOUT</span>
+      <b> &nbsp; LOGOUT</b>
     </v-btn>
   </v-app-bar>
 </template>
@@ -68,7 +124,8 @@ import { mapActions, mapState } from "vuex";
 const accountModule = "accountModule";
 const authenticationModule = "authenticationModule";
 const googleAuthenticationModule = "googleAuthenticationModule";
-const naverAuthenticationModule = "naverAuthenticationModule"
+const naverAuthenticationModule = "naverAuthenticationModule";
+const surveyModule = "surveyModule"
 
 export default {
   data() {
@@ -85,7 +142,7 @@ export default {
         //   action: () => {
         //     this.goToDocumentSummaryList();
         //   },
-        // },        
+        // },
       ],
       myPageItems: [
         {
@@ -93,13 +150,14 @@ export default {
           action: () => {
             this.goToMyPage();
           },
-        },        
+        },
       ],
-      isUserAuthenticated: sessionStorage.getItem('isUserAuthenticated'),
+      surveyId:1,
+      isUserAuthenticated: sessionStorage.getItem("isUserAuthenticated"),
     };
   },
   computed: {
-    ...mapState(authenticationModule, ["isAuthenticatedKakao","isAdmin"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal"]),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
@@ -108,11 +166,12 @@ export default {
     ...mapActions(authenticationModule, ["requestKakaoLogoutToDjango"]),
     ...mapActions(googleAuthenticationModule, ["requestGoogleLogoutToDjango"]),
     ...mapActions(naverAuthenticationModule, ["requestNaverLogoutToDjango"]),
+    ...mapActions(surveyModule,['requestRandomStringToDjango']),
     goToHome() {
       router.push("/");
-    },    
+    },
     goToProductList() {
-      router.push("/product/list");
+      router.push("/companyReport/list");
     },
 
     goToCart() {
@@ -121,103 +180,110 @@ export default {
     goToOrder() {
       router.push("/order/list");
     },
-
+    async goToSurvey() {
+      const randomString = await this.requestRandomStringToDjango(this.surveyId)
+      this.$router.push({
+                name: 'SurveyReadPage',
+                params: { randomString: randomString.toString() }
+            })
+    },
     goToMyPage() {
       router.push("/account/mypage");
     },
     goToSurveyListPage() {
       router.push("/survey/list");
     },
+    goToAiInterviewPage() {
+      router.push("/ai-interview")
+    },
     signIn() {
       router.push("/account/login");
     },
     signOut() {
-      if (sessionStorage.getItem('loginType') == 'KAKAO') {
+      if (sessionStorage.getItem("loginType") == "KAKAO") {
         this.requestKakaoLogoutToDjango();
-        this.$store.state.authenticationModule.isAuthenticatedKakao = false
-        this.$store.state.authenticationModule.isAdmin = false
+        this.$store.state.authenticationModule.isAuthenticatedKakao = false;
+        this.$store.state.authenticationModule.isAdmin = false;
       }
-      if (sessionStorage.getItem('loginType') == 'GOOGLE') {
+      if (sessionStorage.getItem("loginType") == "GOOGLE") {
         this.requestGoogleLogoutToDjango();
-        this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = false
+        this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = false;
       }
-      if (sessionStorage.getItem('loginType') == 'NAVER') {
+      if (sessionStorage.getItem("loginType") == "NAVER") {
         this.requestNaverLogoutToDjango();
-        this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = false
+        this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = false;
       }
-      if (sessionStorage.getItem('loginType') == 'NORMAL') {
-        sessionStorage.removeItem("normalToken")
-        sessionStorage.removeItem("email")
-        sessionStorage.removeItem("loginType")
-        if (sessionStorage.getItem("fileKey")){
-          sessionStorage.removeItem("fileKey")
+      if (sessionStorage.getItem("loginType") == "NORMAL") {
+        sessionStorage.removeItem("normalToken");
+        sessionStorage.removeItem("email");
+        sessionStorage.removeItem("loginType");
+        if (sessionStorage.getItem("fileKey")) {
+          sessionStorage.removeItem("fileKey");
         }
         this.$store.state.accountModule.isAuthenticatedNormal = false;
       }
       router.push("/");
-    },    
+    },
   },
 
   mounted() {
-    console.log("navigation bar mounted()");
+    // console.log("navigation bar mounted()");
     const userToken = sessionStorage.getItem("userToken");
+    const adminToken = sessionStorage.getItem("adminToken")
     if (userToken) {
-      console.log("You already has a userToken!");
-      this.$store.state.authenticationModule.isAuthenticatedKakao = true
+      // console.log("You already has a userToken!");
+      this.$store.state.authenticationModule.isAuthenticatedKakao = true;
     }
-    const adminToken = sessionStorage.getItem("adminToken");
-    if (adminToken){
-      console.log("You already has a adminToken!");
-      this.$store.state.authenticationModule.isAdmin = true
-    }
-    const googleUserToken = sessionStorage.getItem("googleUserToken")
+    const googleUserToken = sessionStorage.getItem("googleUserToken");
     if (googleUserToken) {
-      console.log("You already has a googleUserToken!")
-      this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true
+      // console.log("You already has a googleUserToken!")
+      this.$store.state.googleAuthenticationModule.isAuthenticatedGoogle = true;
     }
-    const naverUserToken = sessionStorage.getItem("naverUserToken")
+    const naverUserToken = sessionStorage.getItem("naverUserToken");
     if (naverUserToken) {
-      console.log("You already has a naverUserToken!")
-      this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true
+      // console.log("You already has a naverUserToken!")
+      this.$store.state.naverAuthenticationModule.isAuthenticatedNaver = true;
     }
-    const normalToken = sessionStorage.getItem("normalToken")
+    const normalToken = sessionStorage.getItem("normalToken");
     if (normalToken) {
-      this.$store.state.accountModule.isAuthenticatedNormal = true
+      this.$store.state.accountModule.isAuthenticatedNormal = true;
+    }
+    if (adminToken){
+      this.$store.state.authenticationModule.isAdmin = true
     }
   },
 };
 </script>
 
 <style scoped>
+
 .navbar-title {
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
   font-size: 24px;
   font-weight: bold;
-  color: white;
+  color: black;
+  display: flex;
+  align-items: center; /* 수직 정렬 */
 }
 
 .navbar-title-btn {
-  color: white;
-}
-
-.v-icon.home-icon {
-  font-size: 32px;
-  margin-right: 0px;
-  color: rgb(0, 255, 0);;
-}
-
-.mdi-icon {
-  font-size: 32px;
-  margin-right: 8px;
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
+  color: black;
+  display: flex;
+  align-items: center; /* 로고와 텍스트 수직 정렬 */
 }
 
 .btn-text {
-  font-size: 14px;
+  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
+  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
+  letter-spacing: 0.3px;
+  font-size: 16px;
   margin-right: 16px;
-  color: white;
-}
-
-.v-btn {
-  text-transform: uppercase;
+  color: black;
 }
 
 .v-btn:hover {
@@ -248,5 +314,4 @@ export default {
 .v-list-item:hover {
   background-color: rgba(0, 255, 55, 0.25);
 }
-
 </style>

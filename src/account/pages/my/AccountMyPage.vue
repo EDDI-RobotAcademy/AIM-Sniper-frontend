@@ -5,10 +5,12 @@
       <v-card class="id-card mx-auto" min-width="500" style="background-color: rgba(0, 255, 55, 0.1);  
   color: white;
   border: 2px solid green;">
-        <div class="company-logo" style="color: white;">Text Chat Programmers</div>
+        <div class="company-logo" style="color: white;">AICORP INSIGHT MARKET</div>
         <v-avatar size="120" class="mt-8 avatar-margin">
           <v-img :src="imageSrc"></v-img>
         </v-avatar>
+        <br>
+        <br>
         <v-card-text>
           <h2 class="text-h5 mb-2">{{ nickname }}</h2>
           <p class="subtitle-1">{{ email }}</p>
@@ -69,7 +71,7 @@ export default {
   async created() {
     try {
       const email = sessionStorage.getItem("email");
-      console.log('email:', email)
+      // console.log('email:', email)
       const nickname = await this.requestNicknameToDjango(email);      
       const gender = await this.requestGenderToDjango(email);
       const birthyear = await this.requestBirthyearToDjango(email);

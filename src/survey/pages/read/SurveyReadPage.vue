@@ -73,6 +73,7 @@
 import { mapActions, mapState } from 'vuex'
 import router from "@/router";
 const surveyModule = 'surveyModule'
+const accountModule = 'accountModule'
 
 export default {
     props: {
@@ -83,16 +84,30 @@ export default {
     },
     data() {
       return {
+        accountId: null,
+        email: null,
         valid: false,
         rules: {
           textRequired: (value) => !!value || '필수 입력 항목입니다.',
           radioRequired: (value) => !!value || '옵션을 선택해주세요.',
         },
         submitForm: [],
+        payload: null
       };
     },
     computed: {
         ...mapState(surveyModule, ['surveyForm'])
+    },
+    async mounted() {
+      this.email = sessionStorage.getItem("email");
+      if (this.email) {
+        // console.log("Logged In");
+        this.accountId = await this.requestAccountIdToDjango(this.email)
+        // console.log('accountID: ', this.accountId)
+      }
+      else {
+        // console.log('비회원 유저')
+      }
     },
     created () {
       this.requestSurveyFormToDjango(this.randomString);
@@ -100,6 +115,7 @@ export default {
     methods: {
         
       ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango']),
+      ...mapActions(accountModule, ['requestAccountIdToDjango']),
 
       isChecked(index, selection) {
         return this.surveyForm.surveyQuestions[index].answer.includes(selection);
@@ -157,14 +173,15 @@ export default {
         });
   
         isValid = await this.$refs.form.validate() && isValid;
-  
+          
         if (isValid) {
-          console.log('전달될 데이터', this.submitForm);
-          const payload = {submitForm: this.submitForm}
-          const isSubmitted = await this.requestSubmitSurveyToDjango(payload)
+          this.payload = {submitForm: this.submitForm, accountId : this.accountId}
+          const isSubmitted = await this.requestSubmitSurveyToDjango(this.payload)
           if (isSubmitted) {
             alert('제출이 완료되었습니다.');
             router.push("/survey/submitted");
+          } else {
+            alert('제출 과정 중 문제가 발생했습니다. 다시 시도해주세요.')
           }
           this.submitForm = [];
         }

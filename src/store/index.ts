@@ -4,9 +4,11 @@ import authenticationModule from '@/authentication/store/authenticationModule'
 import googleAuthenticationModule from '@/googleAuthentication/store/googleAuthenticationModule'
 import { createStore } from 'vuex'
 import naverAuthenticationModule from '@/naverAuthentication/store/naverAuthenticationModule'
-import productModule from '@/product/store/productModule'
+import companyReportModule from "@/companyReport/store/companyReportModule"
 import cartModule from '@/cart/store/cartModule'
 import orderModule from '@/order/store/orderModule'
+import userLogModule from "@/userLog/store/userLogModule"
+import aiInterviewModule from '@/aiInterview/store/aiInterviewModule'
 
 export default createStore({
   state: {
@@ -23,8 +25,10 @@ export default createStore({
     authenticationModule,    
     googleAuthenticationModule,
     naverAuthenticationModule,
-    productModule,
+    companyReportModule,
     cartModule,
-    orderModule
+    orderModule,
+    userLogModule,
+    aiInterviewModule,
   }
 })
