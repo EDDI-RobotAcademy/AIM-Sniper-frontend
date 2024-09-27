@@ -3,6 +3,7 @@ import SurveyReadPage from "@/survey/pages/read/SurveyReadPage.vue"
 import SurveyCreatedPage from "@/survey/pages/created/SurveyCreatedPage.vue"
 import SurveyListPage from "@/survey/pages/list/SurveyListPage.vue"
 import SurveySubmittedPage from "@/survey/pages/submitted/SurveySubmittedPage.vue"
+import SurveyResultPage from '@/survey/pages/result/SurveyResultPage.vue'
 const SurveyRoutes = [
     {
         path: '/survey/register',
@@ -33,6 +34,16 @@ const SurveyRoutes = [
         path: '/survey/submitted',
         name: 'SurveySubmittedPage',
         component: SurveySubmittedPage
+    },
+    {
+        path: '/survey/result/:surveyId',
+        name: 'SurveyResultPage',
+        components: {
+            default: SurveyResultPage,
+        },
+        props: {
+            default: true
+        }
     },
 ]
 
