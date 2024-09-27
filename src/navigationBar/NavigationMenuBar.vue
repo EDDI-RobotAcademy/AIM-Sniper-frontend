@@ -26,7 +26,9 @@
     <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
       <b>survey(관리자용)</b>
     </v-btn>
-
+    <v-btn text @click="goToSurvey" class="btn-text">
+      <b>survey</b>
+    </v-btn>
     <v-btn text @click="goToProductList" class="btn-text">
       <b>Company Report</b>
     </v-btn>    
@@ -123,6 +125,7 @@ const accountModule = "accountModule";
 const authenticationModule = "authenticationModule";
 const googleAuthenticationModule = "googleAuthenticationModule";
 const naverAuthenticationModule = "naverAuthenticationModule";
+const surveyModule = "surveyModule"
 
 export default {
   data() {
@@ -149,6 +152,7 @@ export default {
           },
         },
       ],
+      surveyId:1,
       isUserAuthenticated: sessionStorage.getItem("isUserAuthenticated"),
     };
   },
@@ -162,6 +166,7 @@ export default {
     ...mapActions(authenticationModule, ["requestKakaoLogoutToDjango"]),
     ...mapActions(googleAuthenticationModule, ["requestGoogleLogoutToDjango"]),
     ...mapActions(naverAuthenticationModule, ["requestNaverLogoutToDjango"]),
+    ...mapActions(surveyModule,['requestRandomStringToDjango']),
     goToHome() {
       router.push("/");
     },
@@ -175,7 +180,13 @@ export default {
     goToOrder() {
       router.push("/order/list");
     },
-
+    async goToSurvey() {
+      const randomString = await this.requestRandomStringToDjango(this.surveyId)
+      this.$router.push({
+                name: 'SurveyReadPage',
+                params: { randomString: randomString.toString() }
+            })
+    },
     goToMyPage() {
       router.push("/account/mypage");
     },
