@@ -35,11 +35,12 @@
 
       <h1
         class="section-title"
-        @click="toggleVisibility('allCompanyReportsVisible')"
       >
-        전체 상품 <v-icon small>mdi-chevron-down</v-icon>
+        전체 보고서 <v-icon small>mdi-chevron-down</v-icon>
       </h1>
-
+      <br>
+      <br>
+      <br>
       <v-row
         v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0"
       >
@@ -79,7 +80,7 @@
 
       <v-row v-else-if="allCompanyReportsVisible">
         <v-col cols="12" class="text-center">
-          <v-alert type="info">등록된 전체 보고서가 없습니다!</v-alert>
+          <v-alert type="info">등록된 보고서가 없습니다!</v-alert>
         </v-col>
       </v-row>
 
@@ -162,9 +163,6 @@ export default {
         companyReport_id: companyReportId,
         purchase: this.purchase,
       });
-    },
-    toggleVisibility(section) {
-      this[section] = !this[section];
     },
     changePage(page) {
       this.currentPage = page;
