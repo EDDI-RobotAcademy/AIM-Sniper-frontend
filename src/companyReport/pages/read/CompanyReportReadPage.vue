@@ -99,17 +99,39 @@
     <v-spacer></v-spacer>
 
     <v-row justify="center" class="mt-4">
-      <v-col cols="auto">
-        <router-link
-          :to="{ name: 'CompanyReportListPage' }"
-          class="router-link no-underline"
-        >
-          <v-btn color="#E3EF76" class="action-button">
-            <v-icon left>mdi-arrow-left</v-icon>
-            <span>돌아가기</span>
-          </v-btn>
-        </router-link>
-      </v-col>
+        <v-col cols="auto">
+            <router-link
+            :to="{ name: 'CompanyReportListPage' }"
+            class="router-link no-underline"
+            >
+                <v-btn color="#E3EF76" class="action-button">
+                    <v-icon left>mdi-arrow-left</v-icon>
+                    <span>돌아가기</span>
+                </v-btn>
+            </router-link>
+        </v-col>
+        <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
+            <div class="sign">
+                <svg
+                viewBox="0 0 16 16"
+                class="bi bi-trash3-fill"
+                fill="currentColor"
+                height="18"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+                >
+                <path
+                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
+                ></path>
+                </svg>
+            </div>
+            <div class="text">Delete</div>
+        </button>
+        <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front"> Modify </span>
+        </button>
     </v-row>
     <v-dialog v-model="isCheckoutDialogVisible" max-width="500">
       <v-card>
@@ -156,6 +178,7 @@ import userLogModule from "@/userLog/store/userLogModule";
 const companyReportModule = "companyReportModule";
 const cartModule = "cartModule";
 const orderModule = "orderModule";
+const authenticationModule = "authenticationModule"
 
 export default {
   props: {
@@ -177,9 +200,10 @@ export default {
   },
   computed: {
     ...mapState(companyReportModule, ["companyReport", "companyReports"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
   },
   methods: {
-    ...mapActions(companyReportModule, ["requestCompanyReportToDjango"]),
+    ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango"]),
     ...mapActions(cartModule, [
       "requestAddCartToDjango",
       "requestDeleteCartItemToDjango",
@@ -290,6 +314,11 @@ export default {
         this.isNicknameValid = false;
       }
     },
+    async deleteCompanyReport(){
+        await this.requestDeleteCompanyReportToDjango(this.companyReportId)
+        alert("보고서가 삭제되었습니다.")
+        router.push("/companyReport/list")
+    },
     getCompanyReportImageUrl(imageName) {
         return require(`@/assets/images/uploadImages/${imageName}`)
     },
@@ -331,6 +360,12 @@ export default {
       immediate: true,
     },
   },
+  mounted(){
+    const adminToken = sessionStorage.getItem("adminToken")
+    if (adminToken){
+      this.$store.state.authenticationModule.isAdmin = true
+    }
+  }
 };
 </script>
 
@@ -365,7 +400,6 @@ export default {
 }
 
 .action-button {
-  margin: 10px 10px 0 0;
   font-weight: bold;
 }
 
@@ -381,5 +415,162 @@ export default {
 .category-text {
   color: rgb(183, 100, 93);
   font-size: 18px; /* 원하는 크기로 조정 */
+}
+/* From Uiverse.io by Tsiangana */ 
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background: rgb(255, 135, 65);
+  background: linear-gradient(
+    250deg,
+    rgba(255, 135, 65, 1) 15%,
+    rgba(255, 65, 65, 1) 65%
+  );
+}
+
+/* plus sign */
+.sign {
+  width: 100%;
+  transition-duration: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign svg {
+  width: 17px;
+}
+
+.sign svg path {
+  fill: white;
+}
+/* text */
+.text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: 0.3s;
+}
+/* hover effect on button width */
+.Btn:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: 0.3s;
+}
+
+.Btn:hover .sign {
+  width: 30%;
+  transition-duration: 0.3s;
+  padding-left: 20px;
+}
+/* hover effect button's text */
+.Btn:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: 0.3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.Btn:active {
+  transform: translate(2px, 2px);
+}
+/* From Uiverse.io by PriyanshuGupta28 */ 
+.pushable {
+  position: relative;
+  background: transparent;
+  padding: 0px;
+  border: none;
+  cursor: pointer;
+  outline-offset: 4px;
+  outline-color: deeppink;
+  transition: filter 250ms;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: hsl(226, 25%, 69%);
+  border-radius: 8px;
+  filter: blur(2px);
+  will-change: transform;
+  transform: translateY(2px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(
+    to right,
+    hsl(248, 39%, 39%) 0%,
+    hsl(248, 39%, 49%) 8%,
+    hsl(248, 39%, 39%) 92%,
+    hsl(248, 39%, 29%) 100%
+  );
+}
+
+.front {
+  display: block;
+  position: relative;
+  border-radius: 8px;
+  background: hsl(248, 53%, 58%);
+  padding: 16px 32px;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1rem;
+  transform: translateY(-4px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.pushable:hover {
+  filter: brightness(110%);
+}
+
+.pushable:hover .front {
+  transform: translateY(-6px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+
+.pushable:hover .shadow {
+  transform: translateY(4px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .shadow {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+
+.pushable:focus:not(:focus-visible) {
+  outline: none;
 }
 </style>

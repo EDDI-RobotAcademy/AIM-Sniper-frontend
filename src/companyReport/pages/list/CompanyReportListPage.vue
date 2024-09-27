@@ -145,11 +145,20 @@ export default {
     ...mapActions("companyReportModule", ["requestCompanyReportListToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]), //유저가 상품을 눌렀을 때 상품 클릭 수가 늘어남
     goToCompanyReportReadPage(companyReportId) {
+      const email = sessionStorage.getItem('email');
+      
       this.$router.push({
         name: "CompanyReportReadPage",
         params: { companyReportId },
       });
+
+      if (!email) {
+        // email이 없으면 함수가 동작하지 않음
+        console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
+        return;
+      }
       this.requestCountClickToDjango({
+        email: email,
         companyReport_id: companyReportId,
         purchase: this.purchase,
       });

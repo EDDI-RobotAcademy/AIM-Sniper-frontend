@@ -17,6 +17,7 @@ export type SurveyActions = {
     requestSurveyListToDjango(context: ActionContext<SurveyState, any>): Promise<void>
     requestSurveyFormToDjango(context: ActionContext<SurveyState, any>, randomString: string): Promise<void>
     requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse>
+    requestRandomStringToDjango(context: ActionContext<SurveyState,any>,px: number): Promise<any>
 }
 
 const actions: SurveyActions = {
@@ -54,8 +55,20 @@ const actions: SurveyActions = {
     async requestSubmitSurveyToDjango(context: ActionContext<any, any>, payload: {submitForm: []}): Promise<AxiosResponse> {
         const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/survey/submit-survey', payload);
         return res.data
-    }
-
+    },
+    async requestRandomStringToDjango(context: ActionContext<any, any>, surveyId: number): Promise<any> {
+        try {
+          // Django 서버에 요청
+          const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/survey/randomstring', { 'surveyId': surveyId });
+          
+          // 서버로부터 데이터 받기
+          return res.data;
+        } catch (error) {
+          // 에러 발생 시 null 반환
+          console.error("Django 서버에서 랜덤 문자열을 받아오지 못했습니다:", error);
+          return null;
+        }
+    }      
 };
 
 export default actions;
