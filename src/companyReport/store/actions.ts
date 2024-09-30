@@ -17,6 +17,9 @@ export type CompanyReportActions = {
         imageFormData: FormData
     ): Promise<AxiosResponse>
     requestDeleteCompanyReportToDjango(context: ActionContext<CompanyReportState, unknown>, companyReportId: number): Promise<void>
+    requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
+    }): Promise<void>
 }
 
 const actions: CompanyReportActions = {
@@ -24,7 +27,6 @@ const actions: CompanyReportActions = {
         context: ActionContext<CompanyReportState, any>, 
         companyReportId: number
     ): Promise<void> {
-
         try {
             const res: AxiosResponse<CompanyReport> = 
                 await axiosInst.djangoAxiosInst.get(`/company_report/read/${companyReportId}`)
@@ -68,6 +70,20 @@ const actions: CompanyReportActions = {
             await axiosInst.djangoAxiosInst.delete(`/company_report/delete/${companyReportId}`)
         } catch (error) {
             console.log('requestDeleteBoardToDjango() 과정에서 문제 발생')
+            throw error
+        }
+    },
+    async requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
+    }): Promise<void> {
+        
+        const { companyReportName, content, companyReportId,companyReportPrice } = payload
+
+        try {
+            await axiosInst.djangoAxiosInst.put(`/company_report/modify/${companyReportId}`, { companyReportName, content, companyReportPrice })
+            // console.log('수정 성공!')
+        } catch (error) {
+            console.log('requestModifyCompanyReportToDjango() 과정에서 문제 발생')
             throw error
         }
     },

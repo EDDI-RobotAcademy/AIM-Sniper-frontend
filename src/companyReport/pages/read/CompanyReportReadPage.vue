@@ -326,20 +326,12 @@ export default {
       this.isCheckoutDialogVisible = true;
     },
     goToCartList() {
-      router.push("/cart/list");
+        router.push("/cart/list");
     },
-    goToThisCompanyReportReviewList() {
+    goToModifyPage() {
       this.$router.push({
-        name: "ReviewCompanyReportListPage",
-        params: {
-          companyReportId: this.companyReport.companyReportId.toString(),
-        },
-      });
-    },
-    goToCompanyReportReadPage(companyReportId) {
-      this.$router.push({
-        name: "CompanyReportReadPage",
-        params: { companyReportId: companyReportId },
+        name: "CompanyReportModifyPage",
+        params: { companyReportId: this.companyReport.companyReportId },
       });
     },
     async fetchCompanyReportData(companyReportId) {
