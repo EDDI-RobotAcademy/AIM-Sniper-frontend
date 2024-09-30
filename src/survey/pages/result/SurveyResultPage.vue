@@ -16,8 +16,9 @@
                 <span>{{ question.answer }}</span>
               </v-container>
               <v-container v-if="question.questionType === 'radio' || question.questionType === 'checkbox'">
-              <div :ref="'chart_' + index" class="chart-container"></div>
-                <span>{{ question.selection }}</span>
+                <span>{{ question.selection }}  -- 아직 차트 미완</span>
+
+                <div :ref="'chart_' + index" class="chart-container"></div>
               </v-container>
             </v-card-text>
           </v-card>
@@ -41,18 +42,16 @@ export default {
   },
   computed: {
     ...mapState(surveyModule, ['resultForm']),
-
   },
   mounted() {
-    this.requestSurveyResultToDjango(this.surveyId);
-    if (this.resultForm) {
+    this.requestSurveyResultToDjango(this.surveyId).then(() => {
       this.$nextTick(() => {
-      this.resultForm.surveyQuestions.forEach((question, index) => {
-        this.drawChart(question.selection, index);
+        this.resultForm.surveyQuestions.forEach((question, index) => {
+          this.drawChart(question.selection, index);
+        });
       });
-      window.addEventListener('resize', this.handleResize);
     });
-    }
+    window.addEventListener('resize', this.handleResize);
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize);
@@ -70,55 +69,58 @@ export default {
       const element = this.$refs['chart_' + index]; // 각 차트 컨테이너에 접근
       if (!element) return;
 
-      const keys = Object.keys(data);  // key 값
-      console.log('X 값 :', keys)
-      const values = Object.values(data);  // value 값
+      try {
+        const keys = Object.keys(data); // key 값
+        const values = Object.values(data); // value 값
 
-      const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-      const width = element.clientWidth - margin.left - margin.right;
-      const height = element.clientHeight - margin.top - margin.bottom;
+        const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+        const width = element.clientWidth - margin.left - margin.right;
+        const height = element.clientHeight - margin.top - margin.bottom;
 
-      d3.select(element).selectAll('*').remove();
+        d3.select(element).selectAll('*').remove();
 
-      const svg = d3.select(element)
-        .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
+        const svg = d3.select(element)
+          .append('svg')
+          .attr('width', width + margin.left + margin.right)
+          .attr('height', height + margin.top + margin.bottom)
+          .append('g')
+          .attr('transform', `translate(${margin.left},${margin.top})`);
 
-      const x = d3.scaleBand()
-        .domain(keys)
-        .range([0, width])
-        .padding(0.1);
+        const x = d3.scaleBand()
+          .domain(keys)
+          .range([0, width])
+          .padding(0.1);
 
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(values)])
-        .nice()
-        .range([height, 0]);
+        const y = d3.scaleLinear()
+          .domain([0, d3.max(values)])
+          .nice()
+          .range([height, 0]);
 
-      svg.append('g')
-        .selectAll('rect')
-        .data(values)
-        .enter().append('rect')
-        .attr('x', (d, i) => x(keys[i]))
-        .attr('y', d => y(d))
-        .attr('width', x.bandwidth())
-        .attr('height', d => height - y(d))
-        .attr('fill', 'steelblue');
+        svg.append('g')
+          .selectAll('rect')
+          .data(values)
+          .enter().append('rect')
+          .attr('x', (d, i) => x(keys[i]))
+          .attr('y', d => y(d))
+          .attr('width', x.bandwidth())
+          .attr('height', d => height - y(d))
+          .attr('fill', 'steelblue');
 
-      svg.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+        svg.append('g')
+          .attr('class', 'x-axis')
+          .attr('transform', `translate(0,${height})`)
+          .call(d3.axisBottom(x));
 
-      svg.append('g')
-        .attr('class', 'y-axis')
-        .call(d3.axisLeft(y));
+        svg.append('g')
+          .attr('class', 'y-axis')
+          .call(d3.axisLeft(y));
+      } catch (error) {
+        console.error("Error drawing chart:", error);
+
+      }
     },
   },
 };
-
 </script>
 
 <style scoped>
