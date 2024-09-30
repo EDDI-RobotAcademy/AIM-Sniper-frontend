@@ -1,6 +1,6 @@
 <template>
     <v-container>
-      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm">
+      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm ">
         <v-card-title>
           <span class="headline">{{ surveyForm.surveyTitle }}</span>
         </v-card-title>

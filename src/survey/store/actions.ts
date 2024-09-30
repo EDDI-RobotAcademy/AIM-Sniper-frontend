@@ -60,13 +60,10 @@ const actions: SurveyActions = {
     },
     async requestRandomStringToDjango(context: ActionContext<any, any>, surveyId: number): Promise<any> {
         try {
-          // Django 서버에 요청
-          const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/survey/randomstring', { 'surveyId': surveyId });
-          
-          // 서버로부터 데이터 받기
+          const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.post('/survey/randomstring');
           return res.data;
+
         } catch (error) {
-          // 에러 발생 시 null 반환
           console.error("Django 서버에서 랜덤 문자열을 받아오지 못했습니다:", error);
           return null;
         }
