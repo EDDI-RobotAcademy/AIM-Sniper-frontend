@@ -137,12 +137,6 @@ export default {
             this.goToDocumentList();
           },
         },
-        // {
-        //   title: "내가 저장한 논문 요약",
-        //   action: () => {
-        //     this.goToDocumentSummaryList();
-        //   },
-        // },
       ],
       myPageItems: [
         {
@@ -181,11 +175,13 @@ export default {
       router.push("/order/list");
     },
     async goToSurvey() {
-      const randomString = await this.requestRandomStringToDjango(this.surveyId)
-      this.$router.push({
+      const randomString = await this.requestRandomStringToDjango()
+      if (randomString) {
+        this.$router.push({
                 name: 'SurveyReadPage',
                 params: { randomString: randomString.toString() }
             })
+      }
     },
     goToMyPage() {
       router.push("/account/mypage");
