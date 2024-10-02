@@ -91,7 +91,7 @@
 
 <script>
 import router from "@/router";
-import { useStore, mapActions, mapState } from "vuex";
+import { useStore, mapActions, mapState, mapMutations } from "vuex";
 
 const accountModule = 'accountModule'
 const authenticationModule = 'authenticationModule'
@@ -146,12 +146,13 @@ export default {
     },
     computed: {
     ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
-    ...mapState(accountModule, ["isAuthenticatedNormal", "loginType"]),
+    ...mapState(accountModule, ["isAuthenticatedNormal", "loginType",'isAdmin']),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
     },
     methods: {
-        ...mapActions(accountModule, ['requestAccountCheckToDjango']),
+        ...mapActions(accountModule, ['requestAccountCheckToDjango','requestRoleTypeToDjango']),
+        ...mapMutations(accountModule,['REQUEST_IS_ADMIN_TO_DJANGO']),
         goToHome() {
             router.push("/");
         },
@@ -159,26 +160,31 @@ export default {
         goToSignUp() {
             router.push("/account/register/normal"); 
         },
-
         async onSubmit() {
             if (!this.form) return;
-
             this.loading = true;
-
             try {
                 const response = await this.checkPassword();
-
+                const roleType = await this.requestRoleTypeToDjango(this.email);
                 if (response) {
-                // 이메일과 비밀번호가 모두 일치하면 로그인 성공
-                    this.login_flag = true;
-                    sessionStorage.setItem('normalToken', true)
-                    sessionStorage.setItem('email', this.email)
-                    sessionStorage.setItem('loginType', 'NORMAL')
-                    this.$store.state.accountModule.isAuthenticatedNormal = true
-                    this.goToHome();
-
+                    this.login_flag = true; // 로그인 성공
+                    sessionStorage.setItem('email', this.email);
+                    sessionStorage.setItem('loginType', 'NORMAL');
+                    if (roleType.data.roleType == "ADMIN") {
+                        // Admin 처리
+                        sessionStorage.removeItem('normalToken');
+                        sessionStorage.setItem('adminToken', true);
+                        this.REQUEST_IS_ADMIN_TO_DJANGO(true);
+                        // console.log(this.$store.state.accountModule.isAdmin)
+                        this.goToHome();
+                    } else {
+                        // Normal 처리
+                        sessionStorage.setItem('normalToken', true);
+                        this.$store.state.accountModule.isAuthenticatedNormal = true;
+                        this.goToHome();
+                    }
                 } else {
-                // 이메일 또는 비밀번호가 일치하지 않으면 로그인 실패
+                    // 로그인 실패 처리
                     this.login_flag = false;
                 }
             } catch (error) {
@@ -187,16 +193,6 @@ export default {
             } finally {
                 this.loading = false;
             }
-
-            // setTimeout(
-            //     () => ((this.loading = false), (this.login_flag = true)),
-            //     2000
-            // );
-
-            // setTimeout(
-            //     () => ((this.loading = false), (this.login_flag = false)),
-            //     2000
-            // );
         },
 
         emailRequired(v) {

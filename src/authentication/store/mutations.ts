@@ -14,7 +14,7 @@ const mutations: MutationTree<AuthenticationState> = {
         state.isAuthenticatedKakao = settingValue
     },
     [REQUEST_IS_ADMIN_TO_DJANGO](state: AuthenticationState, settingValue: boolean): void {
-        state.isAdmin = settingValue
+        state.isKakaoAdmin = settingValue
     }
 }
 

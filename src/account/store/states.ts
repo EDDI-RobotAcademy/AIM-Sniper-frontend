@@ -1,5 +1,6 @@
 export interface Account {
     nickname: string,
+    
 }
 
 export interface AccountState {
@@ -7,13 +8,15 @@ export interface AccountState {
     email: string
     isauthenticatedNormal: boolean
     account: Account | null
+    isNormalAdmin: boolean
 }
 
 const state: AccountState = {
     loginType: '',
     email: '',
     isauthenticatedNormal: false,
-    account: null
+    account: null,
+    isNormalAdmin: false
 }
 
 export default state

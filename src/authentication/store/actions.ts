@@ -74,13 +74,8 @@ const actions: AuthenticationActions = {
             // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("accessToken")
-            if (email=="aim-sniper@kakao.com"){
-                sessionStorage.setItem("adminToken", response.data.userToken)
-                commit("REQUEST_IS_ADMIN_TO_DJANGO",true)
-            }else{
-                sessionStorage.setItem("userToken", response.data.userToken)
-                commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', true);
-            }
+            sessionStorage.setItem("userToken", response.data.userToken)
+            commit('REQUEST_IS_AUTHENTICATED_TO_DJANGO', true);
             return response.data;
         } catch (error) {
             console.error('Error adding redis access token:', error);

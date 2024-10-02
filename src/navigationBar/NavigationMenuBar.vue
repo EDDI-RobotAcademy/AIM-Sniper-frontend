@@ -23,48 +23,21 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <v-btn v-if="isAdmin" text @click="goToSurveyListPage" class="btn-text">
+    <v-btn v-if="isNormalAdmin ||
+      isGoogleAdmin ||
+      isKakaoAdmin ||
+      isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
       <b>survey</b>
     </v-btn>
-    <v-btn v-if="!isAdmin" text @click="goToSurvey" class="btn-text">
+    <v-btn v-if="!isNormalAdmin &&
+      !isGoogleAdmin &&
+      !isKakaoAdmin &&
+      !isNaverAdmin" text @click="goToSurvey" class="btn-text">
       <b>survey</b>
     </v-btn> 
     <v-btn text @click="goToProductList" class="btn-text">
       <b>Company Report</b>
-    </v-btn>    
-
-    <v-menu
-      v-if="
-        isAuthenticatedKakao ||
-        isAuthenticatedGoogle ||
-        isAuthenticatedNormal ||
-        isAuthenticatedNaver
-      "
-      close-on-content-click
-    >
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToCart">
-          <b>cart</b>
-        </v-btn>
-      </template>
-    </v-menu>
-
-    <v-menu
-      v-if="
-        isAuthenticatedKakao ||
-        isAuthenticatedGoogle ||
-        isAuthenticatedNormal ||
-        isAuthenticatedNaver
-      "
-      close-on-content-click
-    >
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="btn-text" @click="goToOrder">
-          <b>order</b>
-        </v-btn>
-      </template>
-    </v-menu>
-
+    </v-btn>   
     <v-btn text @click="goToAiInterviewPage" class="btn-text">
       <b>AI Interview</b>
     </v-btn>
@@ -93,14 +66,38 @@
         </v-list-item>
       </v-list>
     </v-menu>
-
+    <v-menu
+      v-if="isNormalAdmin ||
+      isGoogleAdmin ||
+      isKakaoAdmin ||
+      isNaverAdmin"
+      close-on-content-click
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
+          <b>ADMIN</b>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in adminPageList"
+          :key="index"
+          @click="item.action"
+        >
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <v-btn
       v-if="
         !isAuthenticatedKakao &&
         !isAuthenticatedGoogle &&
         !isAuthenticatedNormal &&
         !isAuthenticatedNaver &&
-        !isAdmin
+        !isNormalAdmin &&
+        !isKakaoAdmin &&
+        !isGoogleAdmin &&
+        !isNaverAdmin
       "
       text
       @click="signIn"
@@ -130,11 +127,18 @@ const surveyModule = "surveyModule"
 export default {
   data() {
     return {
-      myDocumentItems: [
+      adminPageList: [
         {
-          title: "AI 논문 자료 정리",
+          title: "사용자 관리",
           action: () => {
-            this.goToDocumentList();
+            this.goToManagementUserPage();
+          },
+        },
+        {
+          title: "사용자 로그 현황",
+          
+          action: () => {
+            this.goToManagementUserLogList();
           },
         },
       ],
@@ -145,16 +149,28 @@ export default {
             this.goToMyPage();
           },
         },
+        {
+          title: "장바구니",
+          action: () =>{
+            this.goToCart();
+          }
+        },
+        {
+          title: "주문 목록",
+          action: () =>{
+            this.goToOrder();
+          }
+        }
       ],
       surveyId:1,
       isUserAuthenticated: sessionStorage.getItem("isUserAuthenticated"),
     };
   },
   computed: {
-    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
-    ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
-    ...mapState(accountModule, ["loginType", "isAuthenticatedNormal"]),
-    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isKakaoAdmin"]),
+    ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle",'isGoogleAdmin']),
+    ...mapState(accountModule, ["loginType", "isAuthenticatedNormal",'isNormalAdmin']),
+    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver",'isNaverAdmin']),
   },
   methods: {
     ...mapActions(authenticationModule, ["requestKakaoLogoutToDjango"]),
@@ -173,6 +189,12 @@ export default {
     },
     goToOrder() {
       router.push("/order/list");
+    },
+    goToManagementUserPage(){
+      router.push('/management/user')
+    },
+    goToManagementUserLogList(){
+      router.push('/management/log')
     },
     async goToSurvey() {
       const randomString = await this.requestRandomStringToDjango()
@@ -213,19 +235,22 @@ export default {
         sessionStorage.removeItem("normalToken");
         sessionStorage.removeItem("email");
         sessionStorage.removeItem("loginType");
+        sessionStorage.removeItem('adminToken')
         if (sessionStorage.getItem("fileKey")) {
           sessionStorage.removeItem("fileKey");
         }
         this.$store.state.accountModule.isAuthenticatedNormal = false;
+        this.$store.state.authenticationModule.isKakaoAdmin = false
+        this.$store.state.googleAuthenticationModule.isGoogleAdmin = false
+        this.$store.state.naverAuthenticationModule.isNaverAdmin = false
+        this.$store.state.accountModule.isNormalAdmin = false
       }
       router.push("/");
     },
   },
-
   mounted() {
     // console.log("navigation bar mounted()");
     const userToken = sessionStorage.getItem("userToken");
-    const adminToken = sessionStorage.getItem("adminToken")
     if (userToken) {
       // console.log("You already has a userToken!");
       this.$store.state.authenticationModule.isAuthenticatedKakao = true;
@@ -244,8 +269,12 @@ export default {
     if (normalToken) {
       this.$store.state.accountModule.isAuthenticatedNormal = true;
     }
+    const adminToken = sessionStorage.getItem("adminToken")
     if (adminToken){
-      this.$store.state.authenticationModule.isAdmin = true
+      this.$store.state.authenticationModule.isKakaoAdmin = true
+      this.$store.state.googleAuthenticationModule.isGoogleAdmin = true
+      this.$store.state.naverAuthenticationModule.isNaverAdmin = true
+      this.$store.state.accountModule.isNormalAdmin = true
     }
   },
 };

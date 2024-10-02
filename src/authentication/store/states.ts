@@ -1,11 +1,11 @@
 export interface AuthenticationState {
     isAuthenticatedKakao: boolean
-    isAdmin: boolean
+    isKakaoAdmin: boolean
 }
 
 const state: AuthenticationState = {
     isAuthenticatedKakao: false,
-    isAdmin: false
+    isKakaoAdmin: false
 }
 
 export default state
