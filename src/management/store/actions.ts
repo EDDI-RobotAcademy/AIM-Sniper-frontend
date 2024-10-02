@@ -5,6 +5,7 @@ import axiosInst from "@/utility/axiosInstance";
 
 export type ManagementActions = {
   requestUserListToDjango(context: ActionContext<ManagementState, any>): Promise<void>;
+  requestUserLogListToDjango(context: ActionContext<ManagementState, any>): Promise<void>;
   grantAdminRoleInDjango(context: ActionContext<ManagementState,any>,email: string): Promise<any>
   revokeAdminRoleInDjango(context: ActionContext<ManagementState,any>,email: string): Promise<any>
 };
@@ -16,6 +17,17 @@ const actions: ManagementActions = {
             const userList = response.data;
             // 여기서 commit을 통해 Vuex 상태를 업데이트할 수 있습니다.
             commit('REQUEST_USER_LIST_TO_DJANGO', userList);
+        } catch (error) {
+            console.error("Error fetching user list:", error);
+            // 에러 처리 로직 추가 가능
+        }
+    },
+    async requestUserLogListToDjango({commit}: ActionContext<ManagementState,any>){
+        try {
+            const response: AxiosResponse<User[]> = await axiosInst.djangoAxiosInst.post('/management/userLogList'); // Django API 엔드포인트
+            const userLogList = response.data;
+            // 여기서 commit을 통해 Vuex 상태를 업데이트할 수 있습니다.
+            commit('REQUEST_USER_LOG_LIST_TO_DJANGO', userLogList);
         } catch (error) {
             console.error("Error fetching user list:", error);
             // 에러 처리 로직 추가 가능
@@ -43,3 +55,6 @@ const actions: ManagementActions = {
             throw error
         }
     }
+};
+
+export default actions;
