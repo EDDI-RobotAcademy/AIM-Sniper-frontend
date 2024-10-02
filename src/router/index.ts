@@ -10,6 +10,7 @@ import CartRoutes from '@/cart/router/CartRoutes'
 import OrderRoutes from '@/order/router/OrderRoutes'
 import AiInterviewRoutes from '@/aiInterview/router/AiInterviewRoutes'
 import GuideRoutes from '@/guide/router/guideRoutes'
+import ManageMentRoutes from '@/management/router/ManagemetRoutes'
 
 const routes: Array<RouteRecordRaw> = [
   ...HomeRoutes,
@@ -23,6 +24,7 @@ const routes: Array<RouteRecordRaw> = [
   ...OrderRoutes,
   ...AiInterviewRoutes,
   ...GuideRoutes,
+  ...ManageMentRoutes
 ]
 
 const router = createRouter({
