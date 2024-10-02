@@ -7,6 +7,11 @@ const ManageMentRoutes = [
         name: 'ManagementUser',
         component: ManagementUserPage
     },
+    {
+        path: '/management/log',
+        name: 'ManagementLog',
+        component: ManagementLogPage
+    },
 ]
 
 export default ManageMentRoutes
