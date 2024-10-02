@@ -9,6 +9,7 @@ import cartModule from '@/cart/store/cartModule'
 import orderModule from '@/order/store/orderModule'
 import userLogModule from "@/userLog/store/userLogModule"
 import aiInterviewModule from '@/aiInterview/store/aiInterviewModule'
+import managementModule from '@/management/store/managementModule'
 
 export default createStore({
   state: {
@@ -30,5 +31,6 @@ export default createStore({
     orderModule,
     userLogModule,
     aiInterviewModule,
+    managementModule
   }
 })
