@@ -21,6 +21,10 @@ export type AccountActions = {
         context: ActionContext<AccountState, any>,
         payload: { email: string; newPassword: string }
     ): Promise<void>
+    requestRoleTypeToDjango(
+        context: ActionContext<AccountState, any>,
+        email: string
+    ): Promise<void>
 }
 
 const actions: AccountActions = {
@@ -162,6 +166,17 @@ const actions: AccountActions = {
             await axiosInst.djangoAxiosInst.post('/account/modify-nickname', { email: payload.email, newNickname: payload.newNickname });
         } catch (error) {
             console.error('닉네임 변경 실패:', error);
+            throw error;
+        }
+    },
+    async requestRoleTypeToDjango(
+        context: ActionContext<AccountState, any>,
+        email: string
+    ): Promise<void> {
+        try {
+            return await axiosInst.djangoAxiosInst.post('/account/role-type', { 'email':email });
+        } catch (error) {
+            console.error('roleType 취득 실패:', error);
             throw error;
         }
     }

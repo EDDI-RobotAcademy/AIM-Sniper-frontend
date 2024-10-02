@@ -15,7 +15,7 @@ export default {
     methods: {
         ...mapActions(naverAuthenticationModule,
         ['requestNaverAccessTokenToDjangoRedirection', 'requestNaverUserInfoToDjango', 'requestAddNaverRedisAccessTokenToDjango']),
-        ...mapActions(accountModule, ['requestEmailDuplicationCheckToDjango']),
+        ...mapActions(accountModule, ['requestEmailDuplicationCheckToDjango','requestRoleTypeToDjango']),
 
         async setRedirectData () {
             const code = this.$route.query.code
@@ -40,7 +40,14 @@ export default {
                 } else {
                     console.error('AccessToken is missing');
                 }
-                
+                const roleType = await this.requestRoleTypeToDjango(email)
+                console.log(roleType.data.roleType)
+                if (roleType.data.roleType == "ADMIN"){
+                    sessionStorage.setItem('adminToken',sessionStorage.getItem('userToken'))
+                    sessionStorage.removeItem('userToken')
+                    this.REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO(false);
+                    this.REQUEST_IS_GOOGLE_ADMIN_TO_DJANGO(true);
+                }
                 sessionStorage.setItem('loginType', 'NAVER')
                 sessionStorage.setItem('email', email)
                 this.$router.push('/')
