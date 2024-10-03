@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 const googleAuthenticationModule = 'googleAuthenticationModule'
 const accountModule = 'accountModule'
@@ -15,8 +15,8 @@ export default {
     methods: {
         ...mapActions(googleAuthenticationModule,
         ['requestGoogleAccessTokenToDjangoRedirection', 'requestGoogleUserInfoToDjango', 'requestAddGoogleRedisAccessTokenToDjango']),
-        ...mapActions(accountModule, ['requestEmailDuplicationCheckToDjango']),
-
+        ...mapActions(accountModule, ['requestEmailDuplicationCheckToDjango',"requestRoleTypeToDjango"]),
+        ...mapMutations(googleAuthenticationModule,['REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO','REQUEST_IS_GOOGLE_ADMIN_TO_DJANGO']),
         async setRedirectData () {
             const code = this.$route.query.code
             await this.requestGoogleAccessTokenToDjangoRedirection({ code })
@@ -40,7 +40,14 @@ export default {
                 } else {
                     console.error('AccessToken is missing');
                 }
-                
+                const roleType = await this.requestRoleTypeToDjango(email)
+                console.log(roleType.data.roleType)
+                if (roleType.data.roleType == "ADMIN"){
+                    sessionStorage.setItem('adminToken',sessionStorage.getItem('userToken'))
+                    sessionStorage.removeItem('userToken')
+                    this.REQUEST_IS_GOOGLE_AUTHENTICATED_TO_DJANGO(false);
+                    this.REQUEST_IS_GOOGLE_ADMIN_TO_DJANGO(true);
+                }
                 sessionStorage.setItem('loginType', 'GOOGLE')
                 sessionStorage.setItem('email', email)
                 this.$router.push('/')

@@ -1,6 +1,6 @@
 <template>
     <v-container>
-      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm">
+      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm ">
         <v-card-title>
           <span class="headline">{{ surveyForm.surveyTitle }}</span>
         </v-card-title>
@@ -87,6 +87,7 @@ export default {
         accountId: null,
         email: null,
         valid: false,
+        isFirstAccept : false,
         rules: {
           textRequired: (value) => !!value || '필수 입력 항목입니다.',
           radioRequired: (value) => !!value || '옵션을 선택해주세요.',
@@ -103,7 +104,10 @@ export default {
       if (this.email) {
         // console.log("Logged In");
         this.accountId = await this.requestAccountIdToDjango(this.email)
-        // console.log('accountID: ', this.accountId)
+        this.isFirstAccept = await this.requestCheckIsFirstSubmit({accountId : this.accountId})
+        if (this.isFirstAccept) {
+          router.push("/survey/submitted")
+        }
       }
       else {
         // console.log('비회원 유저')
@@ -114,7 +118,7 @@ export default {
     },
     methods: {
         
-      ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango']),
+      ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango', 'requestCheckIsFirstSubmit']),
       ...mapActions(accountModule, ['requestAccountIdToDjango']),
 
       isChecked(index, option) {

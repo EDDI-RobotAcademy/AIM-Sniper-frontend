@@ -1,6 +1,8 @@
 export interface SurveyState {
     surveyTitleList: Survey[]
     surveyForm: Survey | null
+    resultForm: Survey | null
+    
 }
 
 export interface Survey {
@@ -13,7 +15,8 @@ export interface Survey {
 
 const state: SurveyState = {
     surveyTitleList: [],
-    surveyForm: null
+    surveyForm: null,
+    resultForm: null
 }
 
 export default state

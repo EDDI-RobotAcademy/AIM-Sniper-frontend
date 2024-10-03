@@ -1,9 +1,11 @@
 export interface NaverAuthenticationState {
     isAuthenticatedNaver: boolean
+    isNaverAdmin:boolean
 }
 
 const state: NaverAuthenticationState = {
-    isAuthenticatedNaver: false
+    isAuthenticatedNaver: false,
+    isNaverAdmin:false
 }
 
 export default state
