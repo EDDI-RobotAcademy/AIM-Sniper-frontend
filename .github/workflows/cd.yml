@@ -89,8 +89,9 @@ jobs:
     runs-on: [ self-hosted, deploy-aim-frontend ]
     steps:
       - name: Get Github Actions IP
-        id: ip
-        uses: haythem/public-ip@v1.2
+        id: publicip
+        run: |
+          echo "ip=$(curl -s canhazip.com)" >> $GITHUB_OUTPUT
         
       - name: Configure AWS IAM Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -101,7 +102,7 @@ jobs:
 
       - name: Add Github Actions IP to Security Group
         run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.publicip.outputs.ip }}/32
     
       - name: Deploy to Production
         uses: appleboy/ssh-action@master
@@ -124,4 +125,4 @@ jobs:
 
       - name: Remove Github Actions IP From Security Group
         run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.publicip.outputs.ip }}/32
