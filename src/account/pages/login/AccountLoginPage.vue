@@ -1,32 +1,30 @@
 <template>
     <v-container class="container">
         <div class="login-wrapper">
-            <div>                
-                
-
-                <div :style="{ marginBottom: login_flag ? '20px' : '10px', textAlign: 'center', fontSize: '25px'}">
-                        LOGIN
+            <div>
+                 
+                <div class="login_logo">
+                    <!-- LOGIN 텍스트 대신 이미지 삽입 -->    
                 </div>
 
                 <div v-if="login_flag == false && this.isEmailCollect == false" class="login-error-box">
-                    <!-- {{ email }}의 비밀번호가 올바르지 않습니다. -->
                     이메일이 올바르지 않습니다.
                     <br />
                     올바른 이메일을 입력하거나,
                     <br />
-                    다른 간편로그인을  시도해 보세요.
+                    다른 간편로그인을 시도해 보세요.
                 </div>
                 <div v-if="login_flag == false && this.isEmailCollect == true && this.isPasswordCollect == false" class="login-error-box">
                     비밀번호가 올바르지 않습니다.
                     <br />
                     올바른 비밀번호를 입력하거나,
                     <br />
-                    다른 간편로그인을  시도해 보세요.
+                    다른 간편로그인을 시도해 보세요.
                 </div>
 
                 <v-responsive class="mx-auto" min-width="300">
                     <v-form v-model="form" @submit.prevent="onSubmit">
-                        <v-text-field
+                        <!-- <v-text-field
                             label="이메일 주소"
                             variant="solo"
                             v-model="email"
@@ -34,6 +32,7 @@
                             bg-color="rgba(0, 0, 0, 0.5)"
                             clearable
                             :rules="[emailRequired]"
+                            style="width: 75%; margin: 10px auto; display: block;"
                         />
 
                         <v-text-field
@@ -43,51 +42,55 @@
                             color="#fff"
                             bg-color="rgba(0, 0, 0, 0.5)"
                             :rules="[passwordRequired]"
-                            :append-inner-icon="
-                                visible ? 'mdi-eye' : 'mdi-eye-off'
-                            "
+                            :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
                             :type="visible ? 'text' : 'password'"
                             @click:append-inner="visible = !visible"
-                        />
+                            style="width: 75%; margin: 10px auto; display: block;"
+                        /> -->
 
-                        <v-btn
-                            width="100%"
+                        <!-- 로그인 버튼 -->
+                        <!-- <v-btn
                             color="white"
                             :loading="loading"
                             type="submit"
                             variant="elevated"
-                            block
-                            style="font-size: 13px; margin-top:20px;"
+                            style="width: 75%; margin: 5px auto; display: block; font-size: 12px;"
                         >
-                            로그인
-                        </v-btn>
+                            <b>로그인</b>
+                        </v-btn> -->
                     </v-form>
                 </v-responsive>
+
                 <!-- 회원가입 버튼 -->
-                <v-btn
-                    width="100%"
+                <!-- <v-btn
                     color="purple darken-2"
                     class="black--text mt-2"
-                    block
-                    style="font-size: 13px;"
+                    style="width: 75%; margin: 5px auto; display: flex; align-items: center; justify-content: center; font-size: 12px;"
                     :to="{ name: 'NomalAccountRegisterPage' }"
                 >
-                    회원가입
-                </v-btn>
+                    <b>회원가입</b>
+                </v-btn> -->
+
 
                 <v-divider :thickness="3" style="margin-top: 20px; margin-bottom: 20px;"></v-divider>
-                
 
-                <v-btn color="#FEE500" class="black--text mt-2 kakao-login-btn" block @click="goToKakaoLogin">
+                <!-- 각 소셜 로그인 버튼들 -->
+                <v-btn class="kakao-login-btn" style="width: 75%; margin: 10px auto; display: block;" @click="goToKakaoLogin">
+                    <!-- 카카오 로그인 -->
                 </v-btn>
-                <v-btn color="#ffffff" class="black--text mt-2 google-login-btn" block @click="goToGoogleLogin">
+
+                <v-btn class="google-login-btn" style="width: 75%; margin: 10px auto; display: block;" @click="goToGoogleLogin">
+                    <!-- Google 로그인 -->
                 </v-btn>
-                <v-btn color="#ffffff" class="black--text mt-2 naver-login-btn" block @click="goToNaverLogin">
+
+                <v-btn class="naver-login-btn" style="width: 75%; margin: 10px auto; margin-bottom: 20px; display: block;" @click="goToNaverLogin">
+                    <!-- 네이버 로그인 -->
                 </v-btn>
             </div>
         </div>
     </v-container>
 </template>
+
 
 <script>
 import router from "@/router";
@@ -225,17 +228,36 @@ export default {
 
 
 <style scoped>
+html, body {
+    overflow: hidden; /* 스크롤바 비활성화 */
+    height: 100%; /* 전체 페이지가 100% 화면을 차지하도록 설정 */
+    margin: 0;
+    padding: 0;
+}
+
 .container {
     margin: 0;
     width: 100%;
     max-width: 100vw;
     height: 100%;
+    padding: 0;
     display: flex;                  /* Flexbox 사용하여 가운데 정렬 */
     justify-content: center;        /* 수평 가운데 정렬 */
-    align-items: center;            /* 수직 가운데 정렬 */
-    padding: 10%;
-    background: url("@/assets/images/fixed/login_bg.png") no-repeat center center; /* 배경 이미지 설정 */
-    background-size: cover;                                                     /* 배경 이미지 크기 조정 */
+    align-items: center;            /* 수직 가운데 정렬 */    
+    box-sizing: border-box;        /* 크기 조정을 더 쉽게 하기 위해 사용 */
+    background-color: white;      /* 배경을 흰색으로 설정 */
+    /* background: url("@/assets/images/fixed/login_bg.png") no-repeat center center; 배경 이미지 설정 */
+    /* background-size: cover;                                                     배경 이미지 크기 조정 */
+}
+
+.login_logo {
+    height: 25vh;
+    overflow: hidden;
+    margin: 0;
+    background-image: url("@/assets/images/fixed/AiM_BI_Login.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;    
 }
 
 /* 로그인 박스 설정 */
@@ -243,27 +265,63 @@ export default {
     position: relative;
     z-index: 1;    
     color: white;
-    width: 400px;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.75); /* 반투명 배경 */
-    border-radius: 20px; /* 모서리 둥글게 */
+    width: 520px;
+    padding: 0;
+    background-color: rgba(255, 255, 255, 0.75); /* 반투명 배경 */
+    border-radius: 20px; /* 모서리 둥글게 */    
+    border: 0px solid rgba(128, 128, 128, 0.7); /* 얇은 회색 테두리 */    
+    box-shadow: 0 10px 30px rgba(156, 156, 156, 0.3); /* 그림자 효과를 강하게 추가 */
+    padding: 30px;
+}
+
+
+/* 로그인 및 회원가입 버튼 설정 */
+.v-btn {
+    width: 75%;
+    margin: 10px auto;
+    display: block;
+    font-size: 13px;
+    text-align: center;
 }
 
 /* 에러 메시지 박스 설정 */
 .login-error-box {
-    background-color: rgba(255, 0, 0, 0.85);
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 10px;
+    background-color: rgb(255, 0, 0);
+    padding: 10px;
+    margin-bottom: 1px;
+    border-radius: 20px;
     color: #fff;
+}
+
+/* 로그인 및 회원가입 버튼 설정 */
+.v-btn {
+    width: 75%;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;  /* 수직 가운데 정렬 */
+    justify-content: center;  /* 수평 가운데 정렬 */
+    font-size: 13px;
+    text-align: center;
+    height: 48px; /* 버튼의 높이를 적절히 설정 */
+}
+
+
+.button-style {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 90%;
 }
 
 /* Kakao 로그인 버튼 설정 */
 .kakao-login-btn {
-    background-image: url("@/assets/images/fixed/kakao_login.png");
+    background-image: url("@/assets/images/fixed/btn_login_kakao.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #FEE500;
+    color: black;
+    font-size: 16px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -271,23 +329,43 @@ export default {
 
 /* Google 로그인 버튼 설정 */
 .google-login-btn {
-    background-image: url("@/assets/images/fixed/google_login.png");
+    background-image: url("@/assets/images/fixed/btn_login_google.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .naver-login-btn {
-    background-image: url("@/assets/images/fixed/naver_login.png");
+    background-image: url("@/assets/images/fixed/btn_login_naver.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #03C75A;
+    width: 10vw;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+.v-text-field input {
+    background-color: transparent !important;
+    color: black !important; /* 입력값을 검정색으로 설정 */
+}
+
+.v-label {
+    color: black !important; /* 레이블을 검정색으로 설정 */
+}
+
 
 /* 로그인 폼의 텍스트 필드 라벨 색상 설정 */
 :deep(.v-label.v-field-label) {
@@ -306,13 +384,13 @@ export default {
 
 /* 오류 메시지 스타일링 */
 :deep(.v-messages__message) {
-    color: rgba(0, 255, 55, 0.75)!important; /* 메시지 색상 */
-    font-size: 15px; /* 메시지 폰트 크기 */
+    color: rgb(0, 0, 255)!important; /* 메시지 색상 */
+    font-size: 12px; /* 메시지 폰트 크기 */
 }
 
 /* 텍스트 필드 에러 상태의 레이블 색상을 초록색으로 변경 */
 :deep(.v-field--error:not(.v-field--disabled) .v-label.v-field-label) {
-    color: rgba(0, 255, 55, 0.75) !important; /* 에러 상태의 레이블 색상을 초록색으로 변경 */
+    color: rgba(0, 0, 255) !important; /* 에러 상태의 레이블 색상을 초록색으로 변경 */
 }
 
 </style>
