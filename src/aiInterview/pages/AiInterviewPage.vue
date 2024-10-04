@@ -39,6 +39,7 @@
             @keydown.enter.exact.prevent="handleEnterKey"  
             @keydown.shift.enter="handleShiftEnter"
             @input="adjustTextareaHeight"
+            @disable="finished"
             ref="messageInput"
           ></textarea>
           <button class="send-button" @click="sendMessage">입력</button>
@@ -49,8 +50,10 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import markdownIt from 'markdown-it'
 import '@mdi/font/css/materialdesignicons.css'
+const aiInterviewModule = 'aiInterviewModule'
 
 export default ({
   data() {
@@ -59,10 +62,15 @@ export default ({
       userInputMessage: '',
       aiOutput: '',
       chatHistory: [
-        { type: 'ai', content: '안녕하세요! AI 모의 면접 서비스입니다.' }
+        { type: 'ai', content: '안녕하세요! AI 모의 면접 서비스입니다. "면접 시작"을 입력하시면 면접을 시작할 수 있습니다. 총 5번의 질문이 제공됩니다.' }
       ],
       isLoading: false,  // 로딩 상태 추가,
       md: new markdownIt(), // markdown-it
+
+      sendCount: 0,  // 메시지 전송 횟수 추적
+      maxMessages: 6,  // 최대 메시지 전송 횟수 설정
+      aiResponseList: [],  // AI 질문 리스트 저장
+      questionIndex: 0,  // 현재 질문 인덱스
 
       showContextMenu: false,
       contextMenuX: 0,
@@ -75,6 +83,7 @@ export default ({
     };
   },
   methods: {
+    ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango' ]),
     renderMessageContent(message) {
       if (message.type !== 'user') {
         // markdown-it로 렌더링된 내용에 .markdown-content 클래스를 추가
@@ -133,7 +142,15 @@ export default ({
       this.adjustTextareaHeight();  // 줄바꿈 후 높이 조정
     },
 
-    sendMessage(event) {
+    async sendMessage(event) {
+      if (this.sendCount >= this.maxMessages) {
+        this.finished = true;
+        this.chatHistory.push({
+            type: "ai",
+            content: "면접이 종료되었습니다. 추후에 더 나은 서비스로 찾아오겠습니다.",
+          });
+        return;  // 5번 이상이면 메시지 전송 차단
+      }
       if (this.userInput.trim()) {
         // 텍스트 메시지를 채팅 히스토리에 추가
         if (this.userInput.trim()) {
@@ -144,10 +161,16 @@ export default ({
         this.userInput = '';
         this.adjustTextareaHeight();  // 전송 후 높이도 초기화
         this.isLoading = true;  // ... 로딩 상태 활성화
+        this.sendCount++;
 
         // AI 응답 시뮬레이션
-        setTimeout(() => {
-          const aiResponse = "AI 모의 면접 서비스를 위해 데이터를 구축 중입니다. 조금만 기다려 주세요!"
+        setTimeout(async () => {
+          if (this.aiResponseList.length === 0) {
+            const sessionId = Math.floor(Math.random() * 200) + 1;
+            this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
+          }
+          const aiResponse = this.aiResponseList.questionList[this.questionIndex] || "면접이 종료되었습니다." // "AI 모의 면접 서비스를 위해 데이터를 구축 중입니다. 조금만 기다려 주세요!"
+          this.questionIndex++;
           this.chatHistory.push({
             type: "ai",
             content: aiResponse,
