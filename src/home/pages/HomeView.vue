@@ -47,7 +47,7 @@ export default defineComponent({
   data() {
     return {
       imageSrc,
-      surveyId:1,
+      surveyId:2,
     };
   },
   computed: {
