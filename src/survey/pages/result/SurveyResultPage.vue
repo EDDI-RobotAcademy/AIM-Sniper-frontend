@@ -46,8 +46,8 @@ export default {
     ...mapState(surveyModule, ['resultForm']),
   },
   async mounted() {
-    await this.requestSurveyResultToDjango(this.surveyId); // 비동기 호출 대기
-    console.log(this.resultForm)
+    await this.requestSurveyResultToDjango(this.surveyId);
+    
     this.resultForm.surveyQuestions.forEach((question, index) => {
       if (question.questionType === 'radio' || question.questionType === 'checkbox') {
         this.drawBarChart(question, index);
