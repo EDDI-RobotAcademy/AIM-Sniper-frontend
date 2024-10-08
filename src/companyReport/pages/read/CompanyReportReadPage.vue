@@ -228,6 +228,8 @@ export default {
       isGoToCartListDialogVisible: false,
       purchase: true,
       financeData: [],
+      companyInfo: [],
+      summary:'',
     };
   },
   computed: {
@@ -240,6 +242,7 @@ export default {
   },
   methods: {
     ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango","requestCompanyReportFinanceToDjango",
+    'requestCompanyReportInfoToDjango',"requestCompanyReportSummaryToDjango"]),
     ...mapActions(cartModule, [
       "requestAddCartToDjango",
       "requestDeleteCartItemToDjango",
@@ -385,6 +388,17 @@ export default {
       // this.financeData = rawData.map(item => item[0]); // 배열에서 첫 번째 객체만 추출하여 저장
       // console.log(this.financeData); // 데이터 확인
     },
+    async getCompanyInfo() {
+      // 데이터 확인
+      let data = await this.requestCompanyReportInfoToDjango(this.companyReport.companyReportName);
+      this.companyInfo = data.data[0]
+      // console.log(this.companyInfo)
+    },
+    async getCompanySummary(){
+      let data = await this.requestCompanyReportSummaryToDjango(this.companyReport.companyReportName);
+      this.summary = data.data
+      // console.log(typeof this.summary)
+    },
     createChart() {
       const margin = { top: 35, right: 15, bottom: 30, left: 28 };
       const width = 240 - margin.left;
@@ -490,6 +504,8 @@ export default {
   async created() {
     await this.fetchCompanyReportData(this.companyReportId);
     await this.getFinanceData(); // 컴포넌트 생성 시 데이터 가져오기
+    await this.getCompanyInfo();
+    await this.getCompanySummary();
     this.createChart(); // 데이터 가져온 후 차트 생성
   },
   watch: {
