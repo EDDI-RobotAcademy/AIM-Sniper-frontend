@@ -223,11 +223,11 @@ export default {
         if (sessionStorage.getItem("fileKey")) {
           sessionStorage.removeItem("fileKey");
         }
-        this.$store.state.accountModule.isAuthenticatedNormal = false;
-        this.$store.state.authenticationModule.isKakaoAdmin = false
-        this.$store.state.googleAuthenticationModule.isGoogleAdmin = false
-        this.$store.state.naverAuthenticationModule.isNaverAdmin = false
-        this.$store.state.accountModule.isNormalAdmin = false
+      this.$store.state.accountModule.isAuthenticatedNormal = false;
+      this.$store.state.authenticationModule.isKakaoAdmin = false
+      this.$store.state.googleAuthenticationModule.isGoogleAdmin = false
+      this.$store.state.naverAuthenticationModule.isNaverAdmin = false
+      this.$store.state.accountModule.isNormalAdmin = false
       }
       router.push("/");
     },
