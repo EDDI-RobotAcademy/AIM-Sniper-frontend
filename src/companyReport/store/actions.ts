@@ -21,6 +21,7 @@ export type CompanyReportActions = {
         companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
     }): Promise<void>
     requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
 }
 
 const actions: CompanyReportActions = {

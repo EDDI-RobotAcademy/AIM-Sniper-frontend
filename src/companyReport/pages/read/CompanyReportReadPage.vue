@@ -199,6 +199,9 @@
 import { mapActions, mapState } from "vuex";
 import router from "@/router";
 import userLogModule from "@/userLog/store/userLogModule";
+import * as d3 from 'd3';
+import axiosInst from "@/utility/axiosInstance"
+
 
 const companyReportModule = "companyReportModule";
 const cartModule = "cartModule";
