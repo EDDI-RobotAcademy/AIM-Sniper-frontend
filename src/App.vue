@@ -27,7 +27,7 @@ export default defineComponent({
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box;  
 }
 
 html, body {
@@ -40,17 +40,10 @@ html, body {
   overflow-x: hidden; /* 가로 스크롤 제거 */
 }
 
-/* 특정 요소에 폰트 적용을 원하면 추가로 정의할 수 있음
+/* 특정 요소에 폰트 적용을 원하면 추가로 정의할 수 있음 */
 h1, h2, h3, h4, h5, h6, p, b, a {
   font-family: 'Pretendard', sans-serif;
-} */
-
-/* 뷰포트에 맞춘 크기 조정 */
-/* body {
-  font-size: calc(1vw + 1vh + 0.5vmin); 
-  line-height: 1.5;
-  max-width: 100%;
-} */
+} 
 
 /* Flexbox 레이아웃 */
 .container {
