@@ -1,52 +1,105 @@
 <template>
   <v-container class="container">
-    <div class="id-card-container">
-    <div class="lanyard"></div>
-      <v-card class="id-card mx-auto" min-width="500" style="background-color: rgba(0, 255, 55, 0.1);  
-  color: white;
-  border: 2px solid green;">
-        <div class="company-logo" style="color: white;">AICORP INSIGHT MARKET</div>
-        <v-avatar size="120" class="mt-8 avatar-margin">
+
+    <div class="id-card-container">    
+      <v-card class="id-card mx-auto">
+        <!-- <div class="company-name" >AIM</div> -->
+        <v-avatar size="120px" class="mt-8 avatar-margin">
           <v-img :src="imageSrc"></v-img>
         </v-avatar>
-        <br>
-        <br>
+        
         <v-card-text>
-          <h2 class="text-h5 mb-2">{{ nickname }}</h2>
-          <p class="subtitle-1">{{ email }}</p>
+          <h2 class="text-h5 mb-2" style="margin-top: 24px; margin-bottom: 16px; font-weight: 700;">{{ nickname }}</h2>
+          
           <v-divider class="my-3"></v-divider>
-          <v-row dense>
-            <v-col cols="6">
+          <v-row class="myinfo">
+            <v-col cols="12">
               <v-icon>{{
                 gender === "MALE" ? "mdi-gender-male" : "mdi-gender-female"
               }}</v-icon>
               <span class="ml-1">{{ gender === "MALE" ? "남성" : "여성" }}</span>
-            </v-col>
-            <v-col cols="6">
+              &nbsp;&nbsp;&nbsp;
               <v-icon>mdi-calendar</v-icon>
               <span class="ml-1">{{ birthyear }}</span>
-            </v-col>
+              &nbsp;&nbsp;&nbsp;
+              <v-icon>mdi-email</v-icon>
+              <span class="subtitle-1">{{ email }}</span>
+            </v-col>            
           </v-row>
+          
+          <v-row justify="center">
+            
+            <v-col cols="6">
+              <v-btn class="btn-update" @click="$router.push({ name: 'AccountModifyPage' })">
+                프로필 수정
+              </v-btn>
+            </v-col>
+            
+            <v-col cols="6">              
+              <button class="delete_button" type="button" @click="$router.push({ name: 'AccountWithdrawPage' })">
+                <span class="delete_button_text">탈퇴하기</span>
+                <span class="delete_button_icon"
+                  ><svg
+                    class="svg"
+                    height="512"
+                    viewBox="0 0 512 512"
+                    width="512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <title></title>
+                    <path
+                      d="M112,112l20,320c.95,18.49,14.4,32,32,32H348c17.67,0,30.87-13.51,32-32l20-320"
+                      style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                    ></path>
+                    <line
+                      style="stroke:#fff;stroke-linecap:round;stroke-miterlimit:10;stroke-width:32px"
+                      x1="80"
+                      x2="432"
+                      y1="112"
+                      y2="112"
+                    ></line>
+                    <path
+                      d="M192,112V72h0a23.93,23.93,0,0,1,24-24h80a23.93,23.93,0,0,1,24,24h0v40"
+                      style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                    ></path>
+                    <line
+                      style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                      x1="256"
+                      x2="256"
+                      y1="176"
+                      y2="400"
+                    ></line>
+                    <line
+                      style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                      x1="184"
+                      x2="192"
+                      y1="176"
+                      y2="400"
+                    ></line>
+                    <line
+                      style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                      x1="328"
+                      x2="320"
+                      y1="176"
+                      y2="400"
+                    ></line></svg
+                ></span>
+              </button>
+
+            </v-col>            
+          </v-row>
+          
         </v-card-text>
       </v-card>
     </div>
-    <div class="floating-menu-container" @mouseover="showMenu" @mouseleave="hideMenu">
-      <v-btn class="floating-button">
-        <v-icon>{{ menuOpen ? "mdi-close" : "mdi-menu" }}</v-icon>
-      </v-btn>
-      <div v-if="menuOpen" class="floating-menu">
-        <v-btn
-          class="menu-item"
-          @click="$router.push({ name: 'AccountModifyPage' })"
-        >
-          수정
-        </v-btn>
-        <v-btn class="menu-item" @click="$router.push({ name: 'AccountWithdrawPage' })">
-          회원탈퇴
-        </v-btn>
-      </div>
-    </div>
-  </v-container>  
+    
+     <!-- 탈퇴 버튼을 카드 외부로 위치 -->
+     <v-row justify="center" class="mt-4">
+      
+    </v-row>  
+    
+  </v-container>
+    
 </template>
 
 <script>
@@ -103,123 +156,144 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-/* 컨테이너 설정 */
+
+/* 전체 컨테이너 설정 */
 .container {
-  margin: 0;
-  padding: 0;
-  min-width: 100vw; /* 화면 전체 너비를 차지 */
-  height: 100%; /* 화면 전체 높이를 차지 */
+  min-height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: flex-end; /* 수직 가운데 정렬 */
-  background: url("@/assets/images/fixed/mypage_bg.jpeg") no-repeat center center;
-  background-size: 50%; /* 배경 이미지를 화면에 맞춤 */
-  background-color: #000;
-  padding-top: 25vh;
-  padding-bottom: 40%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 /* id-card-container 설정 */
 .id-card-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%; /* 컨테이너가 화면 너비를 꽉 채우도록 설정 */
+  text-align: center;
+  padding: 60px;
 }
 
 /* id-card 스타일 */
 .id-card {
-  border-radius: 10px;
+  position: relative;
+  width: 436px;
+  height: auto;
   overflow: hidden;
-  text-align: center;
-  width: 100%; /* id-card의 너비를 화면에 맞게 조정 */
-  max-width: 500px; /* 최대 너비를 500px로 설정 */
+  text-align: center;  
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 255, 55, 0.1); /* 배경색 */
-  border: 2px solid green;
-  color: white;
+  color: black;
+  background-color: white;
+  border: 2px solid white;
+  border-radius: 32px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);  
 }
 
-/* 기타 스타일 유지 */
-.lanyard {
-  position: absolute;
-  top: -100px;
-  width: 100%;
-  height: 100px;
-  background-color: rgba(0, 255, 55, 0.1);
-  left: 50%;  
-}
 
-.lanyard::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;  
-  width: 30px;
-  height: 10px;
-  background-color: darkgreen;
-  border-radius: 5px 5px 0 0;
-}
-
-.company-logo {
+/* 최상단 AIN 문구 */
+.company-name {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-.v-avatar {
-  margin: 0 auto;
-  border: 3px solid #f0f0f0;
-  margin-top: 20px;
-}
-
-.avatar-margin {
-  margin-top: 20px;
-}
-
-.floating-menu-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+.myinfo {
+  height: 40px;
   display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
+  background: #D7DBEC;
+  border: 1px solid D7DBEC;
+  border-radius: 12px;
+  margin-bottom: 40px; 
 }
 
-.floating-button {
-  background-color: #000;
-  color: #fff;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-}
-
-.floating-menu {
+/* 프로필 수정 버튼 */
+.btn-update {  
   display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
+  justify-content: center !important;
+  align-items: center !important;
+  background: white;
+  border: 1px solid lightgray;
+  border-radius: 12px;
+  color: black;
+  margin-left: 20%;
 }
 
-.menu-item {
-  margin-bottom: 10px;
-  background-color: #000;
+/* 회원 삭제 버튼 */
+.delete_button {
+  position: relative;
+  border-radius: 12px;
+  width: 120px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cc0000;
+  background-color: #e50000;
+  overflow: hidden;
+}
+
+.delete_button,
+.delete_button_icon,
+.delete_button_text {
+  transition: all 0.3s;
+}
+
+.delete_button .delete_button_text {
+  transform: translateX(25px);
   color: #fff;
+  font-weight: 600;
 }
 
-@media (max-width: 600px) {
-  .id-card {
-    max-width: 90%; /* 작은 화면에서는 최대 너비를 줄임 */
-  }
-
-  .id-card-container {
-    margin-top: 0; /* 작은 화면에서는 여백을 줄여서 중앙에 맞춤 */
-  }
+.delete_button .delete_button_icon {
+  position: absolute;
+  transform: translateX(95px);
+  height: 100%;
+  width: 20px;
+  background-color: #cc0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.delete_button .svg {
+  width: 20px;
+}
+
+.delete_button:hover {
+  background: #cc0000;
+}
+
+.delete_button:hover .delete_button_text {
+  color: transparent;
+}
+
+.delete_button:hover .delete_button_icon {
+  width: 120px;
+  transform: translateX(0);
+}
+
+.delete_button:active .delete_button_icon {
+  background-color: #b20000;
+}
+
+.delete_button:active {
+  border: 1px solid #b20000;
+}
+
+
 </style>
