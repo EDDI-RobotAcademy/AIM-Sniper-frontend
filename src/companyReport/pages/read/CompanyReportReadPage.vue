@@ -51,15 +51,15 @@
 
               <v-row>
                 <v-col cols="12">
-                  <v-btn
+                  <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
                     color="yellow darken-2"
                     dark
                     @click="confirmCheckout"
                     class="action-button"
                   >
-                    <v-icon left>mdi-cart</v-icon>구매하기
+                    <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>구매하기
                   </v-btn>
-                  <v-btn
+                  <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
                     color="success"
                     @click="onAddToCartAndAsk"
                     class="action-button"
@@ -97,7 +97,6 @@
     </v-card>
     <v-alert v-else type="info">현재 등록된 상품이 없습니다!</v-alert>
     <v-spacer></v-spacer>
-
     <v-row justify="center" class="mt-4">
         <v-col cols="auto">
             <router-link
@@ -110,7 +109,7 @@
                 </v-btn>
             </router-link>
         </v-col>
-        <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
+        <button v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" class="Btn" @click="deleteCompanyReport">
             <div class="sign">
                 <svg
                 viewBox="0 0 16 16"
@@ -127,7 +126,7 @@
             </div>
             <div class="text">Delete</div>
         </button>
-        <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
+        <button v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" class="pushable" @click="goToModifyPage">
             <span class="shadow"></span>
             <span class="edge"></span>
             <span class="front"> Modify </span>
@@ -178,7 +177,10 @@ import userLogModule from "@/userLog/store/userLogModule";
 const companyReportModule = "companyReportModule";
 const cartModule = "cartModule";
 const orderModule = "orderModule";
-const authenticationModule = "authenticationModule"
+const accountModule = "accountModule";
+const authenticationModule = "authenticationModule";
+const googleAuthenticationModule = "googleAuthenticationModule";
+const naverAuthenticationModule = "naverAuthenticationModule";
 
 export default {
   props: {
@@ -200,7 +202,11 @@ export default {
   },
   computed: {
     ...mapState(companyReportModule, ["companyReport", "companyReports"]),
-    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isKakaoAdmin"]),
+    ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle",'isGoogleAdmin']),
+    ...mapState(accountModule, ["loginType", "isAuthenticatedNormal",'isNormalAdmin']),
+    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver",'isNaverAdmin']),
+    formattedSummary() {return this.summary.replace(/\n/g, '<br>');}
   },
   methods: {
     ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango"]),
@@ -320,7 +326,7 @@ export default {
         router.push("/companyReport/list")
     },
     getCompanyReportImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`)
+      return require(`@/assets/images/uploadImages/${imageName}`)
     },
     confirmCheckout() {
       this.isCheckoutDialogVisible = true;
@@ -355,7 +361,10 @@ export default {
   mounted(){
     const adminToken = sessionStorage.getItem("adminToken")
     if (adminToken){
-      this.$store.state.authenticationModule.isAdmin = true
+      this.$store.state.authenticationModule.isKakaoAdmin = true
+        this.$store.state.googleAuthenticationModule.isGoogleAdmin = true
+        this.$store.state.naverAuthenticationModule.isNaverAdmin = true
+        this.$store.state.accountModule.isNormalAdmin = true
     }
   }
 };

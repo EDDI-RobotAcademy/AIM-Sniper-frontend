@@ -134,11 +134,11 @@ export default {
             
         }
         const goToNaverLogin = async () => {
-            alert("현재 로그인 검수중입니다.")
-            // sessionStorage.setItem('loginType', "NAVER")
-            // await store.dispatch(
-            //     "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
-            // )
+            // alert("현재 로그인 검수중입니다.")
+            sessionStorage.setItem('loginType', "NAVER")
+            await store.dispatch(
+                "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
+            )
         }
 
         return {
@@ -149,7 +149,7 @@ export default {
     },
     computed: {
     ...mapState(authenticationModule, ["isAuthenticatedKakao"]),
-    ...mapState(accountModule, ["isAuthenticatedNormal", "loginType",'isAdmin']),
+    ...mapState(accountModule, ["isAuthenticatedNormal", "loginType",'isKakaoAdmin']),
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle"]),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver"]),
     },
@@ -178,7 +178,7 @@ export default {
                         sessionStorage.removeItem('normalToken');
                         sessionStorage.setItem('adminToken', true);
                         this.REQUEST_IS_ADMIN_TO_DJANGO(true);
-                        // console.log(this.$store.state.accountModule.isAdmin)
+                        // console.log(this.$store.state.accountModule.isKakaoAdmin)
                         this.goToHome();
                     } else {
                         // Normal 처리

@@ -36,7 +36,7 @@ export default {
                 }
 
                 const roleType = await this.requestRoleTypeToDjango(email)
-                console.log(roleType.data.roleType)
+                // console.log(roleType.data.roleType)
                 if (roleType.data.roleType == "ADMIN"){
                     sessionStorage.setItem('adminToken',sessionStorage.getItem('userToken'))
                     sessionStorage.removeItem('userToken')
