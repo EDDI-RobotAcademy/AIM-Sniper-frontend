@@ -21,7 +21,7 @@
             outlined
           ></v-text-field>
         </v-col>
-        <v-col v-if="isAdmin" cols="auto" class="text-right">
+        <v-col v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" cols="auto" class="text-right">
           <v-btn
             :to="{ name: 'CompanyReportRegisterPage' }"
             class="register-btn"
@@ -104,7 +104,7 @@ const authenticationModule = "authenticationModule";
 export default {
   computed: {
     ...mapState("companyReportModule", ["companyReports"]),
-    ...mapState(authenticationModule, ["isAdmin"]),
+    ...mapState(authenticationModule, ["isKakaoAdmin"]),
     paginatedCompanyReports() {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredCompanyReports.slice(
@@ -155,7 +155,7 @@ export default {
 
       if (!email) {
         // email이 없으면 함수가 동작하지 않음
-        console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
+        // console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
         return;
       }
       this.requestCountClickToDjango({
@@ -168,7 +168,7 @@ export default {
       this.currentPage = page;
     },
     getImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`);
+      return require(`@/assets/images/uploadImages/${imageName}`);
     },
   },
   mounted() {

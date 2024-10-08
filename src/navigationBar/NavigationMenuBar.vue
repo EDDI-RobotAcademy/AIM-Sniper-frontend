@@ -205,7 +205,7 @@ export default {
       if (sessionStorage.getItem("loginType") == "KAKAO") {
         this.requestKakaoLogoutToDjango();
         this.$store.state.authenticationModule.isAuthenticatedKakao = false;
-        this.$store.state.authenticationModule.isAdmin = false;
+        this.$store.state.authenticationModule.isKakaoAdmin = false;
       }
       if (sessionStorage.getItem("loginType") == "GOOGLE") {
         this.requestGoogleLogoutToDjango();
