@@ -14,7 +14,11 @@
                 <v-card outlined>
                   <v-card-text>
                     <h4 v-html="formatQuestionTitle(index, question)"></h4>
-  
+                    <v-row v-if="question.images.length !==0">
+                      <v-col v-for="(image, index) in question.images" :key="index" cols="4" class="mb-4">
+                        <v-img :src="getImageUrl(image)" aspect-ratio="1.0" contain></v-img>
+                      </v-col>
+                    </v-row>
                     <v-text-field
                       v-if="question.questionType === 'text'"
                       v-model="question.answer"
@@ -102,7 +106,6 @@ export default {
     async mounted() {
       this.email = sessionStorage.getItem("email");
       if (this.email) {
-        // console.log("Logged In");
         this.accountId = await this.requestAccountIdToDjango(this.email)
         this.isFirstAccept = await this.requestCheckIsFirstSubmit({accountId : this.accountId})
         if (this.isFirstAccept) {
@@ -155,7 +158,9 @@ export default {
             return `${index +1}. ${question.questionTitle} <span class="essential">${question.essential ? '* 필수' : '* 선택'}</span>`;
         }
       },
-  
+      getImageUrl(imageName) {
+        return require(`@/assets/images/uploadImages/${imageName}`);
+      },
       async onSubmit() {
         console.log("surveyForm : ", this.surveyForm)
         let isValid = true;
