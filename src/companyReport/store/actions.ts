@@ -20,6 +20,12 @@ export type CompanyReportActions = {
     requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
         companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
     }): Promise<void>
+    requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
+    requestCompanyReportInfoToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
+    requestCompanyReportSummaryToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
 }
 
 const actions: CompanyReportActions = {
@@ -84,6 +90,34 @@ const actions: CompanyReportActions = {
             // console.log('수정 성공!')
         } catch (error) {
             console.log('requestModifyCompanyReportToDjango() 과정에서 문제 발생')
+            throw error
+        }
+    },
+    async requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,companyReportName:string
+    ) :Promise<any>{
+        try {
+            const data =  await axiosInst.djangoAxiosInst.post('company_report/finance',{companyReportName})
+            return data
+        }catch (error){
+            console.log('requestCompanyReportFinanceToDjango 중 문제 발생')
+            throw error
+        }
+    },
+    async requestCompanyReportInfoToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>{
+        try{
+            return await axiosInst.djangoAxiosInst.post('company_report/info',{companyReportName})
+        }catch(error){
+            console.log('requestCompanyReportInfoToDjango 중 문제 발생')
+            throw error
+        }
+    },
+    async requestCompanyReportSummaryToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>{
+        try{
+            return await axiosInst.djangoAxiosInst.post('company_report/summary',{companyReportName})
+        }catch(error){
+            console.log('requestCompanyReportSummaryToDjango 중 문제 발생')
             throw error
         }
     },

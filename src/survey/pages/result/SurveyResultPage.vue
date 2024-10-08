@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto my-12" max-width="800" v-if="resultForm">
+  <v-card class="mx-auto my-12" max-width="600" v-if="resultForm">
     <v-card-title>
       <span class="headline">{{ resultForm.surveyTitle }}</span>
     </v-card-title>
@@ -13,12 +13,14 @@
             <v-card-text>
               <h4>{{ index + 1 }}. {{ question.questionTitle }}</h4>
               <v-container v-if="question.questionType === 'text'">
-                <span>{{ question.answer }}</span>
+                <v-container style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 6px;">
+                  <v-row v-for="answer in question.answer" :key="answer">
+                    <v-col>{{ answer }}</v-col>
+                  </v-row>
+                </v-container>
               </v-container>
               <v-container v-if="question.questionType === 'radio' || question.questionType === 'checkbox'">
-                <span>{{ question.selection }}  -- 아직 차트 미완</span>
-
-                <div :ref="'chart_' + index" class="chart-container"></div>
+                <div :ref="`chart_${index}`" class="chart-container"></div>
               </v-container>
             </v-card-text>
           </v-card>
@@ -43,86 +45,76 @@ export default {
   computed: {
     ...mapState(surveyModule, ['resultForm']),
   },
-  mounted() {
-    this.requestSurveyResultToDjango(this.surveyId).then(() => {
-      this.$nextTick(() => {
-        this.resultForm.surveyQuestions.forEach((question, index) => {
-          this.drawChart(question.selection, index);
-        });
-      });
+  async mounted() {
+    await this.requestSurveyResultToDjango(this.surveyId);
+    
+    this.resultForm.surveyQuestions.forEach((question, index) => {
+      if (question.questionType === 'radio' || question.questionType === 'checkbox') {
+        this.drawBarChart(question, index);
+      }
     });
-    window.addEventListener('resize', this.handleResize);
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     ...mapActions(surveyModule, ['requestSurveyResultToDjango']),
 
-    handleResize() {
-      this.resultForm.surveyQuestions.forEach((question, index) => {
-        this.drawChart(question.selection, index);
-      });
-    },
+    drawBarChart(question, index) {
+      const data = question.selection;
+      const keys = Object.keys(data);
+      const values = Object.values(data);
+      const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-    drawChart(data, index) {
-      const element = this.$refs['chart_' + index]; // 각 차트 컨테이너에 접근
-      if (!element) return;
+      const element = this.$refs[`chart_${index}`][0];
+      d3.select(element).selectAll('*').remove();
 
-      try {
-        const keys = Object.keys(data); // key 값
-        const values = Object.values(data); // value 값
+      const svg = d3.select(element)
+        .append('svg')
+        .attr('width', 400)
+        .attr('height', 250);
 
-        const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-        const width = element.clientWidth - margin.left - margin.right;
-        const height = element.clientHeight - margin.top - margin.bottom;
+      const xScale = d3.scaleBand()
+        .domain(keys)
+        .range([0, 400])
+        .padding(0.1);
 
-        d3.select(element).selectAll('*').remove();
+      const yScale = d3.scaleLinear()
+        .domain([0, d3.max(values)])
+        .range([200, 0]);
+        
 
-        const svg = d3.select(element)
-          .append('svg')
-          .attr('width', width + margin.left + margin.right)
-          .attr('height', height + margin.top + margin.bottom)
-          .append('g')
-          .attr('transform', `translate(${margin.left},${margin.top})`);
+      svg.selectAll('.bar')
+        .data(values)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', (d, i) => xScale(keys[i]))
+        .attr('y', d => yScale(d))
+        .attr('width', xScale.bandwidth())
+        .attr('height', d => 200 - yScale(d))
+        .attr('fill', (d, i) => colorScale(i));  
 
-        const x = d3.scaleBand()
-          .domain(keys)
-          .range([0, width])
-          .padding(0.1);
+      svg.selectAll('.text')
+        .data(values)
+        .enter()
+        .append('text')
+        .attr('class', 'value-text')
+        .attr('x', (d, i) => xScale(keys[i]) + xScale.bandwidth() / 2)
+        .attr('y', d => (yScale(d) > 20 ? yScale(d) - 5 : yScale(d) + 15)) 
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .style('fill', 'black')
+        .text(d => d);
 
-        const y = d3.scaleLinear()
-          .domain([0, d3.max(values)])
-          .nice()
-          .range([height, 0]);
-
-        svg.append('g')
-          .selectAll('rect')
-          .data(values)
-          .enter().append('rect')
-          .attr('x', (d, i) => x(keys[i]))
-          .attr('y', d => y(d))
-          .attr('width', x.bandwidth())
-          .attr('height', d => height - y(d))
-          .attr('fill', 'steelblue');
-
-        svg.append('g')
-          .attr('class', 'x-axis')
-          .attr('transform', `translate(0,${height})`)
-          .call(d3.axisBottom(x));
-
-        svg.append('g')
-          .attr('class', 'y-axis')
-          .call(d3.axisLeft(y));
-      } catch (error) {
-        console.error("Error drawing chart:", error);
-
-      }
-    },
-  },
-};
+      svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + 200 + ")")
+        .call(d3.axisBottom(xScale)
+          .ticks(5)
+          .tickSize(0)
+          .tickPadding(10)); 
+    }
+  }
+}
 </script>
-
 <style scoped>
 .headline {
   font-weight: bold;
@@ -130,6 +122,6 @@ export default {
 
 .chart-container {
   width: 100%;
-  height: 400px; /* 원하는 높이로 설정 */
+  height: 100%;
 }
 </style>

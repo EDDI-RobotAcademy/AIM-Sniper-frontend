@@ -1,46 +1,39 @@
 <template>
-  <v-app-bar color="rgba(82,82,82,0.2)" app dark height="75" style="backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"> 
-    <v-toolbar-title class="navbar-title" style="display: flex; align-items: center; width: auto;">
-      <v-btn text @click="goToHome" class="navbar-title-btn" style="width: 100%; display: flex; align-items: center; height: auto">
-        <v-img
-          class="home-icon"
-          src="@/assets/images/fixed/AiM_BI_Basic.png"
-          alt="AIM LOGO"
-          contain
-          height="125" 
-          width="75" 
-          cover
-        ></v-img>
-        
-        <p style="font-size: 14px; font-weight: bold; text-transform: none; width: auto;">
-          &nbsp; <span style="color: blue; font-weight: bold;">A</span>i company-report&nbsp;
-          <span style="color: blue; font-weight: bold;">I</span>nsight&nbsp;
-          <span style="color: blue; font-weight: bold;">M</span>arket
-          <span v-if="isAdmin" style="color: cyan; font-weight: bold;">(Admin Page)</span>          
-        </p>
-
-      </v-btn>
-    </v-toolbar-title>
+  <v-app-bar color="transparent" app dark height="72" class="menu-bar">        
+    
+    <v-btn text @click="goToHome" class="navbar-logo-btn">
+      <v-img
+        class="home-icon"
+        src="@/assets/images/fixed/AIM_BI_White.png"
+        alt="AIM LOGO"
+        contain
+        height="56" 
+        width="56"
+        cover
+      ></v-img>       
+    </v-btn>   
+    
     <v-spacer></v-spacer>
 
-    <v-btn v-if="isNormalAdmin ||
-      isGoogleAdmin ||
-      isKakaoAdmin ||
-      isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
-      <b>survey</b>
+    <v-btn text @click="goToHome" class="btn-text">
+      HOME
     </v-btn>
-    <v-btn v-if="!isNormalAdmin &&
-      !isGoogleAdmin &&
-      !isKakaoAdmin &&
-      !isNaverAdmin" text @click="goToSurvey" class="btn-text">
-      <b>survey</b>
-    </v-btn> 
+
+    <v-btn v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
+      SURVEY
+    </v-btn>
+    <v-btn v-if="!isNormalAdmin && !isGoogleAdmin && !isKakaoAdmin && !isNaverAdmin" text @click="goToSurvey" class="btn-text">
+      SURVEY
+    </v-btn>
+
     <v-btn text @click="goToProductList" class="btn-text">
-      <b>Company Report</b>
+      COMPANY REPORT
     </v-btn>   
     <v-btn text @click="goToAiInterviewPage" class="btn-text">
-      <b>AI Interview</b>
+      AI INTERVIEW
     </v-btn>
+
+    <v-spacer></v-spacer>
 
     <v-menu
       v-if="
@@ -87,31 +80,22 @@
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-menu>
-    <v-btn
-      v-if="
-        !isAuthenticatedKakao &&
-        !isAuthenticatedGoogle &&
-        !isAuthenticatedNormal &&
-        !isAuthenticatedNaver &&
-        !isNormalAdmin &&
-        !isKakaoAdmin &&
-        !isGoogleAdmin &&
-        !isNaverAdmin
-      "
-      text
-      @click="signIn"
-      class="btn-text"
-    >
-      <v-icon left>mdi-login</v-icon>
-      <b> &nbsp; LOGIN</b>
+    </v-menu>    
+
+    <v-btn v-if="!isAuthenticatedKakao && !isAuthenticatedGoogle && !isAuthenticatedNormal && !isAuthenticatedNaver && !isNormalAdmin && !isKakaoAdmin && !isGoogleAdmin && !isNaverAdmin" text @click="signIn" class="btn-login">
+      <!-- <v-icon left>mdi-login</v-icon> -->
+       LOGIN
     </v-btn>
-    <v-btn v-else text @click="signOut" class="btn-text">
-      <v-icon left>mdi-logout</v-icon>
-      <b> &nbsp; LOGOUT</b>
+    
+    <v-btn v-else text @click="signOut" class="btn-logout">
+      <!-- <v-icon left>mdi-logout</v-icon> -->
+       LOGOUT
     </v-btn>
+    
   </v-app-bar>
 </template>
+
+
 
 <script>
 import "@mdi/font/css/materialdesignicons.css";
@@ -221,7 +205,7 @@ export default {
       if (sessionStorage.getItem("loginType") == "KAKAO") {
         this.requestKakaoLogoutToDjango();
         this.$store.state.authenticationModule.isAuthenticatedKakao = false;
-        this.$store.state.authenticationModule.isAdmin = false;
+        this.$store.state.authenticationModule.isKakaoAdmin = false;
       }
       if (sessionStorage.getItem("loginType") == "GOOGLE") {
         this.requestGoogleLogoutToDjango();
@@ -239,11 +223,11 @@ export default {
         if (sessionStorage.getItem("fileKey")) {
           sessionStorage.removeItem("fileKey");
         }
-        this.$store.state.accountModule.isAuthenticatedNormal = false;
-        this.$store.state.authenticationModule.isKakaoAdmin = false
-        this.$store.state.googleAuthenticationModule.isGoogleAdmin = false
-        this.$store.state.naverAuthenticationModule.isNaverAdmin = false
-        this.$store.state.accountModule.isNormalAdmin = false
+      this.$store.state.accountModule.isAuthenticatedNormal = false;
+      this.$store.state.authenticationModule.isKakaoAdmin = false
+      this.$store.state.googleAuthenticationModule.isGoogleAdmin = false
+      this.$store.state.naverAuthenticationModule.isNaverAdmin = false
+      this.$store.state.accountModule.isNormalAdmin = false
       }
       router.push("/");
     },
@@ -280,62 +264,76 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
-
-.navbar-title {
-  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
-  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
-  letter-spacing: 0.3px;  
-  font-weight: bold;
-  color: black;
-  display: flex;
-  align-items: center; /* 수직 정렬 */
+.menu-bar {
+  background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%));
 }
-
-.navbar-title-btn {
-  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
-  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
-  letter-spacing: 0.3px;
-  color: black;
+/* AIM 로고 이미지 버튼 */
+.navbar-logo-btn {
   display: flex;
-  align-items: center; /* 로고와 텍스트 수직 정렬 */
+  align-items: center;
+  margin-left: 80px !important;
 }
 
 .btn-text {
-  font: 0.75em Verdana, Dotum, AppleGothic, sans-serif;
-  font-family: 'Knockout-51', "Ubuntu", "Noto Sans KR", "Nanum Gothic", Verdana, Dotum, AppleGothic, sans-serif;
-  letter-spacing: 0.3px;
-  font-size: 14px;
-  margin-right: 14px;
-  color: black;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0px 10px;
+  margin: 0px 10px;
 }
 
-.v-btn:hover {
-  background-color: rgba(0, 255, 55, 0.25);
+.btn-login {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700px;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;  
+  margin-right: 80px !important;
+  border: 1px solid white;
+  color: white; /* 텍스트 색상도 흰색으로 변경 */  
 }
 
-.v-btn:hover .btn-text {
+.btn-logout {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700px;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;  
+  margin-right: 80px !important;
+  border: 1px solid white;
+  color: white; /* 텍스트 색상도 흰색으로 변경 */  
+}
+
+
+.btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  
+}
+/* 클릭해서 선택되었을시 표시 */
+.btn-text:focus {
+  background-color: rgba(255, 255, 255, 0.25); 
   color: white;
-}
-
-.v-btn:focus {
-  background-color: rgba(0, 255, 55, 0.25); /* 클릭해서 선택되었을시 표시 */
-  color: white;
-}
-
-.v-btn:focus .btn-text {
-  color: white;
+  
 }
 
 .v-menu > .v-overlay__content > .v-card,
 .v-menu > .v-overlay__content > .v-sheet,
-.v-menu > .v-overlay__content > .v-list {
-  background-color: rgba(2, 74, 27, 0.479);
-  color: rgb(0, 255, 0);
-  border: 2px solid rgb(0, 255, 0);
+.v-menu > .v-overlay__content > .v-list {  
+  background-color: rgba(0, 0, 0, 0.25);
+  color: white;
+  border: 3px solid white
 }
 
 .v-list-item:hover {
-  background-color: rgba(0, 255, 55, 0.25);
+  background-color: rgba(255, 255, 255, 0.25);
+  
 }
 </style>
