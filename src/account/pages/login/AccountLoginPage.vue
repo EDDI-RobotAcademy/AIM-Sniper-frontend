@@ -134,11 +134,11 @@ export default {
             
         }
         const goToNaverLogin = async () => {
-            // alert("현재 로그인 검수중입니다.")
-            sessionStorage.setItem('loginType', "NAVER")
-            await store.dispatch(
-                "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
-            )
+            alert("현재 로그인 검수중입니다.")
+            // sessionStorage.setItem('loginType', "NAVER")
+            // await store.dispatch(
+            //     "naverAuthenticationModule/requestNaverOauthRedirectionToDjango"
+            // )
         }
 
         return {
