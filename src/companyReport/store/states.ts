@@ -7,7 +7,7 @@ export interface CompanyReport {
     companyReportId: number
     companyReportName: string
     companyReportPrice: number
-    writer: string
+    companyReportTitleImage: string
     content: string
     companyReportCategory: string
     regDate: string
