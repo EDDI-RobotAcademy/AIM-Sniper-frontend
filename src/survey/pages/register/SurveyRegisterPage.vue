@@ -49,6 +49,21 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
+              <v-row>
+                <v-col cols="8">
+                  <v-file-input
+                    v-model="uploadedImage"
+                    label="사진 등록"
+                    multiple
+                    @change="onFileChange(uploadedImage)"
+                  />
+                  <v-container v-if="uploadedImages.length !== 0">
+                    <ul>
+                      <li class="li-margin" v-for="(image, index) in uploadedImages" :key="index">{{ image.name }}</li>
+                    </ul>
+                  </v-container>
+                </v-col>
+              </v-row>
               <v-btn :disabled="questionTitle === null || questionTitle === ''" 
               @click="createQuestion(questionType)">완료</v-btn>
             </v-card-text>
@@ -66,6 +81,21 @@
                 :rules="[v => !!v || '질문 제목은 필수 항목입니다.']"
                 required
               ></v-text-field>
+              <v-row>
+                <v-col cols="8">
+                  <v-file-input
+                    v-model="uploadedImage"
+                    label="사진 등록"
+                    multiple
+                    @change="onFileChange(uploadedImage)"
+                  />
+                  <v-container v-if="uploadedImages.length !== 0">
+                    <ul>
+                      <li class="li-margin" v-for="(image, index) in uploadedImages" :key="index">{{ image.name }}</li>
+                    </ul>
+                  </v-container>
+                </v-col>
+              </v-row>
               <v-btn v-if="readyToCreateQuestionTitle" 
               :disabled="questionTitle === null || questionTitle === ''" 
               @click="createQuestion(questionType)">질문 생성</v-btn>
@@ -102,6 +132,12 @@
           <v-card outlined>
             <v-card-text>
               <h4 v-html="formatQuestionTitle(index, question)"></h4><br>
+              <v-row v-if="question.images.length !==0">
+                <v-col v-for="(image, index) in question.images" :key="index" cols="4" class="mb-4">
+                  <span>추가된 이미지 {{ image.name }}</span>
+                  <!-- <v-img :src="getImageUrl(image.name)" aspect-ratio="1.0" contain></v-img> -->
+                </v-col>
+              </v-row>
               <v-text-field
                 v-if="question.questionType === 'text'"
                 label="답변을 입력하세요"
@@ -165,6 +201,8 @@ export default {
       generateOptions: ['text', 'radio', 'checkbox'],
       isFormDirty: false,
       randomString: '',
+      uploadedImages: [],
+      uploadedImage: null
     };
   },
   methods: {
@@ -179,9 +217,7 @@ export default {
       }
     
       this.surveyId = await this.requestCreateSurveyFormToDjango({ randomString: this.randomString })
-      // console.log('survey id', this.surveyId)
-      // console.log('randomString: ', this.randomString)
-      
+
       if (this.surveyId !== '') {
         this.formCreated = true;
         this.start = false;
@@ -191,39 +227,42 @@ export default {
     async sendTitleAndDescription() {
       const payload = {surveyId : this.surveyId, surveyTitle: this.surveyTitle, surveyDescription : this.surveyDescription}
       const titleDescriptionSaved = await this.requestRegisterTitleAndDescriptionToDjango(payload)
-      // console.log('제목/내용 저장 됐나요? :', titleDescriptionSaved)
+
       if (titleDescriptionSaved) {
         this.titleAndDescriptionCreated = true
         this.showTitleDescription = false;
       }
     },
     async createQuestion(questionType) {
-      if (this.questionTitle === '') {
-        alert('내용을 입력하세요');
-        return;
+      if (!this.questionTitle) {
+          alert('내용을 입력하세요');
+          return;
       }
-      const payload = { 
-        surveyId: this.surveyId, 
-        questionTitle: this.questionTitle, 
-        questionType: questionType, 
-        isEssential: this.isEssential 
-      }
-      this.questionId = await this.requestCreateQuestionToDjango(payload);
-      // console.log('question id : ', this.questionId)
-      this.readyToCreateQuestionTitle = false;
+
+      const imageFormData = new FormData();
+      imageFormData.append("surveyId", this.surveyId);
+      imageFormData.append("questionTitle", this.questionTitle);
+      imageFormData.append("questionType", this.questionType);
+      imageFormData.append("isEssential", this.isEssential ? 'true' : 'false');
       
+      this.uploadedImages.forEach(image => {
+          imageFormData.append("images", image);
+      });
+
+      this.questionId = await this.requestCreateQuestionToDjango(imageFormData);
+      this.readyToCreateQuestionTitle = false;
+
       if (this.questionId !== null && questionType === 'text') {
-        const preForm = {questionTitle: this.questionTitle, questionType: questionType, isEssential: this.isEssential }
-        this.surveyQuestions.push(preForm);
+          const preForm = { questionTitle: this.questionTitle, questionType: questionType, isEssential: this.isEssential, images: this.uploadedImages }
+          this.surveyQuestions.push(preForm);
         this.resetQuestionFields();
-      }
+        }
     },
     async createSelection() {
       if (this.option.trim() !== '') {
         this.selection.push(this.option);
         const payload = { questionId: this.questionId, selection: this.option}
         this.selectionId = await this.requestRegisterSelectionToDjango(payload)
-        // console.log('selectionId 저장됨 : ', this.selectionId)
         this.option = '';
         this.isFormDirty = true;
       } else {
@@ -236,7 +275,7 @@ export default {
         return;
       }
       if (this.questionId !== null && this.selectionId !== null) {
-        const preForm = {questionTitle: this.questionTitle, questionType: this.questionType, isEssential: this.isEssential, selection: this.selection }
+        const preForm = {questionTitle: this.questionTitle, questionType: this.questionType, isEssential: this.isEssential, selection: this.selection, images : this.uploadedImages }
         this.surveyQuestions.push(preForm);
         this.resetQuestionFields();
       }
@@ -246,12 +285,19 @@ export default {
       this.questionType = null;
       this.isFormDirty = true; 
     },
+    onFileChange(files) {
+      const newImages = Array.from(files);
+      this.uploadedImages = [...this.uploadedImages, ...newImages]; 
+      console.log('값 추가됨? ', this.uploadedImages)
+      this.uploadedImage=null
+    },
     resetQuestionFields() {
       this.questionTitle = '';
       this.selection = [];
       this.isAdded = false;
       this.questionType = null;
       this.isEssential = false;
+      this.uploadedImages= [];
       this.isFormDirty = true;
       this.readyToCreateQuestionTitle = true;
     },
@@ -266,7 +312,19 @@ export default {
       else {
         return `${index +1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
       }
-      },
+    },
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    async getImageUrl(imageName) {
+      try {
+          await this.sleep(2500);
+          return require(`@/assets/images/uploadImages/${imageName}`);
+      } catch (e) {
+          console.error("Image not found:", imageName);
+          return '';
+        }
+    },
     disableEnter(event) {
       event.preventDefault();
       event.stopPropagation();
