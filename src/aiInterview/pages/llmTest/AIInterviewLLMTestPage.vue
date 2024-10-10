@@ -3,13 +3,15 @@
     <v-container v-if="!start"  align=center height="100%">
       <br><br><br>
       <h2>안녕하십니까? AI 모의 면접 서비스입니다.</h2><br>
-      <v-container class="draw-line">
-        <v-card-title>안내 사항</v-card-title>
-        <v-card-text>- 본 면접은 ~~를 위해 사용하실 수 있습니다.</v-card-text>
-        <v-card-text>- 총 6번의 질문이 제공됩니다.</v-card-text>
-      </v-container>
-      <v-card-text>면접 서비스를 시작하시려면 아래 버튼을 눌러주세요.</v-card-text>
-      <v-btn @click="startInterview">START</v-btn>
+      <v-container class="draw-line" align=start>
+        <v-card-title align=center><strong>※ 사전 공지 ※</strong></v-card-title><br>
+        <li class="li">본 면접은 특정 기업 및 직무에 맞추어진 면접이 아닌 <strong>인성 면접</strong>임을 알려드립니다.</li><br>
+        <li class="li">총 <strong>5개</strong>의 질문이 제공됩니다.</li><br>
+        <li class="li">현재 서비스에는 <strong>답변 시간 제한</strong>이 없으나 추후 추가될 예정입니다.</li><br>
+      </v-container><br>
+      <v-card-text><strong>면접 서비스를 시작하시려면 아래 버튼을 눌러주세요.</strong></v-card-text>
+      <v-btn @click="startInterview" color="primary">START</v-btn>
+      
     </v-container>
     <v-container v-if="start" align="center">
       <div v-if="visible" class="interview-container">
@@ -90,7 +92,7 @@ export default ({
       this.start = true;
     },
     async getAIQuestions() { 
-      console.log('getAIQuestions()')   
+      // console.log('getAIQuestions()')   
       if (this.aiResponseList.length === 0) {
         const sessionId = Math.floor(Math.random() * 200) + 1;
         this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
@@ -140,7 +142,7 @@ export default ({
         this.chatHistory[lastIndex].content = this.currentAIMessage;
       } else {
         this.chatHistory.push({ type: 'ai', content: this.currentAIMessage });
-        console.log('chathistroy에 AI 질문 추가: ', this.chatHistory)
+        // console.log('chathistroy에 AI 질문 추가: ', this.chatHistory)
       }
     },
 
@@ -165,7 +167,7 @@ export default ({
       }
       if (this.userInput.trim()) {
         this.chatHistory.push({ type: 'user', content: this.userInput });
-        console.log('chathistroy에 User 답변 추가: ', this.chatHistory);
+        // console.log('chathistroy에 User 답변 추가: ', this.chatHistory);
         this.userInput = '';
         this.adjustTextareaHeight();
         this.isLoading = true; 
@@ -173,7 +175,7 @@ export default ({
 
         setTimeout(async () => {
           if (this.aiResponseList.length === 0) {
-            console.log('나오면 안됨')
+            // console.log('나오면 안됨')
             const sessionId = Math.floor(Math.random() * 200) + 1;
             this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
           }
@@ -206,7 +208,11 @@ export default ({
   border: 1px solid #333; 
   padding: 16px;
   border-radius: 10px;
-  width: 40%;
+  width: 57%;
+}
+
+.li {
+  margin-left: 3%;
 }
 
 .interview-container {

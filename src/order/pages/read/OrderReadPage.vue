@@ -4,15 +4,14 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            <span>구매한 이모티콘</span>
-            <v-icon class="ml-auto">mdi-emoticon-happy-outline</v-icon>
+            <span>구매한 보고서</span><br>
           </v-card-title>
           <v-card-text>
             <v-table>
               <thead>
                 <tr class="table-header">
-                  <th>이모티콘</th>
-                  <th>이름</th>
+                  <th></th>
+                  <th>기업명</th>
                   <th>가격</th>
                   <th></th>
                 </tr>
@@ -44,9 +43,10 @@
         </v-card>
       </v-col>
     </v-row>
+    <br>
     <v-row justify="center">
       <v-col cols="auto">
-        <v-btn color="#E3EF76" @click="goToLastPage">
+        <v-btn color="primary" @click="goToLastPage">
           <v-icon left>mdi-arrow-left</v-icon>
           <span>돌아가기</span>
         </v-btn>
