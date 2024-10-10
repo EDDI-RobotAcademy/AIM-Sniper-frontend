@@ -3,7 +3,7 @@
     <v-col cols="2" class="d-flex align-center justify-center"> </v-col>
 
     <v-card v-if="companyReport">
-      <v-card-title>상품 정보</v-card-title>
+      <v-card-title>기업 분석 정보</v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -52,19 +52,20 @@
               <v-row>
                 <v-col cols="12">
                   <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
-                    color="yellow darken-2"
+                    color="primary"
                     dark
                     @click="confirmCheckout"
                     class="action-button"
+                    style="margin-right: 10px;"
                   >
-                    <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>구매하기
+                    <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>구매
                   </v-btn>
                   <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
-                    color="success"
+                    color="primary"
                     @click="onAddToCartAndAsk"
                     class="action-button"
                   >
-                    <v-icon left>mdi-cart-plus</v-icon>장바구니에 추가
+                    <v-icon left>mdi-cart-plus</v-icon>장바구니
                   </v-btn>
                 </v-col>
               </v-row>
@@ -129,7 +130,7 @@
             :to="{ name: 'CompanyReportListPage' }"
             class="router-link no-underline"
             >
-                <v-btn color="#E3EF76" class="action-button">
+                <v-btn color="primary" class="action-button">
                     <v-icon left>mdi-arrow-left</v-icon>
                     <span>돌아가기</span>
                 </v-btn>
@@ -255,7 +256,6 @@ export default {
     ...mapActions(userLogModule, ["requestCountClickToDjango"]),
     async onPurchase() {
       this.isCheckoutDialogVisible = false;
-      // console.log('이모티콘 구매')
       try {
         const email = sessionStorage.getItem("email");
         const payload = {
@@ -267,7 +267,7 @@ export default {
           await this.requestOrderItemDuplicationCheckToDjango(payload);
         // console.log('isDuplicate:', isDuplicatedOrderItem)
         if (isDuplicatedOrderItem) {
-          alert("이미 구매하신 상품입니다.");
+          alert("이미 구매하신 보고서입니다.");
         } else {
           try {
             const email = sessionStorage.getItem("email");
@@ -312,9 +312,9 @@ export default {
           await this.requestCartItemDuplicationCheckToDjango(payload);
         // console.log('isDuplicate:', isDuplicatedOrderItem)
         if (isDuplicatedOrderItem) {
-          alert("이미 구매하신 상품입니다.");
+          alert("이미 구매하신 보고서입니다.");
         } else if (isDuplicatedCartItem) {
-          alert("장바구니에 있는 상품입니다.");
+          alert("장바구니에 있는 보고서입니다.");
         } else {
           try {
             this.isGoToCartListDialogVisible = true;

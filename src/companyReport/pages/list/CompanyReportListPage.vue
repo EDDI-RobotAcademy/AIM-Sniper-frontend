@@ -36,7 +36,7 @@
       <h1
         class="section-title"
       >
-        전체 보고서 <v-icon small>mdi-chevron-down</v-icon>
+        전체 기업 목록 <v-icon small>mdi-chevron-down</v-icon>
       </h1>
       <br>
       <br>

@@ -29,9 +29,25 @@
     <v-btn text @click="goToProductList" class="btn-text">
       COMPANY REPORT
     </v-btn>   
-    <v-btn text @click="goToAiInterviewPage" class="btn-text">
+    <!-- <v-btn text @click="goToAiInterviewPage" class="btn-text">
       AI INTERVIEW
-    </v-btn>
+    </v-btn> -->
+    <v-menu>
+      <template v-slot:activator="{ props }">
+          <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
+            <b>AI Interview</b>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in aiInterviewPageList"
+            :key="index"
+            @click="item.action"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+    </v-menu>
 
     <v-spacer></v-spacer>
 
@@ -146,6 +162,20 @@ export default {
           }
         }
       ],
+      aiInterviewPageList: [
+        {
+          title: "대화형",
+          action: () => {
+            this.goToAiInterviewPage();
+          },
+        },
+        {
+          title: "단일 질문 노출형",
+          action: () =>{
+            this.goToLlmTestPage();
+          }
+        },
+      ],
       surveyId:1,
       isUserAuthenticated: sessionStorage.getItem("isUserAuthenticated"),
     };
@@ -197,6 +227,9 @@ export default {
     },
     goToAiInterviewPage() {
       router.push("/ai-interview")
+    },
+    goToLlmTestPage() {
+      router.push("/ai-interview/llmTest")
     },
     signIn() {
       router.push("/account/login");
