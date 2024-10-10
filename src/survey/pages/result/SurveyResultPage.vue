@@ -108,9 +108,12 @@ export default {
         .attr("class", "grid")
         .attr("transform", "translate(0," + 200 + ")")
         .call(d3.axisBottom(xScale)
-          .ticks(5)
-          .tickSize(0)
-          .tickPadding(10)); 
+        .ticks(5)
+        .tickSize(0)
+        .tickPadding(10))
+        .selectAll("text")
+        .attr("transform", "rotate(45)")
+        .style("text-anchor", "start");
     }
   }
 }
