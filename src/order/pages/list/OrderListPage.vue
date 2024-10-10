@@ -5,11 +5,11 @@
       <v-row justify="center" v-if="orderList.length > 0">
         <v-col cols="12" md="10" lg="8">
           <h2 class="title">
-            <span>내 주문 목록</span>
+            <span>구매한 보고서 목록</span>
             <v-icon class="ml-auto" color="primary"
               >mdi-clipboard-list-outline</v-icon
             >
-          </h2>
+          </h2><br>
           <v-data-table
             v-model:items-per-page="perPage"
             :headers="headerTitle"
@@ -43,7 +43,7 @@
             <v-icon size="64" color="grey lighten-1"
               >mdi-package-variant-closed</v-icon
             >
-            <p class="no-orders-text">주문 기록이 없습니다.</p>
+            <p class="no-orders-text">구매 기록이 없습니다.</p>
           </v-card>
         </v-col>
       </v-row>

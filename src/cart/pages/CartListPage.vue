@@ -5,15 +5,15 @@
         <v-col cols="12">
           <v-card>
             <v-card-title>
-              내 장바구니<v-icon left>mdi-basket</v-icon>
+              내 장바구니<v-icon left>mdi-basket</v-icon><br>
             </v-card-title>
             <v-card-text>
               <v-table>
                 <thead>
                   <tr class="table-header">
                     <th>선택</th>
-                    <th>상품</th>
-                    <th>이름</th>
+                    <th></th>
+                    <th>기업명</th>
                     <th>가격</th>
                     <th></th>
                   </tr>
@@ -45,7 +45,7 @@
                     <td>{{ item.companyReportPrice }}</td>
                     <td>
                       <v-btn color="red" @click="removeItem(item)"
-                        >장바구니에서 제거</v-btn
+                        >제거</v-btn
                       >
                     </td>
                   </tr>
@@ -95,7 +95,7 @@
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <v-btn color="#E3EF76" @click="goToLastPage">
+          <v-btn color="primary" @click="goToLastPage">
             <v-icon left>mdi-arrow-left</v-icon>
             <span>돌아가기</span>
           </v-btn>
@@ -168,7 +168,7 @@ export default {
           (selectedItem) => selectedItem.cartItemId !== item.cartItemId
         );
       } catch (error) {
-        console.error("장바구니 상품 삭제 중 에러 발생:", error);
+        // console.error("장바구니 상품 삭제 중 에러 발생:", error);
       }
     },
     confirmCheckout() {
