@@ -1,4 +1,30 @@
 <template>
+  <div>
+    <v-row class="justify-center align-center mt-15 mb-15">
+      <v-col
+        v-for="(companyReport, index) in topNCompanyReports"
+        :key="index"
+        cols="12"
+        sm="4"
+        md="3"
+        lg="2"
+      >
+        <div class="popular-company">
+          <div class="border-top"></div>
+          <div class="img">
+              <img 
+              :src="getImageUrl(companyReport.companyReportTitleImage)">
+          </div>
+          <span>{{ companyReport.companyReportName }}</span>
+          <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+          <button 
+            @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
+            click
+          </button>
+        </div>
+      </v-col>
+    </v-row>
+  </div>
   <div class="background-image">
     <v-container>
       <v-row class="justify-center align-center">
@@ -136,6 +162,15 @@ export default {
       }
       return companyReports;
     },
+    topNCompanyReports() {
+      let companyReports = this.companyReports;
+      companyReports = companyReports.filter(
+          (companyReport) => {
+            return this.topList.some(topId => topId === companyReport.companyReportId);
+      });
+      
+      return companyReports;
+    },
   },
   data() {
     return {
@@ -146,10 +181,12 @@ export default {
       itemsPerPage: 8,
       allCompanyReportsVisible: true,
       purchase: false,
+      topN: 5,
+      topList: [],
     };
   },
   methods: {
-    ...mapActions("companyReportModule", ["requestCompanyReportListToDjango"]),
+    ...mapActions("companyReportModule", ["requestCompanyReportListToDjango", "requestTopNCompanyReportListToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]), //유저가 상품을 눌렀을 때 상품 클릭 수가 늘어남
     goToCompanyReportReadPage(companyReportId) {
       const email = sessionStorage.getItem('email');
@@ -182,8 +219,13 @@ export default {
       return require(`@/assets/images/uploadImages/${imageName}`);
     },
   },
-  mounted() {
+  async mounted() {
     this.requestCompanyReportListToDjango();
+
+    const response = await this.requestTopNCompanyReportListToDjango(this.topN);
+    if (response && response.data) {
+      this.topList = response.data;
+    }
   },
 };
 </script>
@@ -234,5 +276,66 @@ export default {
 .category-select .v-input__control {
   border-radius: 30px;
   background-color: #fff;
+}
+
+.popular-company {
+  width: 190px;
+  height: 240px;
+  width: 190px;
+  height: 240px;
+  background: #0A28B0;
+  border-radius: 15px;
+  box-shadow: 1px 5px 60px 11px #1f199d6b;
+}
+
+.popular-company .border-top {
+  width: 60%;
+  height: 3%;
+  background: #8094F4;
+  margin: auto;
+  border-radius: 0px 0px 15px 15px;
+}
+
+.popular-company span {
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  display: block;
+  padding-top: 10px;
+  font-size: 16px;
+}
+
+.popular-company .price {
+  font-weight: 400;
+  color: white;
+  display: block;
+  text-align: center;
+  padding-top: 3px;
+  font-size: 12px;
+}
+
+.popular-company .img {
+  width: 100px;
+  height: 70px;
+  /* background: #8094F4; */
+  border-radius: 15px;
+  margin: auto;
+  margin-top: 25px;
+}
+
+.popular-company button {
+  padding: 8px 25px;
+  display: block;
+  margin: auto;
+  border-radius: 8px;
+  border: none;
+  margin-top: 20px;
+  background: #8094F4;
+  color: white;
+  font-weight: 600;
+}
+
+.popular-company button:hover {
+  background: #534bf3;
 }
 </style>
