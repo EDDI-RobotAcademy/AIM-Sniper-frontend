@@ -81,50 +81,63 @@
           </v-row>
           <v-row>
             <v-col>
-              <h1 class="text-center">🏢 {{ this.companyInfo.company_name }} 요약 정리 </h1>
+              <h1 class="title text-center">🏢 {{ this.companyInfo.company_name }} 요약 정리 </h1>
             </v-col>
-            <v-divider></v-divider>
-            <div class="overview">
+          </v-row>
+          
+          <v-divider class="my-4"></v-divider>
+
+          <v-row ref="overviewRow" class="overview" justify="center">
+            <v-col ref="overview" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
-                <v-col cols="auto">
+                <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>주소</b>  {{ this.companyInfo.address }}
+                    <b>주소</b> {{ this.companyInfo.address }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>대표이사</b> {{ this.companyInfo.ceo_name }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>설립연도</b> {{ this.companyInfo.est_date }}
                   </span>
                 </v-col>
                 <v-col cols="auto">
                   <span>
-                    <b>대표이사</b>  {{ this.companyInfo.ceo_name }}
-                  </span>
-                </v-col>
-                <v-col cols="auto">
-                  <span>
-                    <b>설립연도</b>  {{ this.companyInfo.est_date }}
-                  </span>
-                </v-col>
-                <v-col cols="auto">
-                  <span>
-                    <b>웹사이트</b>  
+                    <b>웹사이트 </b>
                     <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
                       {{ companyInfo.website }}
                     </a>
                   </span>
                 </v-col>
               </v-row>
-            </div>
-            <div class="finance">
+            </v-col>
+          </v-row>
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
             <v-divider></v-divider>
-              <v-col cols="auto" class="mt-8 d-flex justify-center align-center">
-                <div ref="chart"></div>
-              </v-col>
-              <v-divider></v-divider>
-            </div>
-            <div class="summary d-flex justify-center align-center">
-              <br>
+          </div>
+
+          <v-row class="finance" justify="center">
+            <v-col ref="finance" cols="auto" class="my-5 d-flex justify-center align-center">
+              <div ref="chart"></div>
+            </v-col>
+          </v-row>
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
+            <v-divider></v-divider>
+          </div>
+
+          <v-row :style="{ width: this.maxWidth + 'px' }"
+                  class="summary d-flex justify-center align-center">
+            <v-col cols="auto">
               <span v-html="formattedSummary"></span>
-            </div>
+            </v-col>
           </v-row>
-          <v-row>
-          </v-row>
+
         </v-container>
       </v-card-text>
     </v-card>
@@ -238,6 +251,7 @@ export default {
       financeYears: [],
       companyInfo: [],
       summary:'',
+      maxWidth: 0,
     };
   },
   computed: {
@@ -535,7 +549,18 @@ export default {
                 .attr('font-weight', 'bold')
                 .text(metric.label); // 각 지표 레이블로 제목 추가
         });
-    }
+    },
+    calculateMaxWidth() {
+      const overview = this.$refs.overview;
+      const finance = this.$refs.finance;
+
+      // `ref`가 정의된 경우에만 길이를 측정
+      const overviewWidth = overview ? overview.$el.getBoundingClientRect().width : 0;
+      const financeWidth = finance ? finance.$el.getBoundingClientRect().width : 0;
+
+      // 세 길이 중 가장 큰 값을 찾기
+      this.maxWidth = Math.max(overviewWidth, financeWidth);
+    },
   },
   async created() {
     await this.fetchCompanyReportData(this.companyReportId);
@@ -543,6 +568,8 @@ export default {
     await this.getCompanyInfo();
     await this.getCompanySummary();
     this.createChart(); // 데이터 가져온 후 차트 생성
+    this.calculateMaxWidth();
+    window.addEventListener("resize", this.calculateMaxWidth);
   },
   watch: {
     "$route.params.companyReportId": {
@@ -560,7 +587,10 @@ export default {
         this.$store.state.naverAuthenticationModule.isNaverAdmin = true
         this.$store.state.accountModule.isNormalAdmin = true
     }
-  }
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxWidth);
+  },
 };
 </script>
 
@@ -772,31 +802,41 @@ svg {
   outline: none;
 }
 
-.overview {
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 0px;
+a {
+  color: rgb(107, 107, 107);
+  text-decoration: none; 
 }
 
-.overview span {
+a:hover {
+  color: rgb(27, 59, 173);
+}
+
+a:visited {
+  color: rgb(107, 107, 107); 
+}
+
+a:active {
+  color: rgb(27, 59, 173); 
+}
+
+.auto-width-divider {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-content span {
   padding: 1.1rem;
-  /* text-align: center; */
   color: rgb(107, 107, 107);
 }
 
-.overview span b {
+.overview-content span b {
   font-size: 1.rem;
-}
-
-.finance {
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .summary {
   margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  width: 95%;
 }
 </style>
