@@ -92,22 +92,22 @@
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>주소</b> {{ this.companyInfo.address }}
+                    <b>주소</b>  {{ this.companyInfo.address }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>대표이사</b> {{ this.companyInfo.ceo_name }}
+                    <b>대표이사</b>  {{ this.companyInfo.ceo_name }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>설립연도</b> {{ this.companyInfo.est_date }}
+                    <b>설립연도</b>  {{ this.companyInfo.est_date }}
                   </span>
                 </v-col>
                 <v-col cols="auto">
                   <span>
-                    <b>웹사이트 </b>
+                    <b>웹사이트  </b>
                     <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
                       {{ companyInfo.website }}
                     </a>
@@ -131,8 +131,8 @@
             <v-divider></v-divider>
           </div>
 
-          <v-row :style="{ width: this.maxWidth + 'px' }"
-                  class="summary d-flex justify-center align-center">
+          <v-row :style="{ width: this.maxWidth-50. + 'px' }"
+                  class="summary my-5 d-flex justify-center align-center">
             <v-col cols="auto">
               <span v-html="formattedSummary"></span>
             </v-col>
@@ -421,8 +421,8 @@ export default {
       // console.log(typeof this.summary)
     },
     createChart() {
-        const margin = { top: 55, right: 50, bottom: 50, left: 50 };
-        const width = 240 - margin.left;
+        const margin = { top: 55, right: 25, bottom: 20, left: 40 };
+        const width = 250 - margin.right * 2 ;
         const height = 260 - margin.top - margin.bottom;
 
         const years = this.financeYears;
@@ -457,7 +457,7 @@ export default {
             const svg = d3
                 .select(this.$refs.chart)
                 .append('svg')
-                .attr('width', width + margin.left)
+                .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -827,7 +827,7 @@ a:active {
 }
 
 .overview-content span {
-  padding: 1.1rem;
+  padding: 2rem;
   color: rgb(107, 107, 107);
 }
 
@@ -837,6 +837,23 @@ a:active {
 
 .summary {
   margin: auto;
-  width: 95%;
 }
+
+::v-deep .summary p {
+  margin-bottom: 30px;
+  line-height: 1.8;
+}
+
+::v-deep .summary span > ul > li {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+::v-deep .summary li ul {
+  padding-left: 20px; 
+  margin: 10px 0 10px 10px;
+}
+
+
+
 </style>
