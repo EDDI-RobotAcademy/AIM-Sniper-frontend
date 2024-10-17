@@ -41,9 +41,7 @@
       </div>
     </div>
 
-    <div class="footer-container">
-      <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
-    </div>
+    
   </div>
 </template>
 
@@ -217,20 +215,7 @@ export default defineComponent({
   background-color: rgba(255, 255, 255, 0.25);  
 }   
 
-.footer-container {
-  background-color: rgba(82, 82, 82, 0.2);
-  color: lightgray;
-  font-size: 12px;
-  text-align: center;
-  padding: 7px;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
+
 
 
 
