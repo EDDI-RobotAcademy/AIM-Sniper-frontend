@@ -131,7 +131,7 @@
             <v-divider></v-divider>
           </div>
 
-          <v-row :style="{ width: this.maxWidth-50. + 'px' }"
+          <v-row :style="{ width: this.financeWidth + 'px' }"
                   class="summary my-5 d-flex justify-center align-center">
             <v-col cols="auto">
               <span v-html="formattedSummary"></span>
@@ -252,6 +252,7 @@ export default {
       companyInfo: [],
       summary:'',
       maxWidth: 0,
+      financeWidth: 0,
     };
   },
   computed: {
@@ -430,27 +431,35 @@ export default {
         // 각 지표에 대한 막대 생성
         const metrics = [
             { key: 'revenue', label: '수익성 (매출액)' },
-            { key: 'receivable_turnover', label: '수익성 (영업이익)' },
-            { key: 'operating_cash_flow', label: '안정성 (자기자본)' }
+            { key: 'profit_trend', label: '수익성 (영업이익)' },
+            { key: 'owners_capital', label: '안정성 (자기자본)' }
         ];
 
         // 숫자를 한국식으로 변환하는 함수
         function formatKoreanNumber(number) {
+            const isNegative = number < 0; // 음수 여부 확인
+            number = Math.abs(number); // 절대값으로 변환하여 처리
+
+            let result = '';
+
             if (number >= 1e12) {
                 const trillion = Math.floor(number / 1e12);
                 const billion = Math.round((number % 1e12) / 1e8);
-                return `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
+                result = `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
             } else if (number >= 1e8) {
-                return `${Math.round(number / 1e8)}억`;
+                result = `${Math.round(number / 1e8)}억`;
             } else if (number >= 1e6) {
-                return `${Math.round(number / 1e6)}백만`;
+                result = `${Math.round(number / 1e6)}백만`;
             } else if (number >= 1e3) {
-                return `${Math.round(number / 1e3)}천`;
+                result = `${Math.round(number / 1e3)}천`;
             } else {
-                return number.toLocaleString();
+                result = number.toLocaleString();
             }
+
+            return isNegative ? `-${result}` : result; // 음수인 경우 '-' 추가
         }
 
+        console.log(this.financeData)
         // 각 지표에 대해 그래프 생성
         metrics.forEach((metric, metricIndex) => {
             // SVG 생성
@@ -480,23 +489,53 @@ export default {
                 d3.max(this.financeData[years[1]], d => d[metric.key]),
                 d3.max(this.financeData[years[2]], d => d[metric.key]),
             ]);
+            const yMin = d3.min([
+                d3.min(this.financeData[years[0]], d => d[metric.key]),
+                d3.min(this.financeData[years[1]], d => d[metric.key]),
+                d3.min(this.financeData[years[2]], d => d[metric.key]),
+            ]);
+            const yMaxAbs = Math.max(Math.abs(yMin), Math.abs(yMax));  // 최대 절대값을 계산
 
             const y = d3.scaleLinear()
-                .domain([0, yMax])
+                .domain([yMin < 0 ? -yMaxAbs : 0, yMax])
                 .range([height, 0]);
 
             // Y축 설정
-            const yAxis = svg.append('g')
-                              .call(d3.axisLeft(y)
-                                .ticks(3)
-                                .tickFormat(d => d.toString().slice(0, 2))
-                              )
-                              .style('color', '#808080');
+            svg.append('g')
+                .call(d3.axisLeft(y)
+                  .ticks(3)
+                  .tickFormat(d => d.toString().slice(0, 2))
+                )
+                .style('color', '#808080');
+
+            // 기준선 (0) 그리기
+            if (yMin < 0) {
+                svg.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', width)
+                    .attr('y1', y(0)) // Y축의 0 위치
+                    .attr('y2', y(0))
+                    .attr('stroke', '#808080')
+                    .attr('stroke-width', 1);
+            }
 
             // 막대 색상 설정
-            const getBarColor = (value, prevValue) => {
-                if (prevValue !== undefined) {
-                    const change = ((value - prevValue) / prevValue) * 100;
+            const getBarColor = (value, preValue) => {
+                if (preValue !== undefined) {
+                    const change = (() => {
+                        if (preValue > 0) {
+                            return ((value - preValue) / preValue) * 100;
+                        } else if (preValue < 0) {
+                            if (value > 0) {
+                                return ((value - preValue) / Math.abs(preValue)) * 100;
+                            } else {
+                                return ((Math.abs(preValue) - Math.abs(value)) / Math.abs(preValue)) * 100;
+                            }
+                        } else {
+                            // preValue가 0일 때 처리
+                            return value > 0 ? 100 : (value < 0 ? -100 : 0);
+                        }
+                    })();
                     if (change >= 5) return "#77DD77"; // 초록색 (증가)
                     if (change <= -5) return "#FF6961"; // 빨간색 (감소)
                     return "#AEC6CF"; // 파란색 (변화 거의 없음)
@@ -508,21 +547,22 @@ export default {
             svg.selectAll(`.${metric.key}`)
                 .data(years.map((year, index) => {
                     const value = this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0;
-                    const prevValue = index > 0 ? this.financeData[years[index - 1]].length > 0 ? this.financeData[years[index - 1]][0][metric.key] : 0 : undefined;
+                    const preValue = index > 0 ? this.financeData[years[index - 1]].length > 0 ? this.financeData[years[index - 1]][0][metric.key] : 0 : undefined;
                     return {
                         year,
                         value,
-                        color: index === years.length - 1 ? getBarColor(value, prevValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
+                        color: index === years.length - 1 ? getBarColor(value, preValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
                     };
                 }))
                 .enter()
                 .append('rect')
                 .attr('class', metric.key)
                 .attr('x', d => x0(d.year))
-                .attr('y', d => y(d.value))
+                .attr('y', d => d.value >= 0 ? y(d.value) : y(0))
                 .attr('width', x0.bandwidth())
-                .attr('height', d => height - y(d.value))
+                .attr('height', d => Math.abs(y(d.value) - y(0)))  // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
                 .attr('fill', d => d.color);
+
 
             // 막대 상단에 값 표시
             svg.selectAll(`.${metric.key}-label`)
@@ -557,6 +597,7 @@ export default {
       // `ref`가 정의된 경우에만 길이를 측정
       const overviewWidth = overview ? overview.$el.getBoundingClientRect().width : 0;
       const financeWidth = finance ? finance.$el.getBoundingClientRect().width : 0;
+      this.financeWidth = financeWidth
 
       // 세 길이 중 가장 큰 값을 찾기
       this.maxWidth = Math.max(overviewWidth, financeWidth);
