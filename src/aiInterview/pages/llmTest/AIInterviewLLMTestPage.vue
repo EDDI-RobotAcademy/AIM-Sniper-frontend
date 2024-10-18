@@ -90,7 +90,8 @@ export default ({
   },
   methods: {
     ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango',
-                                      'requestInferNextQuestionToFastAPI',]),
+                                      'requestInferNextQuestionToFastAPI',
+                                      'requestInferedResultToFastAPI',]),
     startInterview() {
       this.start = true;
     },
@@ -207,6 +208,16 @@ export default ({
 
             const payload = { answer: lastUserInput, nextIntent: nextIntent}
             await this.requestInferNextQuestionToFastAPI(payload)
+
+            const response = await this.requestInferedResultToFastAPI();
+            if (response && response.nextQuestion) {
+              this.currentAIMessage = response.nextQuestion
+            }
+
+            this.chatHistory.push({
+              type: "ai",
+              content: this.currentAIMessage,
+            })
           }
           
           // this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || 
