@@ -24,8 +24,6 @@ export type CompanyReportActions = {
         companyReportName:string) :Promise<any>
     requestCompanyReportInfoToDjango(context: ActionContext<CompanyReportState,any>,
         companyReportName:string) :Promise<any>
-    requestCompanyReportSummaryToDjango(context: ActionContext<CompanyReportState,any>,
-        companyReportName:string) :Promise<any>
     requestTopNCompanyReportListToDjango(context: ActionContext<CompanyReportState, unknown>, 
         topN: number): Promise<void>
 }
@@ -111,15 +109,6 @@ const actions: CompanyReportActions = {
             return await axiosInst.djangoAxiosInst.post('company_report/info',{companyReportName})
         }catch(error){
             console.log('requestCompanyReportInfoToDjango 중 문제 발생')
-            throw error
-        }
-    },
-    async requestCompanyReportSummaryToDjango(context: ActionContext<CompanyReportState,any>,
-        companyReportName:string) :Promise<any>{
-        try{
-            return await axiosInst.djangoAxiosInst.post('company_report/summary',{companyReportName})
-        }catch(error){
-            console.log('requestCompanyReportSummaryToDjango 중 문제 발생')
             throw error
         }
     },
