@@ -81,7 +81,7 @@
           </v-row>
           <v-row>
             <v-col>
-              <h1 class="title text-center">🏢 {{ this.companyInfo.company_name }} 요약 정리 </h1>
+              <h1 class="title text-center">🏢 {{ companyInfo.company_name }} 요약 정리 </h1>
             </v-col>
           </v-row>
           
@@ -92,17 +92,17 @@
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>주소</b>  {{ this.companyInfo.address }}
+                    <b>주소</b>  {{ companyInfo.address }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>대표이사</b>  {{ this.companyInfo.ceo_name }}
+                    <b>대표이사</b>  {{ companyInfo.ceo_name }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>설립연도</b>  {{ this.companyInfo.est_date }}
+                    <b>설립연도</b>  {{ companyInfo.est_date }}
                   </span>
                 </v-col>
                 <v-col cols="auto">
@@ -134,7 +134,7 @@
           <v-row :style="{ width: this.financeWidth + 'px' }"
                   class="summary my-5 d-flex justify-center align-center">
             <v-col cols="auto">
-              <span v-html="formattedSummary"></span>
+              <span v-html="companyInfo.business_summary"></span>
             </v-col>
           </v-row>
 
@@ -250,7 +250,6 @@ export default {
       financeData: [],
       financeYears: [],
       companyInfo: [],
-      summary:'',
       maxWidth: 0,
       financeWidth: 0,
     };
@@ -261,11 +260,14 @@ export default {
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle",'isGoogleAdmin']),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal",'isNormalAdmin']),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver",'isNaverAdmin']),
-    formattedSummary() {return this.summary.replace(/\n/g, '<br>');}
   },
   methods: {
-    ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango","requestCompanyReportFinanceToDjango",
-    'requestCompanyReportInfoToDjango',"requestCompanyReportSummaryToDjango"]),
+    ...mapActions(companyReportModule, [
+      "requestCompanyReportToDjango",
+      "requestDeleteCompanyReportToDjango",
+      "requestCompanyReportFinanceToDjango",
+      'requestCompanyReportInfoToDjango'
+    ]),
     ...mapActions(cartModule, [
       "requestAddCartToDjango",
       "requestDeleteCartItemToDjango",
@@ -416,11 +418,7 @@ export default {
       this.companyInfo = data.data[0]
       // console.log(this.companyInfo)
     },
-    async getCompanySummary(){
-      let data = await this.requestCompanyReportSummaryToDjango(this.companyReport.companyReportName);
-      this.summary = data.data
-      // console.log(typeof this.summary)
-    },
+    
     createChart() {
         const margin = { top: 55, right: 25, bottom: 20, left: 40 };
         const width = 250 - margin.right * 2 ;
@@ -607,7 +605,6 @@ export default {
     await this.fetchCompanyReportData(this.companyReportId);
     await this.getFinanceData(); // 컴포넌트 생성 시 데이터 가져오기
     await this.getCompanyInfo();
-    await this.getCompanySummary();
     this.createChart(); // 데이터 가져온 후 차트 생성
     this.calculateMaxWidth();
     window.addEventListener("resize", this.calculateMaxWidth);
