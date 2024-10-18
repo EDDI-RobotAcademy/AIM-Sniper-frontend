@@ -3,7 +3,6 @@
     <v-col cols="2" class="d-flex align-center justify-center"> </v-col>
 
     <v-card v-if="companyReport">
-      <v-card-title>기업 분석 정보</v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -48,7 +47,6 @@
                   </p>
                 </v-col>
               </v-row>
-
               <v-row>
                 <v-col cols="12">
                   <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
@@ -82,43 +80,64 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" md="12">
-              <h2>1. 기업 개황</h2>
-              <br>
-              &nbsp;&nbsp;
-              <span><b>주소:</b> {{ this.companyInfo.address }}</span>
-              <br>
-              &nbsp;&nbsp;
-              <span><b>대표이사:</b> {{ this.companyInfo.ceo_name }}</span>
-              <br>
-              &nbsp;&nbsp;
-              <span><b>회사 유형:</b> {{ this.companyInfo.company_class }}</span>
-              <br>
-              &nbsp;&nbsp;
-              <span><b>회사 이름:</b> {{ this.companyInfo.company_name }}</span>
-              <br>
-              &nbsp;&nbsp;
-              <span><b>설립 연도:</b> {{ this.companyInfo.est_date }}</span>
-              <br>
-              &nbsp;&nbsp;
-              <b>웹사이트: </b><a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
-                {{ companyInfo.website }}
-              </a>
-              <br>
-              <br>
-              <h2>2. 재무 현황</h2>
-              <br>
-              <v-col cols="12"><div ref="chart"></div></v-col>
-              <!-- <div ref="chart"></div> -->
-              <br>
-              <br>
-              <h2>3. 회사 요약</h2>
-              <br>
+            <v-col>
+              <h1 class="title text-center">🏢 {{ this.companyInfo.company_name }} 요약 정리 </h1>
+            </v-col>
+          </v-row>
+          
+          <v-divider class="my-4"></v-divider>
+
+          <v-row ref="overviewRow" class="overview" justify="center">
+            <v-col ref="overview" cols="auto" class="overview-content mb-2 mt-2">
+              <v-row no-gutters>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>주소</b>  {{ this.companyInfo.address }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>대표이사</b>  {{ this.companyInfo.ceo_name }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>설립연도</b>  {{ this.companyInfo.est_date }}
+                  </span>
+                </v-col>
+                <v-col cols="auto">
+                  <span>
+                    <b>웹사이트  </b>
+                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
+                      {{ companyInfo.website }}
+                    </a>
+                  </span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
+            <v-divider></v-divider>
+          </div>
+
+          <v-row class="finance" justify="center">
+            <v-col ref="finance" cols="auto" class="my-5 d-flex justify-center align-center">
+              <div ref="chart"></div>
+            </v-col>
+          </v-row>
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
+            <v-divider></v-divider>
+          </div>
+
+          <v-row :style="{ width: this.maxWidth-50. + 'px' }"
+                  class="summary my-5 d-flex justify-center align-center">
+            <v-col cols="auto">
               <span v-html="formattedSummary"></span>
             </v-col>
           </v-row>
-          <v-row>
-          </v-row>
+
         </v-container>
       </v-card-text>
     </v-card>
@@ -229,8 +248,10 @@ export default {
       isGoToCartListDialogVisible: false,
       purchase: true,
       financeData: [],
+      financeYears: [],
       companyInfo: [],
       summary:'',
+      maxWidth: 0,
     };
   },
   computed: {
@@ -384,9 +405,9 @@ export default {
       let data = await this.requestCompanyReportFinanceToDjango(this.companyReport.companyReportName);
       let rawData = data.data;  
       this.financeData = rawData
+      this.financeYears = Object.keys(data.data)
       // 받은 데이터 변환
       // this.financeData = rawData.map(item => item[0]); // 배열에서 첫 번째 객체만 추출하여 저장
-      // console.log(this.financeData); // 데이터 확인
     },
     async getCompanyInfo() {
       // 데이터 확인
@@ -400,106 +421,146 @@ export default {
       // console.log(typeof this.summary)
     },
     createChart() {
-      const margin = { top: 35, right: 15, bottom: 30, left: 28 };
-      const width = 240 - margin.left;
-      const height = 400 - margin.top - margin.bottom;
+        const margin = { top: 55, right: 25, bottom: 20, left: 40 };
+        const width = 250 - margin.right * 2 ;
+        const height = 260 - margin.top - margin.bottom;
 
-      const years = [2021, 2022, 2023];
+        const years = this.financeYears;
 
-      // 각 지표에 대한 막대 생성
-      const metrics = [
-        { key: 'revenue', color: 'steelblue', label: '재무 지표 매출액(단위: 천억원)' },
-        { key: 'receivable_turnover', color: 'green', label: '매출 채권 회전율(단위: %)' },
-        { key: 'operating_cash_flow', color: 'red', label: '영업 활동 현금 흐름(단위: 천억원)' }
-      ];
+        // 각 지표에 대한 막대 생성
+        const metrics = [
+            { key: 'revenue', label: '수익성 (매출액)' },
+            { key: 'receivable_turnover', label: '수익성 (영업이익)' },
+            { key: 'operating_cash_flow', label: '안정성 (자기자본)' }
+        ];
 
-      // 각 지표에 대해 그래프 생성
-      metrics.forEach((metric, metricIndex) => {
-        // SVG 생성
-        const svg = d3
-          .select(this.$refs.chart)
-          .append('svg')
-          .attr('width', width + margin.left)
-          .attr('height', height + margin.top + margin.bottom)
-          .append('g')
-          .attr('transform', `translate(${margin.left},${margin.top})`);
-
-        // X축 (년도)
-        const x0 = d3.scaleBand()
-          .domain(years)
-          .range([0, width])
-          .paddingInner(0.1); // 연도 간격 조정
-
-        // Y축 (지표 값)
-        const yMax = d3.max([
-          d3.max(this.financeData['2021'], d => d[metric.key]),
-          d3.max(this.financeData['2022'], d => d[metric.key]),
-          d3.max(this.financeData['2023'], d => d[metric.key]),
-        ]);
-
-        const y = d3.scaleLinear()
-          .domain([0, yMax])
-          .range([height, 0]);
-
-        // Y축 추가 및 단위 표시 (revenue와 operating_cash_flow에 대해서만 적용)
-        if (metric.key === 'revenue') {
-          const yAxisFormatted = d3.axisLeft(y).tickFormat(d => (d / 100000000000).toFixed(1)); // 천억원 단위로 변환
-          svg.append('g').call(yAxisFormatted);
-          svg.append('text')
-            .attr('class', 'axis-label')
-            .attr('transform', 'rotate(-90)') // Y축 레이블 수직으로 회전
-            .attr('y', -40) // Y축 레이블 위쪽 위치 조정
-            .attr('x', -height / 2) // X축 레이블 위치 조정
-            .attr('text-anchor', 'middle')
-        } else if (metric.key === 'operating_cash_flow') {
-          const yAxisFormatted = d3.axisLeft(y).tickFormat(d => (d / 100000000000).toFixed(1)); // 천억원 단위로 변환
-          svg.append('g').call(yAxisFormatted);
-          svg.append('text')
-            .attr('class', 'axis-label')
-            .attr('transform', 'rotate(-90)') // Y축 레이블 수직으로 회전
-            .attr('y', -40) // Y축 레이블 위쪽 위치 조정
-            .attr('x', -height / 2) // X축 레이블 위치 조정
-            .attr('text-anchor', 'middle')
-        } else {
-          const yAxis = svg.append('g').call(d3.axisLeft(y));
-          svg.append('text')
-            .attr('class', 'axis-label')
-            .attr('transform', 'rotate(-90)')
-            .attr('y', -40)
-            .attr('x', -height / 2)
-            .attr('text-anchor', 'middle')
+        // 숫자를 한국식으로 변환하는 함수
+        function formatKoreanNumber(number) {
+            if (number >= 1e12) {
+                const trillion = Math.floor(number / 1e12);
+                const billion = Math.round((number % 1e12) / 1e8);
+                return `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
+            } else if (number >= 1e8) {
+                return `${Math.round(number / 1e8)}억`;
+            } else if (number >= 1e6) {
+                return `${Math.round(number / 1e6)}백만`;
+            } else if (number >= 1e3) {
+                return `${Math.round(number / 1e3)}천`;
+            } else {
+                return number.toLocaleString();
+            }
         }
 
-        // 각 지표에 대한 막대 추가
-        svg.selectAll(`.${metric.key}`)
-          .data(years.map(year => ({
-            year: year,
-            value: this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0,
-          })))
-          .enter()
-          .append('rect')
-          .attr('class', metric.key)
-          .attr('x', d => x0(d.year))
-          .attr('y', d => y(d.value))
-          .attr('width', x0.bandwidth())
-          .attr('height', d => height - y(d.value))
-          .attr('fill', metric.color);
+        // 각 지표에 대해 그래프 생성
+        metrics.forEach((metric, metricIndex) => {
+            // SVG 생성
+            const svg = d3
+                .select(this.$refs.chart)
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        // X축 추가
-        svg.append('g')
-          .attr('transform', `translate(0,${height})`)
-          .call(d3.axisBottom(x0));
+            // X축 (년도)
+            const x0 = d3.scaleBand()
+                .domain(years)
+                .range([0, width])
+                .padding(0.2);
 
-        // 제목 추가
-        svg.append('text')
-          .attr('class', 'chart-title')
-          .attr('x', width / 2) // 가운데 정렬
-          .attr('y', -10) // Y축 위쪽으로 위치 조정
-          .attr('text-anchor', 'middle')
-          .attr('font-weight', 'bold')
-          .text(metric.label); // 각 지표 레이블로 제목 추가
-      });
-    }
+            // X축 추가
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x0))
+                .style('color', '#808080');
+
+            // Y축 (지표 값)
+            const yMax = d3.max([
+                d3.max(this.financeData[years[0]], d => d[metric.key]),
+                d3.max(this.financeData[years[1]], d => d[metric.key]),
+                d3.max(this.financeData[years[2]], d => d[metric.key]),
+            ]);
+
+            const y = d3.scaleLinear()
+                .domain([0, yMax])
+                .range([height, 0]);
+
+            // Y축 설정
+            const yAxis = svg.append('g')
+                              .call(d3.axisLeft(y)
+                                .ticks(3)
+                                .tickFormat(d => d.toString().slice(0, 2))
+                              )
+                              .style('color', '#808080');
+
+            // 막대 색상 설정
+            const getBarColor = (value, prevValue) => {
+                if (prevValue !== undefined) {
+                    const change = ((value - prevValue) / prevValue) * 100;
+                    if (change >= 5) return "#77DD77"; // 초록색 (증가)
+                    if (change <= -5) return "#FF6961"; // 빨간색 (감소)
+                    return "#AEC6CF"; // 파란색 (변화 거의 없음)
+                }
+                return "#D3D3D3"; // 회색 (기본값)
+            };
+
+            // 막대 추가
+            svg.selectAll(`.${metric.key}`)
+                .data(years.map((year, index) => {
+                    const value = this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0;
+                    const prevValue = index > 0 ? this.financeData[years[index - 1]].length > 0 ? this.financeData[years[index - 1]][0][metric.key] : 0 : undefined;
+                    return {
+                        year,
+                        value,
+                        color: index === years.length - 1 ? getBarColor(value, prevValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
+                    };
+                }))
+                .enter()
+                .append('rect')
+                .attr('class', metric.key)
+                .attr('x', d => x0(d.year))
+                .attr('y', d => y(d.value))
+                .attr('width', x0.bandwidth())
+                .attr('height', d => height - y(d.value))
+                .attr('fill', d => d.color);
+
+            // 막대 상단에 값 표시
+            svg.selectAll(`.${metric.key}-label`)
+                .data(years.map(year => ({
+                    year: year,
+                    value: this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0,
+                })))
+                .enter()
+                .append('text')
+                .attr('class', `${metric.key}-label`)
+                .attr('x', d => x0(d.year) + x0.bandwidth() / 2)
+                .attr('y', d => y(d.value) - 7)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#6b6b6b')
+                .attr('font-size', 10)
+                .text(d => formatKoreanNumber(d.value));
+
+            // 제목 추가
+            svg.append('text')
+                .attr('class', 'chart-title')
+                .attr('x', width / 2) // 가운데 정렬
+                .attr('y', -40) // Y축 위쪽으로 위치 조정
+                .attr('text-anchor', 'middle')
+                .attr('font-weight', 'bold')
+                .text(metric.label); // 각 지표 레이블로 제목 추가
+        });
+    },
+    calculateMaxWidth() {
+      const overview = this.$refs.overview;
+      const finance = this.$refs.finance;
+
+      // `ref`가 정의된 경우에만 길이를 측정
+      const overviewWidth = overview ? overview.$el.getBoundingClientRect().width : 0;
+      const financeWidth = finance ? finance.$el.getBoundingClientRect().width : 0;
+
+      // 세 길이 중 가장 큰 값을 찾기
+      this.maxWidth = Math.max(overviewWidth, financeWidth);
+    },
   },
   async created() {
     await this.fetchCompanyReportData(this.companyReportId);
@@ -507,6 +568,8 @@ export default {
     await this.getCompanyInfo();
     await this.getCompanySummary();
     this.createChart(); // 데이터 가져온 후 차트 생성
+    this.calculateMaxWidth();
+    window.addEventListener("resize", this.calculateMaxWidth);
   },
   watch: {
     "$route.params.companyReportId": {
@@ -524,7 +587,10 @@ export default {
         this.$store.state.naverAuthenticationModule.isNaverAdmin = true
         this.$store.state.accountModule.isNormalAdmin = true
     }
-  }
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxWidth);
+  },
 };
 </script>
 
@@ -735,4 +801,59 @@ svg {
 .pushable:focus:not(:focus-visible) {
   outline: none;
 }
+
+a {
+  color: rgb(107, 107, 107);
+  text-decoration: none; 
+}
+
+a:hover {
+  color: rgb(27, 59, 173);
+}
+
+a:visited {
+  color: rgb(107, 107, 107); 
+}
+
+a:active {
+  color: rgb(27, 59, 173); 
+}
+
+.auto-width-divider {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-content span {
+  padding: 2rem;
+  color: rgb(107, 107, 107);
+}
+
+.overview-content span b {
+  font-size: 1.rem;
+}
+
+.summary {
+  margin: auto;
+}
+
+::v-deep .summary p {
+  margin-bottom: 30px;
+  line-height: 1.8;
+}
+
+::v-deep .summary span > ul > li {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+::v-deep .summary li ul {
+  padding-left: 20px; 
+  margin: 10px 0 10px 10px;
+}
+
+
+
 </style>

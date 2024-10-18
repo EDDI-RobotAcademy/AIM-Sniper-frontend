@@ -4,6 +4,9 @@
     <v-main>
       <router-view />
     </v-main>
+    <div class="footer-container">
+      <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
+    </div>
   </v-app>
 </template>
 
@@ -18,6 +21,20 @@ export default defineComponent({
 </script>
 
 <style>
+
+/* 폰트 설정 */
+.v-application {
+  font-family: 'Pretendard', sans-serif !important;
+}
+.template {
+  font-family: 'Pretendard', sans-serif !important;
+}
+@font-face {
+  font-family:'Pretendard';
+  src: url('assets/fonts/Pretendard.ttf') format('truetype');
+  font-weight: 400;
+}
+
 #app {    
   width : 100vw;
   height : 100vh;
@@ -93,5 +110,21 @@ button {
   .container {
     padding: 20px;
   }
+}
+
+
+.footer-container {
+  background-color: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  text-align: center;
+  padding: 7px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 3px 5px black;  
 }
 </style>
