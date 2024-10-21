@@ -145,37 +145,44 @@
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
         <v-col cols="auto">
-            <router-link
-            :to="{ name: 'CompanyReportListPage' }"
-            class="router-link no-underline"
-            >
-                <v-btn color="primary" class="action-button">
-                    <v-icon left>mdi-arrow-left</v-icon>
-                    <span>돌아가기</span>
-                </v-btn>
-            </router-link>
+          <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline">
+            <v-btn color="primary" class="action-button">
+              <v-icon left>mdi-arrow-left</v-icon>
+              <span>돌아가기</span>
+            </v-btn>
+          </router-link>
         </v-col>
-        <button v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" class="Btn" @click="deleteCompanyReport">
-            <div class="sign">
-                <svg
-                viewBox="0 0 16 16"
-                class="bi bi-trash3-fill"
-                fill="currentColor"
-                height="18"
-                width="18"
-                xmlns="http://www.w3.org/2000/svg"
-                >
-                <path
-                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
-                ></path>
-                </svg>
-            </div>
-            <div class="text">Delete</div>
+  
+        <button
+          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          class="Btn"
+          @click="deleteCompanyReport"
+        >
+          <div class="sign">
+            <svg
+              viewBox="0 0 16 16"
+              class="bi bi-trash3-fill"
+              fill="currentColor"
+              height="18"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
+              ></path>
+            </svg>
+          </div>
+          <div class="text">Delete</div>
         </button>
-        <button v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" class="pushable" @click="goToModifyPage">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front"> Modify </span>
+  
+        <button
+          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          class="pushable"
+          @click="goToModifyPage"
+        >
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front"> Modify </span>
         </button>
     </v-row>
     <v-dialog v-model="isCheckoutDialogVisible" max-width="500">
@@ -327,7 +334,7 @@ export default {
         const email = sessionStorage.getItem("email");
         const payload = {
             email: email,
-          companyReportId: this.companyReport.companyReportId,
+            companyReportId: this.companyReport.companyReportId,
         };
         // console.log('payload:', payload)
         const isDuplicatedOrderItem =
@@ -383,7 +390,11 @@ export default {
         router.push("/companyReport/list")
     },
     getCompanyReportImageUrl(imageName) {
-      return require(`@/assets/images/uploadImages/${imageName}`)
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
+      return require(`@/assets/images/uploadImages/${imageName}`);
     },
     confirmCheckout() {
       this.isCheckoutDialogVisible = true;
@@ -891,7 +902,5 @@ a:active {
   padding-left: 20px; 
   margin: 10px 0 10px 10px;
 }
-
-
 
 </style>
