@@ -43,7 +43,7 @@ jobs:
       run: |
         npm ci --legacy-peer-deps
 
-    - name: Create .env file for CD
+    - name: Create .env file for Continuous Deploy
       run: |
         echo "VUE_APP_BASE_URL=${{ secrets.VUE_APP_BASE_URL }}" >> .env
         echo "VUE_APP_AI_BASE_URL=${{ secrets.VUE_APP_AI_BASE_URL }}" >> .env
