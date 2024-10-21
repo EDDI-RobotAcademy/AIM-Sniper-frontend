@@ -72,6 +72,8 @@ export default ({
       maxMessages: 5,
       aiResponseList: [],
       questionIndex: 0,  
+      intentList: ['대처 능력', '적응력', '프로젝트 경험', '자기 개발'],
+      intentIndex: -1,
     };
   },
   watch: {
@@ -87,7 +89,9 @@ export default ({
     }
   },
   methods: {
-    ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango' ]),
+    ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango',
+                                      'requestInferNextQuestionToFastAPI',
+                                      'requestInferedResultToFastAPI',]),
     startInterview() {
       this.start = true;
     },
@@ -99,8 +103,11 @@ export default ({
       }
 
       this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
-      this.questionIndex++;
+        this.intentIndex++
 
+      // this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
+      // this.questionIndex++;
+      
       this.chatHistory.push({
         type: "ai",
         content: this.currentAIMessage,
@@ -179,14 +186,48 @@ export default ({
             const sessionId = Math.floor(Math.random() * 200) + 1;
             this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
           }
-          this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || 
-            "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
-          this.questionIndex++;
 
-          this.chatHistory.push({
-            type: "ai",
-            content: this.currentAIMessage,
-          });
+          if (this.intentIndex == 4) {
+            this.currentAIMessage = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
+            this.chatHistory.push({
+              type: "ai",
+              content: this.currentAIMessage,
+            });
+            this.finished = true
+          } else {
+            const nextIntent = this.intentList[this.intentIndex]
+            this.intentIndex++
+
+            let lastUserInput = null;
+            for (let i = this.chatHistory.length - 1; i >= 0; i--) {
+              if (this.chatHistory[i].type === 'user') {
+                lastUserInput = this.chatHistory[i].content;
+                break;  // 첫 번째로 찾은 user 타입 항목을 찾으면 반복 종료
+              }
+            }
+
+            const payload = { answer: lastUserInput, nextIntent: nextIntent}
+            await this.requestInferNextQuestionToFastAPI(payload)
+
+            const response = await this.requestInferedResultToFastAPI();
+            if (response && response.nextQuestion) {
+              this.currentAIMessage = response.nextQuestion
+            }
+
+            this.chatHistory.push({
+              type: "ai",
+              content: this.currentAIMessage,
+            })
+          }
+          
+          // this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || 
+          //   "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
+          // this.questionIndex++;
+
+          // this.chatHistory.push({
+          //   type: "ai",
+          //   content: this.currentAIMessage,
+          // });
 
           const chunks = this.chunkText(this.currentAIMessage, 1);
           this.streamText(chunks);
