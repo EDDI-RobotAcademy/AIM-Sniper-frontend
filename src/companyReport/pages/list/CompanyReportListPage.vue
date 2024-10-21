@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <v-row class="justify-center align-center mt-15 mb-15">
+    <v-row class="justify-center align-center mt-15 mb-15">
       <v-col
         v-for="(companyReport, index) in topNCompanyReports"
         :key="index"
@@ -23,7 +23,7 @@
           </button>
         </div>
       </v-col>
-    </v-row> -->
+    </v-row>
   </div>
   <div class="background-image">
     <v-container class="custom-padding">
@@ -69,6 +69,24 @@
             outlined
           ></v-text-field>
         </v-col>        
+      </v-row>
+      <v-row class="justify-center align-center">
+        <v-col cols="12">
+          <h3 class="mb-4">산업 키워드 선택</h3>
+          <v-row class="keyword-container">
+            <v-col cols="auto" v-for="keyword in keywords" :key="keyword" class="pa-2">
+              <v-btn
+                :color="selectedKeywords.includes(keyword) ? 'primary' : ''"
+                @click="toggleKeyword(keyword)"
+                outlined
+                rounded
+                class="keyword-btn"
+              >
+                {{ keyword }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-row>
 
       
@@ -155,19 +173,42 @@ export default {
     filteredCompanyReports() {
       let companyReports = this.companyReports;
 
-      if (this.selectedCategory !== "전체") {
+      // 키워드 필터링: '전체'를 선택하면 필터링을 하지 않음
+      if (!this.selectedKeywords.includes('전체')) {
+        companyReports = companyReports.filter((companyReport) => {
+          if (companyReport.keyword) {
+            // companyReport.keyword가 쉼표로 구분된 문자열이면 배열로 변환
+            const keywordsArray = companyReport.keyword.split(',');
+
+            // 선택된 키워드 중 하나라도 포함된 보고서만 필터링
+            return this.selectedKeywords.some((keyword) =>
+              keywordsArray.includes(keyword)
+            );
+          }
+          return false; // keyword가 없는 경우 필터링 제외
+        });
+      }
+
+      // 카테고리 필터링
+      if (this.selectedCategory !== '전체') {
         companyReports = companyReports.filter(
-          (companyReport) =>
-            companyReport.companyReportCategory === this.selectedCategory
+          (companyReport) => {
+            const categories = Array.isArray(companyReport.categories) 
+              ? companyReport.categories 
+              : companyReport.categories ? companyReport.categories.split(',') : [];
+            return categories.includes(this.selectedCategory);
+          }
         );
       }
 
+      // 검색 필터링
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         companyReports = companyReports.filter((companyReport) =>
           companyReport.companyReportName.toLowerCase().includes(query)
         );
       }
+
       return companyReports;
     },
     topNCompanyReports() {
@@ -182,6 +223,10 @@ export default {
   },
   data() {
     return {
+      selectedKeywords: ['전체'],
+      keywords: [
+      '플랫폼', '정보보안', '빅데이터', '소프트웨어', '하드웨어', '클라우드', '컨설팅', '헬스케어', '메타버스', '인프라', '게임', '의료', 'AI', '디스플레이', '마케팅/광고', '영상 분석', '네트워크', '금융지원'
+      ],
       categories: ["전체", "IT", "플랫폼", "은행"],
       selectedCategory: "전체",
       searchQuery: "",
@@ -224,7 +269,37 @@ export default {
       this.currentPage = page;
     },
     getImageUrl(imageName) {
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
       return require(`@/assets/images/uploadImages/${imageName}`);
+    },
+    toggleKeyword(keyword) {
+      if (keyword === '전체') {
+        // '전체'를 선택하면 다른 모든 키워드를 해제하고 '전체'만 선택
+        this.selectedKeywords = ['전체'];
+      } else {
+        // '전체'가 선택된 상태에서 다른 키워드를 선택하면 '전체'를 해제
+        const index = this.selectedKeywords.indexOf('전체');
+        if (index !== -1) {
+          this.selectedKeywords.splice(index, 1); // '전체' 해제
+        }
+
+        // 키워드가 이미 선택되어 있으면 해제하고, 선택되어 있지 않으면 추가
+        if (this.selectedKeywords.includes(keyword)) {
+          this.selectedKeywords = this.selectedKeywords.filter(
+            (k) => k !== keyword
+          );
+        } else {
+          this.selectedKeywords.push(keyword);
+        }
+
+        // 만약 선택된 키워드가 없으면 '전체'를 다시 추가
+        if (this.selectedKeywords.length === 0) {
+          this.selectedKeywords.push('전체');
+        }
+      }
     },
   },
   async mounted() {
@@ -237,8 +312,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 
@@ -365,5 +438,12 @@ export default {
 
 .popular-company button:hover {
   background: #534bf3;
+}
+.keyword-btn{
+  border-radius: 8px;
+  color: #1e68d1;
+  padding: 4px 12px;
+  width: auto;
+  height: 4vh;
 }
 </style>

@@ -9,6 +9,7 @@ export interface CompanyReport {
     companyReportPrice: number
     companyReportTitleImage: string
     content: string
+    keyword: string
     companyReportCategory: string
     regDate: string
     updDate: string
