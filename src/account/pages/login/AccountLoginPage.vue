@@ -126,12 +126,11 @@ export default {
 
         };
         const goToGoogleLogin = async () => {
-            alert("현재 로그인 검수중입니다.")
-            // sessionStorage.setItem("loginType", "GOOGLE") 
-            // await store.dispatch(
-            //     "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
-            // )
-            
+            // alert("현재 로그인 검수중입니다.")
+            sessionStorage.setItem("loginType", "GOOGLE") 
+            await store.dispatch(
+                "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
+            )
         }
         const goToNaverLogin = async () => {
             alert("현재 로그인 검수중입니다.")
