@@ -27,6 +27,15 @@
                 />
                 </v-col>
             </v-row>
+            <v-row>
+                <v-col cols="12">
+                <v-text-field
+                    v-model="keyword"
+                    label="키워드"
+                    auto-grow
+                />
+                </v-col>
+            </v-row>
             <v-row justify="end">
                 <v-col cols="auto">
                 <v-btn color="primary" @click="onModify">
@@ -66,6 +75,7 @@ export default {
       companyReportName: '',
       content: '',
       companyReportPrice: 0,
+      keyword: '',
     }
   },
   computed: {
@@ -82,7 +92,8 @@ export default {
           companyReportId: Number(this.companyReportId), // 타입 변환
           companyReportName: this.companyReportName,
           content: this.content,
-          companyReportPrice: this.companyReportPrice
+          companyReportPrice: this.companyReportPrice,
+          keyword: this.keyword
         };
 
         // console.log('수정할 payload:', payload);
