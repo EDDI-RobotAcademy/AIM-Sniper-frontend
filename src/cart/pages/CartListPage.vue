@@ -5,15 +5,15 @@
         <v-col cols="12">
           <v-card>
             <v-card-title>
-              내 장바구니<v-icon left>mdi-basket</v-icon>
+              내 장바구니<v-icon left>mdi-basket</v-icon><br>
             </v-card-title>
             <v-card-text>
               <v-table>
                 <thead>
                   <tr class="table-header">
                     <th>선택</th>
-                    <th>상품</th>
-                    <th>이름</th>
+                    <th></th>
+                    <th>기업명</th>
                     <th>가격</th>
                     <th></th>
                   </tr>
@@ -45,7 +45,7 @@
                     <td>{{ item.companyReportPrice }}</td>
                     <td>
                       <v-btn color="red" @click="removeItem(item)"
-                        >장바구니에서 제거</v-btn
+                        >제거</v-btn
                       >
                     </td>
                   </tr>
@@ -53,9 +53,7 @@
               </v-table>
               <v-divider></v-divider>
               <v-row>
-                <!-- <v-col>
-                                <v-btn color="primary" @click="confirmCheckout" :disabled="isCheckoutDisabled">구매하기</v-btn>
-                            </v-col> -->
+               
                 <v-col class="text-right">
                   <strong>Total: {{ selectedItemsTotal }}</strong>
                 </v-col>
@@ -95,7 +93,7 @@
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <v-btn color="#E3EF76" @click="goToLastPage">
+          <v-btn color="primary" @click="goToLastPage">
             <v-icon left>mdi-arrow-left</v-icon>
             <span>돌아가기</span>
           </v-btn>
@@ -154,6 +152,10 @@ export default {
     ...mapActions(orderModule, ["requestCartToAddOrderToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]),
     getImageUrl(imageName) {
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
       return require(`@/assets/images/uploadImages/${imageName}`);
     },
     async removeItem(item) {
@@ -168,7 +170,7 @@ export default {
           (selectedItem) => selectedItem.cartItemId !== item.cartItemId
         );
       } catch (error) {
-        console.error("장바구니 상품 삭제 중 에러 발생:", error);
+        // console.error("장바구니 상품 삭제 중 에러 발생:", error);
       }
     },
     confirmCheckout() {

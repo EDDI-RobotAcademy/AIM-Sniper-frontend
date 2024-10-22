@@ -3,11 +3,10 @@
     <v-col cols="2" class="d-flex align-center justify-center"> </v-col>
 
     <v-card v-if="companyReport">
-      <v-card-title>상품 정보</v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col cols="12" md="5" class="d-flex align-center justify-center">
+            <v-col cols="3" class="d-flex justify-end">
               <v-img
                 :src="
                   getCompanyReportImageUrl(
@@ -16,7 +15,7 @@
                 "
                 class="custom-img grey lighten-2"
                 aspect-ratio="1"
-                style="width: 100%; height: auto; max-height: 200px"
+                style="max-width: 180px; height: 180px;"
               >
                 <template v-slot:placeholder>
                   <v-row
@@ -29,16 +28,34 @@
                 </template>
               </v-img>
             </v-col>
-            <v-col cols="12" md="6" class="d-flex flex-column justify-center">
+            
+            <v-col cols="9" md="6" class="d-flex flex-column justify-center">
+              
               <v-row>
-                <v-col cols="12">
-                  <h1 class="companyReport-name">
-                    {{ companyReport.companyReportName }}
-                  </h1>
+                <v-col cols="12" md="5">
+                  <!-- 이 상품의 태그 -->
+                  <v-row>                    
+                    <v-btn
+                      v-for="(keyword, index) in companyReport.keyword.split(',')"
+                      :key="index"
+                      outlined
+                      rounded
+                      class="keyword-btn"
+                      style="pointer-events: none;"
+                    >
+                      {{ keyword.trim() }}
+                    </v-btn>
+                    
+                  </v-row>
                 </v-col>
               </v-row>
+              
               <v-row>
-                <v-col cols="12">
+                <v-col>
+                  <h1 class="title"> {{ companyInfo.company_name }} 기업 분석 리포트 </h1>
+                </v-col>
+
+                <v-col cols="3">
                   <p class="companyReport-price">
                     {{ companyReport.companyReportPrice }}
                     <span class="original-price">{{
@@ -48,89 +65,134 @@
                   </p>
                 </v-col>
               </v-row>
+              
+              
+              <v-row style="margin-bottom: 20px;">                 
+                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
+                  @click="confirmCheckout"
+                  class="order-action-button"
+                  style="margin-right: 10px;"
+                >
+                  <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>
+                  구매하기
+                </v-btn>
+                
+                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
+                  @click="isGoToCartListDialogVisible = true"
+                  class="cart-action-button"
+                >
+                  <v-icon left>mdi-cart-plus</v-icon>
+                  장바구니 담기
+                </v-btn>                
+              </v-row>
 
-              <v-row>
-                <v-col cols="12">
-                  <v-btn
-                    color="yellow darken-2"
-                    dark
-                    @click="confirmCheckout"
-                    class="action-button"
-                  >
-                    <v-icon left>mdi-cart</v-icon>구매하기
-                  </v-btn>
-                  <v-btn
-                    color="success"
-                    @click="onAddToCartAndAsk"
-                    class="action-button"
-                  >
-                    <v-icon left>mdi-cart-plus</v-icon>장바구니에 추가
-                  </v-btn>
+            </v-col>
+          
+          </v-row>
+          
+          
+          
+          <v-divider class="my-4"></v-divider>
+
+          <v-row ref="overviewRow" class="overview" justify="center">
+            <v-col ref="overview" cols="auto" class="overview-content mb-2 mt-2">
+              <v-row no-gutters>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>주소</b>  {{ companyInfo.address }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>대표이사</b>  {{ companyInfo.ceo_name }}
+                  </span>
+                </v-col>
+                <v-col cols="auto" class="mb-2">
+                  <span>
+                    <b>설립연도</b>  {{ companyInfo.est_date }}
+                  </span>
+                </v-col>
+                <v-col cols="auto">
+                  <span>
+                    <b>웹사이트  </b>
+                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
+                      {{ companyInfo.website }}
+                    </a>
+                  </span>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="12" md="5">
-              <span>이 상품의 태그</span>
-              <v-text-field
-                class="custom-text-field"
-                v-model="companyReport.companyReportCategory"
-                readonly
-              />
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
+            <v-divider></v-divider>
+          </div>
+
+          <v-row class="finance" justify="center">
+            <v-col ref="finance" cols="auto" class="my-5 d-flex justify-center align-center">
+              <div ref="chart"></div>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="12" md="12">
-              <v-textarea
-                class="custom-text-field"
-                v-model="companyReport.content"
-                label="내용"
-                readonly
-                rows="1"
-                auto-grow
-              />
+
+          <div class="auto-width-divider my-2" :style="{ width: this.maxWidth + 'px' }">
+            <v-divider></v-divider>
+          </div>
+
+          <v-row :style="{ width: this.financeWidth + 'px' }"
+                  class="summary my-5 d-flex justify-center align-center">
+            <v-col cols="auto">
+              <span v-html="companyInfo.business_summary"></span>
             </v-col>
           </v-row>
+
         </v-container>
       </v-card-text>
     </v-card>
+
+
+
     <v-alert v-else type="info">현재 등록된 상품이 없습니다!</v-alert>
     <v-spacer></v-spacer>
-
     <v-row justify="center" class="mt-4">
         <v-col cols="auto">
-            <router-link
-            :to="{ name: 'CompanyReportListPage' }"
-            class="router-link no-underline"
-            >
-                <v-btn color="#E3EF76" class="action-button">
-                    <v-icon left>mdi-arrow-left</v-icon>
-                    <span>돌아가기</span>
-                </v-btn>
-            </router-link>
+          <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline">
+            <v-btn class="return-action-button">
+              <v-icon left>mdi-arrow-left</v-icon>
+              <span>목록으로 돌아가기</span>
+            </v-btn>
+          </router-link>
         </v-col>
-        <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
-            <div class="sign">
-                <svg
-                viewBox="0 0 16 16"
-                class="bi bi-trash3-fill"
-                fill="currentColor"
-                height="18"
-                width="18"
-                xmlns="http://www.w3.org/2000/svg"
-                >
-                <path
-                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
-                ></path>
-                </svg>
-            </div>
-            <div class="text">Delete</div>
+  
+        <button
+          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          class="Btn"
+          @click="deleteCompanyReport"
+        >
+          <div class="sign">
+            <svg
+              viewBox="0 0 16 16"
+              class="bi bi-trash3-fill"
+              fill="currentColor"
+              height="18"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
+              ></path>
+            </svg>
+          </div>
+          <div class="text">Delete</div>
         </button>
-        <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
-            <span class="shadow"></span>
-            <span class="edge"></span>
-            <span class="front"> Modify </span>
+  
+        <button
+          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          class="pushable"
+          @click="goToModifyPage"
+        >
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front"> Modify </span>
         </button>
     </v-row>
     <v-dialog v-model="isCheckoutDialogVisible" max-width="500">
@@ -163,7 +225,7 @@
             @click="isGoToCartListDialogVisible = false"
             >취소</v-btn
           >
-          <v-btn color="blue darken-1" text @click="goToCartList">확인</v-btn>
+          <v-btn color="blue darken-1" text @click="onAddToCartAndAsk">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -174,11 +236,17 @@
 import { mapActions, mapState } from "vuex";
 import router from "@/router";
 import userLogModule from "@/userLog/store/userLogModule";
+import * as d3 from 'd3';
+import axiosInst from "@/utility/axiosInstance"
+
 
 const companyReportModule = "companyReportModule";
 const cartModule = "cartModule";
 const orderModule = "orderModule";
-const authenticationModule = "authenticationModule"
+const accountModule = "accountModule";
+const authenticationModule = "authenticationModule";
+const googleAuthenticationModule = "googleAuthenticationModule";
+const naverAuthenticationModule = "naverAuthenticationModule";
 
 export default {
   props: {
@@ -189,21 +257,54 @@ export default {
     companyReportCategory: {
       type: String,
       required: true,
-    },
+    },   
+    
   },
   data() {
     return {
       isCheckoutDialogVisible: false,
       isGoToCartListDialogVisible: false,
       purchase: true,
+      financeData: [],
+      financeYears: [],
+      companyInfo: [],
+      maxWidth: 0,
+      financeWidth: 0,      
     };
   },
   computed: {
     ...mapState(companyReportModule, ["companyReport", "companyReports"]),
-    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isAdmin"]),
+    ...mapState(authenticationModule, ["isAuthenticatedKakao", "isKakaoAdmin"]),
+    ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle",'isGoogleAdmin']),
+    ...mapState(accountModule, ["loginType", "isAuthenticatedNormal",'isNormalAdmin']),
+    ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver",'isNaverAdmin']),
+
+    
   },
   methods: {
-    ...mapActions(companyReportModule, ["requestCompanyReportToDjango","requestDeleteCompanyReportToDjango"]),
+    // 기존 메서드들
+    async getKeywords() {
+        try {
+          const response = await axiosInst.get(`/api/keywords?reportName=${this.companyReportName}`);
+          this.keywords = response.data;  // 받아온 키워드를 저장
+        } catch (error) {
+          console.error("키워드를 불러오는 중 오류 발생:", error);
+        }
+    },
+    toggleKeyword(keyword) {
+        if (this.selectedKeywords.includes(keyword)) {
+          this.selectedKeywords = this.selectedKeywords.filter((k) => k !== keyword);
+        } else {
+          this.selectedKeywords.push(keyword);
+        }
+    },
+
+    ...mapActions(companyReportModule, [
+      "requestCompanyReportToDjango",
+      "requestDeleteCompanyReportToDjango",
+      "requestCompanyReportFinanceToDjango",
+      'requestCompanyReportInfoToDjango'
+    ]),
     ...mapActions(cartModule, [
       "requestAddCartToDjango",
       "requestDeleteCartItemToDjango",
@@ -216,7 +317,6 @@ export default {
     ...mapActions(userLogModule, ["requestCountClickToDjango"]),
     async onPurchase() {
       this.isCheckoutDialogVisible = false;
-      // console.log('이모티콘 구매')
       try {
         const email = sessionStorage.getItem("email");
         const payload = {
@@ -228,7 +328,7 @@ export default {
           await this.requestOrderItemDuplicationCheckToDjango(payload);
         // console.log('isDuplicate:', isDuplicatedOrderItem)
         if (isDuplicatedOrderItem) {
-          alert("이미 구매하신 상품입니다.");
+          alert("이미 구매하신 보고서입니다.");
         } else {
           try {
             const email = sessionStorage.getItem("email");
@@ -264,7 +364,7 @@ export default {
         const email = sessionStorage.getItem("email");
         const payload = {
             email: email,
-          companyReportId: this.companyReport.companyReportId,
+            companyReportId: this.companyReport.companyReportId,
         };
         // console.log('payload:', payload)
         const isDuplicatedOrderItem =
@@ -273,9 +373,9 @@ export default {
           await this.requestCartItemDuplicationCheckToDjango(payload);
         // console.log('isDuplicate:', isDuplicatedOrderItem)
         if (isDuplicatedOrderItem) {
-          alert("이미 구매하신 상품입니다.");
+          alert("이미 구매하신 보고서입니다.");
         } else if (isDuplicatedCartItem) {
-          alert("장바구니에 있는 상품입니다.");
+          alert("장바구니에 있는 보고서입니다.");
         } else {
           try {
             this.isGoToCartListDialogVisible = true;
@@ -285,6 +385,7 @@ export default {
               companyReportPrice: this.companyReport.companyReportPrice,
             };
             await this.requestAddCartToDjango(cartData);
+            router.push("/cart/list");
           } catch (error) {
             console.log("장바구니 추가 과정에서 에러 발생:", error);
           }
@@ -320,26 +421,19 @@ export default {
         router.push("/companyReport/list")
     },
     getCompanyReportImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`)
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
+      return require(`@/assets/images/uploadImages/${imageName}`);
     },
     confirmCheckout() {
       this.isCheckoutDialogVisible = true;
-    },
-    goToCartList() {
-      router.push("/cart/list");
-    },
-    goToThisCompanyReportReviewList() {
+    },    
+    goToModifyPage() {
       this.$router.push({
-        name: "ReviewCompanyReportListPage",
-        params: {
-          companyReportId: this.companyReport.companyReportId.toString(),
-        },
-      });
-    },
-    goToCompanyReportReadPage(companyReportId) {
-      this.$router.push({
-        name: "CompanyReportReadPage",
-        params: { companyReportId: companyReportId },
+        name: "CompanyReportModifyPage",
+        params: { companyReportId: this.companyReport.companyReportId },
       });
     },
     async fetchCompanyReportData(companyReportId) {
@@ -348,9 +442,211 @@ export default {
         // console.log(this.companyReport.companyReportCategory);
       }
     },
+    async getFinanceData() {
+      // 데이터 확인
+      let data = await this.requestCompanyReportFinanceToDjango(this.companyReport.companyReportName);
+      let rawData = data.data;  
+      this.financeData = rawData
+      this.financeYears = Object.keys(data.data)
+      // 받은 데이터 변환
+      // this.financeData = rawData.map(item => item[0]); // 배열에서 첫 번째 객체만 추출하여 저장
+    },
+    async getCompanyInfo() {
+      // 데이터 확인
+      let data = await this.requestCompanyReportInfoToDjango(this.companyReport.companyReportName);
+      this.companyInfo = data.data[0]
+      // console.log(this.companyInfo)
+    },
+    
+    createChart() {
+        const margin = { top: 55, right: 25, bottom: 20, left: 40 };
+        const width = 250 - margin.right * 2 ;
+        const height = 260 - margin.top - margin.bottom;
+
+        const years = this.financeYears;
+
+        // 각 지표에 대한 막대 생성
+        const metrics = [
+            { key: 'revenue', label: '수익성 (매출액)' },
+            { key: 'profit_trend', label: '수익성 (영업이익)' },
+            { key: 'owners_capital', label: '안정성 (자기자본)' }
+        ];
+
+        // 숫자를 한국식으로 변환하는 함수
+        function formatKoreanNumber(number) {
+            const isNegative = number < 0; // 음수 여부 확인
+            number = Math.abs(number); // 절대값으로 변환하여 처리
+
+            let result = '';
+
+            if (number >= 1e12) {
+                const trillion = Math.floor(number / 1e12);
+                const billion = Math.round((number % 1e12) / 1e8);
+                result = `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
+            } else if (number >= 1e8) {
+                result = `${Math.round(number / 1e8)}억`;
+            } else if (number >= 1e6) {
+                result = `${Math.round(number / 1e6)}백만`;
+            } else if (number >= 1e3) {
+                result = `${Math.round(number / 1e3)}천`;
+            } else {
+                result = number.toLocaleString();
+            }
+
+            return isNegative ? `-${result}` : result; // 음수인 경우 '-' 추가
+        }
+
+        console.log(this.financeData)
+        // 각 지표에 대해 그래프 생성
+        metrics.forEach((metric, metricIndex) => {
+            // SVG 생성
+            const svg = d3
+                .select(this.$refs.chart)
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            // X축 (년도)
+            const x0 = d3.scaleBand()
+                .domain(years)
+                .range([0, width])
+                .padding(0.2);
+
+            // X축 추가
+            svg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(x0))
+                .style('color', '#808080');
+
+            // Y축 (지표 값)
+            const yMax = d3.max([
+                d3.max(this.financeData[years[0]], d => d[metric.key]),
+                d3.max(this.financeData[years[1]], d => d[metric.key]),
+                d3.max(this.financeData[years[2]], d => d[metric.key]),
+            ]);
+            const yMin = d3.min([
+                d3.min(this.financeData[years[0]], d => d[metric.key]),
+                d3.min(this.financeData[years[1]], d => d[metric.key]),
+                d3.min(this.financeData[years[2]], d => d[metric.key]),
+            ]);
+            const yMaxAbs = Math.max(Math.abs(yMin), Math.abs(yMax));  // 최대 절대값을 계산
+
+            const y = d3.scaleLinear()
+                .domain([yMin < 0 ? -yMaxAbs : 0, yMax])
+                .range([height, 0]);
+
+            // Y축 설정
+            svg.append('g')
+                .call(d3.axisLeft(y)
+                  .ticks(3)
+                  .tickFormat(d => d.toString().slice(0, 2))
+                )
+                .style('color', '#808080');
+
+            // 기준선 (0) 그리기
+            if (yMin < 0) {
+                svg.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', width)
+                    .attr('y1', y(0)) // Y축의 0 위치
+                    .attr('y2', y(0))
+                    .attr('stroke', '#808080')
+                    .attr('stroke-width', 1);
+            }
+
+            // 막대 색상 설정
+            const getBarColor = (value, preValue) => {
+                if (preValue !== undefined) {
+                    const change = (() => {
+                        if (preValue > 0) {
+                            return ((value - preValue) / preValue) * 100;
+                        } else if (preValue < 0) {
+                            if (value > 0) {
+                                return ((value - preValue) / Math.abs(preValue)) * 100;
+                            } else {
+                                return ((Math.abs(preValue) - Math.abs(value)) / Math.abs(preValue)) * 100;
+                            }
+                        } else {
+                            // preValue가 0일 때 처리
+                            return value > 0 ? 100 : (value < 0 ? -100 : 0);
+                        }
+                    })();
+                    if (change >= 5) return "#77DD77"; // 초록색 (증가)
+                    if (change <= -5) return "#FF6961"; // 빨간색 (감소)
+                    return "#AEC6CF"; // 파란색 (변화 거의 없음)
+                }
+                return "#D3D3D3"; // 회색 (기본값)
+            };
+
+            // 막대 추가
+            svg.selectAll(`.${metric.key}`)
+                .data(years.map((year, index) => {
+                    const value = this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0;
+                    const preValue = index > 0 ? this.financeData[years[index - 1]].length > 0 ? this.financeData[years[index - 1]][0][metric.key] : 0 : undefined;
+                    return {
+                        year,
+                        value,
+                        color: index === years.length - 1 ? getBarColor(value, preValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
+                    };
+                }))
+                .enter()
+                .append('rect')
+                .attr('class', metric.key)
+                .attr('x', d => x0(d.year))
+                .attr('y', d => d.value >= 0 ? y(d.value) : y(0))
+                .attr('width', x0.bandwidth())
+                .attr('height', d => Math.abs(y(d.value) - y(0)))  // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
+                .attr('fill', d => d.color);
+
+
+            // 막대 상단에 값 표시
+            svg.selectAll(`.${metric.key}-label`)
+                .data(years.map(year => ({
+                    year: year,
+                    value: this.financeData[year].length > 0 ? this.financeData[year][0][metric.key] : 0,
+                })))
+                .enter()
+                .append('text')
+                .attr('class', `${metric.key}-label`)
+                .attr('x', d => x0(d.year) + x0.bandwidth() / 2)
+                .attr('y', d => y(d.value) - 7)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#6b6b6b')
+                .attr('font-size', 10)
+                .text(d => formatKoreanNumber(d.value));
+
+            // 제목 추가
+            svg.append('text')
+                .attr('class', 'chart-title')
+                .attr('x', width / 2) // 가운데 정렬
+                .attr('y', -40) // Y축 위쪽으로 위치 조정
+                .attr('text-anchor', 'middle')
+                .attr('font-weight', 'bold')
+                .text(metric.label); // 각 지표 레이블로 제목 추가
+        });
+    },
+    calculateMaxWidth() {
+      const overview = this.$refs.overview;
+      const finance = this.$refs.finance;
+
+      // `ref`가 정의된 경우에만 길이를 측정
+      const overviewWidth = overview ? overview.$el.getBoundingClientRect().width : 0;
+      const financeWidth = finance ? finance.$el.getBoundingClientRect().width : 0;
+      this.financeWidth = financeWidth
+
+      // 세 길이 중 가장 큰 값을 찾기
+      this.maxWidth = Math.max(overviewWidth, financeWidth);
+    },
   },
   async created() {
     await this.fetchCompanyReportData(this.companyReportId);
+    await this.getFinanceData(); // 컴포넌트 생성 시 데이터 가져오기
+    await this.getCompanyInfo();
+    this.createChart(); // 데이터 가져온 후 차트 생성
+    this.calculateMaxWidth();
+    window.addEventListener("resize", this.calculateMaxWidth);
   },
   watch: {
     "$route.params.companyReportId": {
@@ -363,16 +659,38 @@ export default {
   mounted(){
     const adminToken = sessionStorage.getItem("adminToken")
     if (adminToken){
-      this.$store.state.authenticationModule.isAdmin = true
+      this.$store.state.authenticationModule.isKakaoAdmin = true
+        this.$store.state.googleAuthenticationModule.isGoogleAdmin = true
+        this.$store.state.naverAuthenticationModule.isNaverAdmin = true
+        this.$store.state.accountModule.isNormalAdmin = true
     }
-  }
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxWidth);
+  },
 };
 </script>
 
 <style scoped>
+svg {
+  font-family: sans-serif;
+}
 .custom-img {
-  max-width: 100%;
-  height: auto;
+  max-width: 200px;
+  height: 200px;
+  border: 1px solid #ccc !important;
+  border-radius: 32px;
+  box-shadow: 0 1px 3px rgb(206, 205, 205);
+  margin-bottom: 30px;
+}
+
+.keyword-btn {
+  border-radius: 8px;
+  color: #1e68d1;
+  width: auto;
+  height: 3vh;
+  margin-top: 10px;
+  padding: 2px 12px;
 }
 
 .companyReport-name {
@@ -389,7 +707,7 @@ export default {
 
 .companyReport-price {
   font-size: 24px;
-  color: red;
+  color: grey;
 }
 
 .original-price {
@@ -399,9 +717,31 @@ export default {
   margin-left: 10px;
 }
 
-.action-button {
-  font-weight: bold;
+.order-action-button {
+  width: 158px;
+  height: 56px;
+  border-radius: 16px;
+  background: #0A28B0;
+  color: #FFFFFF;
 }
+.cart-action-button {
+  width: 158px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid #E6E8EC !important;
+  background: white;
+  color: #7B8094;
+}
+.return-action-button {
+  width: 158px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #7B8094 !important;
+  background: white;
+  color: black;
+  margin-bottom: 40px;
+}
+
 
 .no-underline {
   text-decoration: none;
@@ -573,4 +913,57 @@ export default {
 .pushable:focus:not(:focus-visible) {
   outline: none;
 }
+
+a {
+  color: rgb(107, 107, 107);
+  text-decoration: none; 
+}
+
+a:hover {
+  color: rgb(27, 59, 173);
+}
+
+a:visited {
+  color: rgb(107, 107, 107); 
+}
+
+a:active {
+  color: rgb(27, 59, 173); 
+}
+
+.auto-width-divider {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-content span {
+  padding: 2rem;
+  color: rgb(107, 107, 107);
+}
+
+.overview-content span b {
+  font-size: 1.rem;
+}
+
+.summary {
+  margin: auto;
+}
+
+::v-deep .summary p {
+  margin-bottom: 30px;
+  line-height: 1.8;
+}
+
+::v-deep .summary span > ul > li {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+::v-deep .summary li ul {
+  padding-left: 20px; 
+  margin: 10px 0 10px 10px;
+}
+
 </style>

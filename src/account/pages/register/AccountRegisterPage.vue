@@ -243,7 +243,9 @@ export default {
         }
 
         if (accessToken) {
-            await this.requestAddRedisAccessTokenToDjango({ email: accountInfo.email, accessToken });
+            if(this.loginType === 'KAKAO'){await this.requestAddRedisAccessTokenToDjango({ email: accountInfo.email, accessToken });}
+            if(this.loginType === 'GOOGLE'){await this.requestAddGoogleRedisAccessTokenToDjango({ email: accountInfo.email, accessToken });}
+            if(this.loginType === 'NAVER'){await this.requestAddNaverRedisAccessTokenToDjango({ email: accountInfo.email, accessToken });}
         } else {
             console.error('AccessToken is missing');
         }

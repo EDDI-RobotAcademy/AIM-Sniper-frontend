@@ -17,6 +17,15 @@ export type CompanyReportActions = {
         imageFormData: FormData
     ): Promise<AxiosResponse>
     requestDeleteCompanyReportToDjango(context: ActionContext<CompanyReportState, unknown>, companyReportId: number): Promise<void>
+    requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number,keyword:string
+    }): Promise<void>
+    requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
+    requestCompanyReportInfoToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>
+    requestTopNCompanyReportListToDjango(context: ActionContext<CompanyReportState, unknown>, 
+        topN: number): Promise<void>
 }
 
 const actions: CompanyReportActions = {
@@ -24,7 +33,6 @@ const actions: CompanyReportActions = {
         context: ActionContext<CompanyReportState, any>, 
         companyReportId: number
     ): Promise<void> {
-
         try {
             const res: AxiosResponse<CompanyReport> = 
                 await axiosInst.djangoAxiosInst.get(`/company_report/read/${companyReportId}`)
@@ -39,7 +47,7 @@ const actions: CompanyReportActions = {
         try {
             const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.get('/company_report/list/');
             const data: CompanyReport[] = res.data;
-            // console.log('data:', data)
+            console.log('data:', data)
             context.commit('REQUEST_COMPANYREPORT_LIST_TO_DJANGO', data);
         } catch (error) {
             console.error('Error fetching companyReport list:', error);
@@ -69,6 +77,48 @@ const actions: CompanyReportActions = {
         } catch (error) {
             console.log('requestDeleteBoardToDjango() 과정에서 문제 발생')
             throw error
+        }
+    },
+    async requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number,keyword:string
+    }): Promise<void> {
+        
+        const { companyReportName, content, companyReportId,companyReportPrice,keyword } = payload
+
+        try {
+            await axiosInst.djangoAxiosInst.put(`/company_report/modify/${companyReportId}`, { companyReportName, content, companyReportPrice,keyword })
+            // console.log('수정 성공!')
+        } catch (error) {
+            console.log('requestModifyCompanyReportToDjango() 과정에서 문제 발생')
+            throw error
+        }
+    },
+    async requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,companyReportName:string
+    ) :Promise<any>{
+        try {
+            const data =  await axiosInst.djangoAxiosInst.post('company_report/finance',{companyReportName})
+            return data
+        }catch (error){
+            console.log('requestCompanyReportFinanceToDjango 중 문제 발생')
+            throw error
+        }
+    },
+    async requestCompanyReportInfoToDjango(context: ActionContext<CompanyReportState,any>,
+        companyReportName:string) :Promise<any>{
+        try{
+            return await axiosInst.djangoAxiosInst.post('company_report/info',{companyReportName})
+        }catch(error){
+            console.log('requestCompanyReportInfoToDjango 중 문제 발생')
+            throw error
+        }
+    },
+    async requestTopNCompanyReportListToDjango(
+        context: ActionContext<CompanyReportState, unknown>, 
+        topN: number): Promise<void>{
+        try{
+            return await axiosInst.djangoAxiosInst.post('company_report/top',{params: {topN}})
+        }catch(error){
+            console.log('requestTopNCompanyReportListToDjango 중 문제 발생')
         }
     },
 };

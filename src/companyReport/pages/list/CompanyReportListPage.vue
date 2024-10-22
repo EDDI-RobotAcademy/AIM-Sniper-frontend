@@ -1,55 +1,127 @@
-<template>
+<template>  
   <div class="background-image">
-    <v-container>
-      <v-row class="justify-center align-center">
-        <v-col cols="3">
-          <v-select
-            v-model="selectedCategory"
-            :items="categories"
-            label="카테고리 선택"
-            class="category-select"
-            outlined
-          ></v-select>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="searchQuery"
-            label="검색"
-            prepend-inner-icon="mdi-magnify"
-            clearable
-            class="search-input"
-            outlined
-          ></v-text-field>
-        </v-col>
-        <v-col v-if="isAdmin" cols="auto" class="text-right">
+    <v-container class="custom-padding">
+      <!-- 관리자 페이지 계정 로그인시에만 나타나는 버튼 -->
+      <v-row>
+        <v-col v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" cols="auto" class="text-right">
           <v-btn
             :to="{ name: 'CompanyReportRegisterPage' }"
             class="register-btn"
-            height="40"
+            width="100vw"
+            color="white"
             outlined
           >
             상품 등록
           </v-btn>
         </v-col>
       </v-row>
+      <!-- 산업 필터 -->
+      <v-row>        
+        <v-col cols="1">
+          <v-btn icon @click="toggleSidebar" style="width: 120px; border-radius: 8px; margin-top: 10px; box-shadow: 0 3px 6px #0a28b0; font-weight: bold;">
+            <v-icon>mdi-file-sync-outline</v-icon>
+              직무 필터
+          </v-btn>
+        </v-col>
 
-      <h1
-        class="section-title"
-        @click="toggleVisibility('allCompanyReportsVisible')"
-      >
-        전체 상품 <v-icon small>mdi-chevron-down</v-icon>
-      </h1>
+        <v-col cols="3">
+          <h2 class="section-title"> 전체 보고서 </h2>
+        </v-col>
+        <v-col cols="3">
+          <!-- 여백용 -->
+        </v-col>
+        
+        <v-col cols="2">
+          <v-select
+            v-model="selectedCategory"
+            :items="categories"            
+            class="category-select"
+            outlined            
+          ></v-select>
+        </v-col>
+        
+        <v-col cols="3">
+          <v-text-field
+            v-model="searchQuery"
+            label="검색 내용을 입력하세요"
+            prepend-inner-icon="mdi-magnify"
+            clearable
+            class="search-input"
+            outlined
+          ></v-text-field>
+        </v-col>
 
-      <v-row
-        v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0"
+                        
+      </v-row>
+
+      <!-- 간단한 사이드바 시작 -->
+      <v-navigation-drawer
+        v-model="isSidebarOpen"
+        right
+        absolute
+        temporary
       >
+        <v-list-item>
+          <v-list-item-content>
+            <br>
+            <v-list-item-title><h3>산업 키워드 선택</h3></v-list-item-title>
+            <br>
+            <v-row class="justify-center align-center">
+              <v-col cols="12">          
+                <v-row class="keyword-container">
+                  <v-col cols="auto" v-for="keyword in keywords" :key="keyword" class="pa-2">
+                    <v-btn
+                      :color="selectedKeywords.includes(keyword) ? 'primary' : ''"
+                      @click="toggleKeyword(keyword)"
+                      outlined
+                      rounded
+                      class="keyword-btn"
+                    >
+                      {{ keyword }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-list-item-content>
+        </v-list-item>
+      </v-navigation-drawer>
+      <!-- 간단한 사이드바 끝 -->
+      
+      <v-row class="justify-center align-center mt-15 mb-15">
+        <v-col
+          v-for="(companyReport, index) in topNCompanyReports"
+          :key="index"
+          cols="12"
+          sm="4"
+          md="3"
+          lg="2"
+        >
+          <div class="popular-company">
+            <div class="border-top"></div>
+            <span><h5>AI - Report 추천</h5></span>
+            <div class="img">
+                <img 
+                :src="getImageUrl(companyReport.companyReportTitleImage)">
+            </div>
+            <span>{{ companyReport.companyReportName }}</span>
+            <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+            <button 
+              @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
+              click
+            </button>
+          </div>
+        </v-col>
+      </v-row>      
+      
+      <v-row v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0">
         <v-col
           v-for="(companyReport, index) in paginatedCompanyReports"
           :key="index"
           cols="12"
           sm="6"
           md="4"
-          lg="3"
+          lg="3"          
         >
           <v-card
             class="companyReport-card"
@@ -79,7 +151,7 @@
 
       <v-row v-else-if="allCompanyReportsVisible">
         <v-col cols="12" class="text-center">
-          <v-alert type="info">등록된 전체 보고서가 없습니다!</v-alert>
+          <v-alert type="info">등록된 보고서가 없습니다!</v-alert>
         </v-col>
       </v-row>
 
@@ -98,12 +170,18 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+const accountModule = "accountModule";
 const authenticationModule = "authenticationModule";
+const googleAuthenticationModule = "googleAuthenticationModule";
+const naverAuthenticationModule = "naverAuthenticationModule";
 
 export default {
   computed: {
     ...mapState("companyReportModule", ["companyReports"]),
-    ...mapState(authenticationModule, ["isAdmin"]),
+    ...mapState(authenticationModule, ["isKakaoAdmin"]),
+    ...mapState(googleAuthenticationModule, ['isGoogleAdmin']),
+    ...mapState(accountModule, ['isNormalAdmin']),
+    ...mapState(naverAuthenticationModule, ['isNaverAdmin']),
     paginatedCompanyReports() {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredCompanyReports.slice(
@@ -114,24 +192,60 @@ export default {
     filteredCompanyReports() {
       let companyReports = this.companyReports;
 
-      if (this.selectedCategory !== "전체") {
+      // 키워드 필터링: '전체'를 선택하면 필터링을 하지 않음
+      if (!this.selectedKeywords.includes('전체')) {
+        companyReports = companyReports.filter((companyReport) => {
+          if (companyReport.keyword) {
+            // companyReport.keyword가 쉼표로 구분된 문자열이면 배열로 변환
+            const keywordsArray = companyReport.keyword.split(',');
+
+            // 선택된 키워드 중 하나라도 포함된 보고서만 필터링
+            return this.selectedKeywords.some((keyword) =>
+              keywordsArray.includes(keyword)
+            );
+          }
+          return false; // keyword가 없는 경우 필터링 제외
+        });
+      }
+
+      // 카테고리 필터링
+      if (this.selectedCategory !== '전체') {
         companyReports = companyReports.filter(
-          (companyReport) =>
-            companyReport.companyReportCategory === this.selectedCategory
+          (companyReport) => {
+            const categories = Array.isArray(companyReport.categories) 
+              ? companyReport.categories 
+              : companyReport.categories ? companyReport.categories.split(',') : [];
+            return categories.includes(this.selectedCategory);
+          }
         );
       }
 
+      // 검색 필터링
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         companyReports = companyReports.filter((companyReport) =>
           companyReport.companyReportName.toLowerCase().includes(query)
         );
       }
+
+      return companyReports;
+    },
+    topNCompanyReports() {
+      let companyReports = this.companyReports;
+      companyReports = companyReports.filter(
+          (companyReport) => {
+            return this.topList.some(topId => topId === companyReport.companyReportId);
+      });
+      
       return companyReports;
     },
   },
   data() {
     return {
+      selectedKeywords: ['전체'],
+      keywords: [
+      '플랫폼', '정보보안', '빅데이터', '소프트웨어', '하드웨어', '클라우드', '컨설팅', '헬스케어', '메타버스', '인프라', '게임', '의료', 'AI', '디스플레이', '마케팅/광고', '영상 분석', '네트워크', '금융지원'
+      ],
       categories: ["전체", "IT", "플랫폼", "은행"],
       selectedCategory: "전체",
       searchQuery: "",
@@ -139,11 +253,17 @@ export default {
       itemsPerPage: 8,
       allCompanyReportsVisible: true,
       purchase: false,
+      topN: 5,
+      topList: [],
+      isSidebarOpen: false, // 사이드바 열림/닫힘 상태
     };
   },
   methods: {
-    ...mapActions("companyReportModule", ["requestCompanyReportListToDjango"]),
+    ...mapActions("companyReportModule", ["requestCompanyReportListToDjango", "requestTopNCompanyReportListToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]), //유저가 상품을 눌렀을 때 상품 클릭 수가 늘어남
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
     goToCompanyReportReadPage(companyReportId) {
       const email = sessionStorage.getItem('email');
       
@@ -154,7 +274,12 @@ export default {
 
       if (!email) {
         // email이 없으면 함수가 동작하지 않음
-        console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
+        // console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
+        return;
+      }
+      if(this.isGoogleAdmin || this.isKakaoAdmin || this.isNaverAdmin || this.isNormalAdmin){
+        // 관리자는 갯수를 세지 않습니다.
+        // console.log("로그인 정보가 없습니다. 상품 클릭 수가 기록되지 않습니다.");
         return;
       }
       this.requestCountClickToDjango({
@@ -163,41 +288,97 @@ export default {
         purchase: this.purchase,
       });
     },
-    toggleVisibility(section) {
-      this[section] = !this[section];
-    },
     changePage(page) {
       this.currentPage = page;
     },
     getImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`);
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
+      return require(`@/assets/images/uploadImages/${imageName}`);
+    },
+    toggleKeyword(keyword) {
+      if (keyword === '전체') {
+        // '전체'를 선택하면 다른 모든 키워드를 해제하고 '전체'만 선택
+        this.selectedKeywords = ['전체'];
+      } else {
+        // '전체'가 선택된 상태에서 다른 키워드를 선택하면 '전체'를 해제
+        const index = this.selectedKeywords.indexOf('전체');
+        if (index !== -1) {
+          this.selectedKeywords.splice(index, 1); // '전체' 해제
+        }
+
+        // 키워드가 이미 선택되어 있으면 해제하고, 선택되어 있지 않으면 추가
+        if (this.selectedKeywords.includes(keyword)) {
+          this.selectedKeywords = this.selectedKeywords.filter(
+            (k) => k !== keyword
+          );
+        } else {
+          this.selectedKeywords.push(keyword);
+        }
+
+        // 만약 선택된 키워드가 없으면 '전체'를 다시 추가
+        if (this.selectedKeywords.length === 0) {
+          this.selectedKeywords.push('전체');
+        }
+      }
     },
   },
-  mounted() {
+  async mounted() {
     this.requestCompanyReportListToDjango();
+
+    const response = await this.requestTopNCompanyReportListToDjango(this.topN);
+    if (response && response.data) {
+      this.topList = response.data;
+    }
   },
 };
 </script>
 
-<style>
-.section-title {
-  color: #0b0b0b;
-  font-family: "Roboto", sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 40px;
+<style scoped>
+
+@font-face {
+  font-family:'Pretendard';
+  src: url('@/assets/fonts/Pretendard.ttf') format('truetype');
+  font-weight: 400;
 }
 
 .register-btn {
+  font-size: 16px;
   background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
+  color: blue !important;
+  border: 1px solid #ccc !important;
   box-shadow: none;
+  border: 1px solid (109, 109, 109, 0.5);
   text-transform: none;
+}
+
+.section-title {
+  color: #0A28B0;
+  font-family: "Pretendard", sans-serif !important;
+  font-weight: bold;
+  font-size: 30px;
+  margin-left: 10px;
+  margin-top: 10px;   
+}
+
+::v-deep .v-field {  
+  background-color: #83838300 !important; 
+  color: rgb(37, 47, 133) !important;    
+  border-radius: 15px 15px 0px 0px!important;    
+}
+
+
+.custom-padding {
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
+  border-radius: 32px;  
+  box-shadow: 0 1px 3px rgb(206, 205, 205); 
 }
 
 .companyReport-card:hover {
@@ -207,23 +388,132 @@ export default {
 .companyReport-title {
   font-size: 18px;
   font-weight: bold;
+  margin-left: 10px;
+  padding-top: 0px;
 }
 
-.companyReport-price {
-  color: #ff5252;
+.companyReport-price {  
+  color: #9452ff;
   font-weight: 600;
+  margin-left: 10px;  
 }
 
 .companyReport-image {
   border-bottom: 1px solid #f5f5f5;
 }
 
-.search-input .v-text-field__control {
-  border-radius: 30px;
+.popular-company {
+  width: 11vw;
+  height: 240px;  
+  background: #0a28b0;
+  margin-top: 0;
+  margin-bottom: 0;  
+  border-radius: 15px;
+  box-shadow: 1px 5px 60px 11px #1f199d6b;
+  position: relative; /* 레이저를 감싸는 요소의 위치 지정 */
+  
 }
 
-.category-select .v-input__control {
-  border-radius: 30px;
-  background-color: #fff;
+.popular-company::before {
+  content: "";
+  position: absolute;
+  width: 6px; /* 점의 크기 */
+  height: 6px;
+  background-color: white; /* 점의 색상 */
+  border-radius: 50%; /* 점을 둥글게 만듦 */
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8), /* 빛 효과 */
+              0 0 50px 25px rgba(255, 255, 255, 0.5), /* 첫 번째 꼬리 */
+              0 0 75px 25px rgba(255, 255, 255, 0.3); /* 더 긴 꼬리 */
+  animation: shooting-star 4s linear infinite; /* 애니메이션 설정 */
+}
+
+@keyframes shooting-star {
+  0% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 처음 크기 */
+  }
+  25% {
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%) scale(1.2); /* 크기 약간 확대 */
+  }
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%) scale(1.4); /* 크기 더 확대 */
+  }
+  75% {
+    top: 100%;
+    left: 0;
+    transform: translateY(-100%) scale(1.2); /* 다시 크기 축소 */
+  }
+  100% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 원래 크기로 돌아옴 */
+  }
+}
+
+
+
+.popular-company .border-top {
+  width: 75%;
+  height: 3%;
+  background: #8094F4;
+  margin: auto;
+  border-radius: 0px 0px 15px 15px;
+}
+
+.popular-company span {
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  display: block;
+  padding-top: 10px;
+  font-size: 16px;
+}
+
+.popular-company .price {
+  font-weight: 400;
+  color: white;
+  display: block;
+  text-align: center;
+  padding-top: 3px;
+  font-size: 12px;
+}
+
+.popular-company .img {
+  width: 120px;
+  height: 70px;
+  /* background: #8094F4; */
+  border-radius: 15px;
+  margin: auto;
+  margin-top: 25px;
+}
+
+.popular-company button {
+  padding: 8px 25px;
+  display: block;
+  margin: auto;
+  border-radius: 8px;
+  border: none;
+  margin-top: 20px;
+  background: #8094F4;
+  color: white;
+  font-weight: 600;
+}
+
+.popular-company button:hover {
+  background: #534bf3;
+}
+.keyword-btn{
+  border-radius: 8px;
+  color: #1e68d1;
+  padding: 4px 12px;
+  width: auto;
+  height: 4vh;
 }
 </style>

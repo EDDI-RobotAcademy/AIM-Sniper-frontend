@@ -1,12 +1,11 @@
 <template>
   <div class="background">
   <v-container class="container">
-    <v-card class="change-card" max-width="500" min-height="600">
-      <v-card-title class="title">Profile Settings</v-card-title>
+    <v-card class="change-card">
+      <v-card-title class="title">프로필 수정</v-card-title>
 
       <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <!-- Conditionally render password fields based on generalLogin -->
           <template v-if="isAuthenticatedNormal">
             <v-text-field
               v-model="currentPassword"
@@ -50,8 +49,8 @@
             :error-messages="nicknameErrorMessages"
           ></v-text-field>
 
-          <v-btn class="mt-4" color=#212121 @click="validateAndChangeNickname">
-            Change Nickname
+          <v-btn class="mt-4" @click="validateAndChangeNickname">
+            닉네임 수정하기
           </v-btn>
         </v-form>
       </v-card-text>
@@ -82,7 +81,7 @@ export default {
       nicknameErrorMessages: '',
       isGeneralLogin: false, // Add this flag to determine if generalLogin exists
       rules: {
-        required: value => !!value || 'Required.',
+        required: value => !!value || '변경할 닉네임을 입력해주세요.',
         matchPassword: value => value === this.newPassword || 'Passwords do not match',
       },
     };
@@ -224,23 +223,37 @@ export default {
 </script>
 
 <style scoped>
-.background{
-  background-color: #212121;
-}
-.container {
+.background{    
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+}
+.container {
+  top: 0;
+  position: absolute;  
+  width: 100vw;
   height: 100vh;
-  background-color: #212121;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  
 }
 
 .change-card {
-  padding: 10vh;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-  background-color: #292828;
-  color:aliceblue;
+  position: relative;
+  width: 500px;
+  height: auto;
+  overflow: hidden;
+  text-align: center;  
+  color: black;
+  background-color: white;
+  border: 2px solid white;
+  border-radius: 32px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .title {
@@ -249,7 +262,15 @@ export default {
   font-weight: bold;
 }
 
-.v-divider {
-  margin: 20px 0;
+.mt-4 {
+  display: flex;
+  justify-content: center !important;
+  align-items: center !important;
+  background: white;
+  border: 1px solid lightgray;
+  border-radius: 12px;
+  color: black;
+  margin-left: 35%;
 }
+
 </style>

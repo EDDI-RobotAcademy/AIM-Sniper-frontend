@@ -4,15 +4,14 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            <span>구매한 이모티콘</span>
-            <v-icon class="ml-auto">mdi-emoticon-happy-outline</v-icon>
+            <span>구매한 보고서</span><br>
           </v-card-title>
           <v-card-text>
             <v-table>
               <thead>
                 <tr class="table-header">
-                  <th>이모티콘</th>
-                  <th>이름</th>
+                  <th></th>
+                  <th>기업명</th>
                   <th>가격</th>
                   <th></th>
                 </tr>
@@ -44,9 +43,10 @@
         </v-card>
       </v-col>
     </v-row>
+    <br>
     <v-row justify="center">
       <v-col cols="auto">
-        <v-btn color="#E3EF76" @click="goToLastPage">
+        <v-btn color="primary" @click="goToLastPage">
           <v-icon left>mdi-arrow-left</v-icon>
           <span>돌아가기</span>
         </v-btn>
@@ -82,7 +82,11 @@ export default {
   methods: {
     ...mapActions(orderModule, ["requestMyOrderItemListToDjango"]),
     getImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`);
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
+      return require(`@/assets/images/uploadImages/${imageName}`);
     },
     goToLastPage() {
       this.$router.go(-1);

@@ -1,11 +1,9 @@
 <template>
-  <div class="home-container">
-    <div class="nav-container">
-      <!-- 네비게이션 바 내용 -->
-    </div>
+  <div class="home-container">    
 
     <div class="content-wrapper">
-      <h2 class="prompt-title">AI 모의 면접</h2>
+      <h2 class="prompt-title">AIM AI INTERVIEW</h2>
+      <h4 class="prompt-subtitle">AIM에서 제공하는 AI 인성면접 서비스에요</h4>
       <div class="prompt-container">
         <div class="chat-window">
           <div
@@ -39,9 +37,10 @@
             @keydown.enter.exact.prevent="handleEnterKey"  
             @keydown.shift.enter="handleShiftEnter"
             @input="adjustTextareaHeight"
+            @disable="finished"
             ref="messageInput"
           ></textarea>
-          <button class="send-button" @click="sendMessage">입력</button>
+          <button class="send-button" @click="sendMessage"><b>↑</b></button>
         </div>
       </div>
     </div>
@@ -49,8 +48,10 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import markdownIt from 'markdown-it'
 import '@mdi/font/css/materialdesignicons.css'
+const aiInterviewModule = 'aiInterviewModule'
 
 export default ({
   data() {
@@ -59,10 +60,15 @@ export default ({
       userInputMessage: '',
       aiOutput: '',
       chatHistory: [
-        { type: 'ai', content: '안녕하세요! AI 모의 면접 서비스입니다.' }
+        { type: 'ai', content: '안녕하세요! AI 모의 면접 서비스입니다. "면접 시작"을 입력하시면 면접을 시작할 수 있습니다. 총 5번의 질문이 제공됩니다.' }
       ],
       isLoading: false,  // 로딩 상태 추가,
       md: new markdownIt(), // markdown-it
+
+      sendCount: 0,  // 메시지 전송 횟수 추적
+      maxMessages: 6,  // 최대 메시지 전송 횟수 설정
+      aiResponseList: [],  // AI 질문 리스트 저장
+      questionIndex: 0,  // 현재 질문 인덱스
 
       showContextMenu: false,
       contextMenuX: 0,
@@ -75,6 +81,7 @@ export default ({
     };
   },
   methods: {
+    ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango' ]),
     renderMessageContent(message) {
       if (message.type !== 'user') {
         // markdown-it로 렌더링된 내용에 .markdown-content 클래스를 추가
@@ -133,7 +140,15 @@ export default ({
       this.adjustTextareaHeight();  // 줄바꿈 후 높이 조정
     },
 
-    sendMessage(event) {
+    async sendMessage(event) {
+      if (this.sendCount >= this.maxMessages) {
+        this.finished = true;
+        this.chatHistory.push({
+            type: "ai",
+            content: "면접이 종료되었습니다. 추후에 더 나은 서비스로 찾아오겠습니다.",
+          });
+        return;  // 5번 이상이면 메시지 전송 차단
+      }
       if (this.userInput.trim()) {
         // 텍스트 메시지를 채팅 히스토리에 추가
         if (this.userInput.trim()) {
@@ -144,10 +159,16 @@ export default ({
         this.userInput = '';
         this.adjustTextareaHeight();  // 전송 후 높이도 초기화
         this.isLoading = true;  // ... 로딩 상태 활성화
+        this.sendCount++;
 
         // AI 응답 시뮬레이션
-        setTimeout(() => {
-          const aiResponse = "AI 모의 면접 서비스를 위해 데이터를 구축 중입니다. 조금만 기다려 주세요!"
+        setTimeout(async () => {
+          if (this.aiResponseList.length === 0) {
+            const sessionId = Math.floor(Math.random() * 200) + 1;
+            this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
+          }
+          const aiResponse = this.aiResponseList.questionList[this.questionIndex] || "면접이 종료되었습니다." // "AI 모의 면접 서비스를 위해 데이터를 구축 중입니다. 조금만 기다려 주세요!"
+          this.questionIndex++;
           this.chatHistory.push({
             type: "ai",
             content: aiResponse,
@@ -164,36 +185,49 @@ export default ({
 
 <style scoped>
 .content-wrapper {
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 40px;
-  box-sizing: border-box;
+  justify-content: flex-start;
+  text-align: center;
+  padding-top: 20px; 
 }
 
 .prompt-title {
-  text-align: center; /* 제목을 가운데 정렬 */
-  font-size: 28px; /* 제목의 글자 크기 */
-  margin-bottom: 20px; /* 제목과 프롬프트 컨테이너 사이의 여백 */
-  color: #333; /* 제목 색상 설정 */
+  width: 100%; /* 부모 요소의 전체 너비를 차지하도록 설정 */
+  max-width: 70vw; /* 프롬프트창과 일치하는 너비 */
+  font-size: 32px;
+  color: #0A28B0;
+  margin-top: 2%;
+  margin-bottom: 10px;
+  margin-left: 5%;
+  text-align: left;  
+}
+.prompt-subtitle {
+  width: 100%; /* 부모 요소의 전체 너비를 차지하도록 설정 */
+  max-width: 70vw; /* 프롬프트창과 일치하는 너비 */
+  font-size: 16px;
+  color: #222222;
+  margin-bottom: 20px;
+  margin-left: 5%;
+  text-align: left;  
 }
 
 /* 채팅 프롬프트 컨테이너 */
 .prompt-container {
-  width: 60%;
-  max-width: 1980px;
-  margin: 30px auto;
-  border-radius: 20px;
+  width: 70vw;
+  height: 60vh; 
+  border-radius: 40px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;  /* 입력창이 맨 아래로 고정되도록 설정 */
-  min-height: 60vh;
-  max-height: 90vh;
+  justify-content: flex-end;
+  
+  max-height: 80vh; /* 높이를 더 줄여서 타이틀과 서브타이틀이 위로 올라가게 함 */
   overflow-y: auto;
-  background-color: white; /* 배경을 흰색으로 설정 */
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2); /* 부드러운 그림자 추가 */
+  background-color: white;
+  box-shadow: 0 0 10px 0 grey;
 }
 
 /* 채팅 창 */
@@ -224,10 +258,7 @@ export default ({
   margin-right: auto;
 }
 
-:root {
-  --user-avatar-color: #4CAF50; /* 사용자 아바타 색상 */
-  --ai-avatar-color: #2196F3; /* AI 아바타 색상 */
-}
+
 
 /* 아바타 이미지 스타일 */
 .avatar {
@@ -240,18 +271,14 @@ export default ({
 }
 
 .ai .avatar {
-  font-size: 30px; /* 아이콘 크기 조정 */
+  font-size: 40px; /* 아이콘 크기 조정 */
   color: black; /* 아이콘 색상 조정 */
 }
 
 .user .avatar {
-  font-size: 30px; /* 아이콘 크기 조정 */
+  font-size: 40px; /* 아이콘 크기 조정 */
   color: black; /* 아이콘 색상 조정 */
-  margin: 15px 50px;
-  margin-top: 25px;   /* 위쪽 여백 */
-  margin-bottom: 10px; /* 아래쪽 여백 */
-  margin-left: 20px;  /* 왼쪽 여백 */
-  margin-right: 5px; /* 오른쪽 여백 */
+  margin: 20px 50px; 
 }
 
 /* 메시지 내용 스타일 */
@@ -264,70 +291,75 @@ export default ({
   position: relative; /* 부모 요소 기준으로 절대 위치 설정 가능 */
   bottom: 0; /* 말풍선이 아이콘의 높이와 정렬되도록 설정 */
 }
-
-.user .message-content {
-  background-color: #dde7f0; /* 사용자 말풍선 색상 변경 */
-  color: black;
-  border-radius: 20px 20px 0px 20px;
-  max-width: 100%;  /* 사용자 말풍선도 50%로 제한 */
-}
-
+/* AI 말풍선 */
 .ai .message-content {
-  background-color: #dde7f0; /* AI 말풍선 색상 변경 */
+  background-color: #0a28b020; 
   color: black;
-  border-radius: 20px;
-  max-width: 100%;  /* AI 말풍선도 50%로 제한 */
+  border-radius: 20px 20px 20px 0px;
+  max-width: 100%; 
 }
+/* 사용자 말풍선 */
+.user .message-content {
+  background: linear-gradient(90deg, #0A28B0, #6a9efc); /* 왼쪽에서 오른쪽으로 파란색 그라데이션 */
+  color: white; 
+  border-radius: 20px 20px 0px 20px;
+  max-width: 100%; /* 사용자 말풍선 너비 제한 */
+  padding: 10px; /* 내부 여백 추가 */
+}
+
+
+
 
 /* 메시지 입력 영역 스타일 */
 .input-area {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 좌우 여백을 자동으로 채움 */
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 15px;
-  padding: 10px;
-  gap: 10px; /* 버튼과 입력창 사이의 간격 */
-  height: auto;
-  max-height: 80px; /* 입력 영역의 최대 높이 설정 */
-  margin-bottom: 0; /* 아래 여백을 제거 */
+  border-radius: 30px; /* 둥근 테두리 */
+  border: none; /* 테두리 제거 */
+  margin: 0 auto; /* 입력창을 중앙으로 정렬 */
+  margin-bottom: 10px;
+  width: 95%; /* 너비를 전체 화면의 95%로 설정 */
+  height: auto; /* 높이를 자동으로 조정 */
+  padding: 10px; /* 입력창 안쪽 여백 추가 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
 }
 
+/* 텍스트 입력창 스타일 */
 textarea {
-  flex-grow: 1; /* 공간을 최대한 차지하도록 설정 */
-  border: 1px solid #ccc; /* 밝은 색으로 테두리 추가 */
-  padding: 10px; /* 안쪽 여백 추가 */
-  resize: none; /* 크기 조정 비활성화 */
-  border-radius: 10px;
-  box-sizing: border-box;
-  font-size: 15px;
-  background-color: rgba(255, 255, 255, 1); /* 흰색 배경 */
-  color: black;  
+  width: 95%; /* 너비를 90%로 설정 */
   height: auto; /* 높이 자동 조정 */
-  max-height: 100px; /* 최대 높이 제한 */
-  margin-right: 8px; /* 버튼과의 간격을 위해 오른쪽 여백 추가 */
-}
-
-.send-button {
-  padding: 10px 12px; /* 버튼 내부 여백 */
-  background-color: black; /* 버튼 배경색 */
-  color: white; /* 버튼 텍스트 색상 */
-  border: none;
-  border-radius: 20px; /* 둥근 모서리 */
-  cursor: pointer; /* 커서 포인터로 변경 */
-  font-size: 16px; /* 버튼 텍스트 크기 */
+  padding: 10px 20px; /* 안쪽 여백 조정 */
+  border-radius: 30px; /* 더 둥글게 조정 */
+  border: 1px solid #ccc; /* 테두리 추가 */
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 1); /* 흰색 배경 */
+  color: black;
+  resize: none; /* 사용자가 크기 조정하지 못하도록 설정 */
+  outline: none; /* 포커스 시 외곽선 제거 */
+  
 }
 
 /* 전송 버튼 스타일 */
-button {
-  background-color: #1c1d1e; /* 버튼 배경을 파란색으로 변경 */
-  color: white; /* 버튼 텍스트 색상 변경 */
+.send-button {
+  padding: 10px 12px; /* 버튼 내부 여백 */
+  background: linear-gradient(90deg, #0A28B0, #6a9efc); /* 그라데이션 배경 */
+  color: white;
   border: none;
-  padding: 10px;
-  margin: 0; /* 버튼들 사이의 불필요한 여백 제거 */
+  border-radius: 50%; /* 버튼을 원형으로 */
   cursor: pointer;
-  border-radius: 20px;
-  font-size: 16px;
+  font-size: 16px; /* 버튼 텍스트 크기 */
+  width: 40px; /* 버튼 크기 설정 */
+  height: 35px; /* 버튼 크기 설정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
 }
+
+
+
 
 /* ... 로딩 말풍선 */
 .loading-message {

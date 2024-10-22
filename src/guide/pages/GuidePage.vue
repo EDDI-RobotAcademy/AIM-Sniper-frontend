@@ -7,7 +7,7 @@
     </p>
 
     <p>
-      본 서비스는 9월 20일부터 9월 27일까지의 1차 개발 모습입니다.<br />
+      본 서비스는 10월 10일까지의 3차 개발 모습입니다.<br />
       서비스의 개괄적인 흐름을 보여드리고자, 러프한 웹 서비스를 오픈하여 제공해드린단 점 양해 말씀 드립니다.
     </p>
     <br>
@@ -41,8 +41,24 @@
     <p class="disclaimer">
       (※ 본 설문에서는 응답해주신 내용들은 통계법 제 33조와 제 34조에 의해 통계적인 목적으로만 사용됩니다.)
     </p>
+    <br>
+    <div class="button-container"> <!-- 새로운 div로 버튼을 감쌉니다. -->
+      <v-btn class="home-button" @click="goToHome">홈페이지로 이동하기</v-btn>
+    </div>
   </div>
 </template>
+
+<script>
+import router from "@/router";
+
+export default {
+  methods: {
+    goToHome() {
+      router.push("/");
+    },
+  },
+}
+</script>
 
 <style scoped>
 .guide-container {
@@ -66,18 +82,17 @@ h2 {
   color: #1c1d1e;
 }
 
-/* 스타일을 추가한 부분 */
 .guideline-list {
-  background-color: #d7dada; /* 배경색 설정 */
-  border-radius: 10px; /* 둥근 모서리 설정 */
-  padding: 20px; /* 내부 패딩 설정 */
+  background-color: #d7dada;
+  border-radius: 10px;
+  padding: 20px;
   margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-  list-style-type: none; /* 기본 점 스타일 제거 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  list-style-type: none;
 }
 
 .guideline-list li {
-  margin-bottom: 15px; /* 리스트 항목 간 간격 설정 */
+  margin-bottom: 15px;
 }
 
 ul li:before {
@@ -93,5 +108,20 @@ p {
   font-size: 14px;
   color: #666;
   margin-top: 30px;
+}
+
+.button-container {
+  display: flex; /* flexbox로 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  margin-top: 20px; /* 버튼 위에 여백 추가 */
+}
+
+.home-button {
+  background-color: black; /* 버튼 배경색을 검은색으로 변경 */
+  color: white; /* 버튼 텍스트 색을 흰색으로 변경 */
+  font-size: 16px; /* 버튼 폰트 크기 조정 */
+  padding: 10px 20px; /* 버튼 내부 여백 조정 */
+  padding-bottom: 30px;
+  border-radius: 5px; /* 둥근 모서리 */
 }
 </style>

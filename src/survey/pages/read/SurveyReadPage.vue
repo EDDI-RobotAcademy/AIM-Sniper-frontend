@@ -1,6 +1,6 @@
 <template>
     <v-container>
-      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm">
+      <v-card class="mx-auto my-12" max-width="800" v-if="surveyForm ">
         <v-card-title>
           <span class="headline">{{ surveyForm.surveyTitle }}</span>
         </v-card-title>
@@ -14,20 +14,24 @@
                 <v-card outlined>
                   <v-card-text>
                     <h4 v-html="formatQuestionTitle(index, question)"></h4>
-  
+                    <v-row v-if="question.images.length !==0">
+                      <v-col v-for="(image, index) in question.images" :key="index" cols="4" class="mb-4">
+                        <v-img :src="getImageUrl(image)" aspect-ratio="1.0" contain></v-img>
+                      </v-col>
+                    </v-row>
                     <v-text-field
                       v-if="question.questionType === 'text'"
                       v-model="question.answer"
                       label="답변을 입력하세요"
                       :rules="question.essential ? [rules.textRequired] : []"
-                      @input="updateSubmitForm(question.questionType, question.questionId, question.answer, null)"
+                      @input="updateSubmitForm(question.questionType, question.questionId, question.answer)"
                     />
   
                     <v-radio-group
                       v-if="question.questionType === 'radio'"
                       v-model="question.answer"
                       :rules="question.essential ? [rules.radioRequired] : []"
-                      @change="updateSubmitForm(question.questionType, question.questionId, question.answer, question.selection)"
+                      @change="updateSubmitForm(question.questionType, question.questionId, question.answer)"
                     >
                     <v-radio
                         v-for="option in question.selection"
@@ -45,7 +49,7 @@
                         :label="option"
                         :value="option"
                         :input-value="isChecked(index, option)"
-                        @change="toggleCheckbox(question.questionType, question.questionId, question.answer, option, question.selection)"
+                        @change="toggleCheckbox(index, option, question.questionType, question.questionId)"
                       />
                     </v-checkbox-group>
                   </v-card-text>
@@ -87,6 +91,7 @@ export default {
         accountId: null,
         email: null,
         valid: false,
+        isFirstAccept : false,
         rules: {
           textRequired: (value) => !!value || '필수 입력 항목입니다.',
           radioRequired: (value) => !!value || '옵션을 선택해주세요.',
@@ -101,9 +106,11 @@ export default {
     async mounted() {
       this.email = sessionStorage.getItem("email");
       if (this.email) {
-        // console.log("Logged In");
         this.accountId = await this.requestAccountIdToDjango(this.email)
-        // console.log('accountID: ', this.accountId)
+        this.isFirstAccept = await this.requestCheckIsFirstSubmit({accountId : this.accountId})
+        if (this.isFirstAccept) {
+          router.push("/survey/submitted")
+        }
       }
       else {
         // console.log('비회원 유저')
@@ -114,43 +121,33 @@ export default {
     },
     methods: {
         
-      ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango']),
+      ...mapActions(surveyModule, ['requestSurveyFormToDjango', 'requestSubmitSurveyToDjango', 'requestCheckIsFirstSubmit']),
       ...mapActions(accountModule, ['requestAccountIdToDjango']),
 
-      isChecked(index, selection) {
-        return this.surveyForm.surveyQuestions[index].answer.includes(selection);
+      isChecked(index, option) {
+        return this.surveyForm.surveyQuestions[index].answer.includes(option);
       },
   
-      toggleCheckbox(questionType, questionId, answer, option, selection) {
-        const answerArray = answer.indexOf(option);
-        if (answerArray === -1) {
-          answer.push(option);
+      toggleCheckbox(index, option, questionType, questionId) {
+        const answerArray = this.surveyForm.surveyQuestions[index].answer
+        const optionIndex = answerArray.indexOf(option);
+        if (optionIndex === -1) {
+          answerArray.push(option);
         } else {
-          answer.splice(answerArray, 1);
+
+          answerArray.splice(optionIndex, 1);
         }
   
-        this.updateCheckboxSubmitForm(questionType, questionId, answer, selection);
+        this.updateCheckboxSubmitForm(answerArray, questionType, questionId);
+      },
+      updateCheckboxSubmitForm(answerArray, questionType, questionId) {
+        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
+        this.submitForm.push({ questionId, answer: answerArray, questionType });
       },
   
-      updateCheckboxSubmitForm(questionType, questionId, answer, selection) {
-        const answerArray = [...answer];
-        const selectionIdArray = []
-        for (const answer of answerArray) {
-            selectionIdArray.push(selection.indexOf(answer) + 1);
-        }
+      updateSubmitForm(questionType, questionId, answer) {
         this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
-        this.submitForm.push({ questionId, selectionIdArray, questionType });
-      },
-  
-      updateSubmitForm(questionType, questionId, answer, selection) {
-        this.submitForm = this.submitForm.filter((item) => item.questionId !== questionId);
-        if (selection !== null) {
-            const selectionId = selection.indexOf(answer) + 1;
-            this.submitForm.push({ questionId, selectionId, questionType});
-        }
-        else {
-            this.submitForm.push({ questionId, answer, questionType });
-        }
+          this.submitForm.push({ questionId, answer, questionType });
       },
   
       formatQuestionTitle(index, question) {
@@ -161,7 +158,9 @@ export default {
             return `${index +1}. ${question.questionTitle} <span class="essential">${question.essential ? '* 필수' : '* 선택'}</span>`;
         }
       },
-  
+      getImageUrl(imageName) {
+        return require(`@/assets/images/uploadImages/${imageName}`);
+      },
       async onSubmit() {
         console.log("surveyForm : ", this.surveyForm)
         let isValid = true;
