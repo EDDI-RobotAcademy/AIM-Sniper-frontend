@@ -53,9 +53,7 @@
               </v-table>
               <v-divider></v-divider>
               <v-row>
-                <!-- <v-col>
-                                <v-btn color="primary" @click="confirmCheckout" :disabled="isCheckoutDisabled">구매하기</v-btn>
-                            </v-col> -->
+               
                 <v-col class="text-right">
                   <strong>Total: {{ selectedItemsTotal }}</strong>
                 </v-col>
@@ -154,6 +152,10 @@ export default {
     ...mapActions(orderModule, ["requestCartToAddOrderToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]),
     getImageUrl(imageName) {
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
       return require(`@/assets/images/uploadImages/${imageName}`);
     },
     async removeItem(item) {
