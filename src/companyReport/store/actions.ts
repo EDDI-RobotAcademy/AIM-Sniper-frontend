@@ -18,7 +18,7 @@ export type CompanyReportActions = {
     ): Promise<AxiosResponse>
     requestDeleteCompanyReportToDjango(context: ActionContext<CompanyReportState, unknown>, companyReportId: number): Promise<void>
     requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
-        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number,keyword:string
     }): Promise<void>
     requestCompanyReportFinanceToDjango(context: ActionContext<CompanyReportState,any>,
         companyReportName:string) :Promise<any>
@@ -47,7 +47,7 @@ const actions: CompanyReportActions = {
         try {
             const res: AxiosResponse<any, any> = await axiosInst.djangoAxiosInst.get('/company_report/list/');
             const data: CompanyReport[] = res.data;
-            // console.log('data:', data)
+            console.log('data:', data)
             context.commit('REQUEST_COMPANYREPORT_LIST_TO_DJANGO', data);
         } catch (error) {
             console.error('Error fetching companyReport list:', error);
@@ -80,13 +80,13 @@ const actions: CompanyReportActions = {
         }
     },
     async requestModifyCompanyReportToDjango(context: ActionContext<CompanyReportState, any>, payload: {
-        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number
+        companyReportName: string, content: string, companyReportId: number,companyReportPrice: number,keyword:string
     }): Promise<void> {
         
-        const { companyReportName, content, companyReportId,companyReportPrice } = payload
+        const { companyReportName, content, companyReportId,companyReportPrice,keyword } = payload
 
         try {
-            await axiosInst.djangoAxiosInst.put(`/company_report/modify/${companyReportId}`, { companyReportName, content, companyReportPrice })
+            await axiosInst.djangoAxiosInst.put(`/company_report/modify/${companyReportId}`, { companyReportName, content, companyReportPrice,keyword })
             // console.log('수정 성공!')
         } catch (error) {
             console.log('requestModifyCompanyReportToDjango() 과정에서 문제 발생')

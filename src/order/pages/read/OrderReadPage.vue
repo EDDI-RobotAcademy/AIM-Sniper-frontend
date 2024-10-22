@@ -82,7 +82,11 @@ export default {
   methods: {
     ...mapActions(orderModule, ["requestMyOrderItemListToDjango"]),
     getImageUrl(imageName) {
-        return require(`@/assets/images/uploadImages/${imageName}`);
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
+      return require(`@/assets/images/uploadImages/${imageName}`);
     },
     goToLastPage() {
       this.$router.go(-1);

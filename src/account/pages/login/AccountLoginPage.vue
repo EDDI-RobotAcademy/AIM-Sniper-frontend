@@ -126,12 +126,11 @@ export default {
 
         };
         const goToGoogleLogin = async () => {
-            alert("현재 로그인 검수중입니다.")
-            // sessionStorage.setItem("loginType", "GOOGLE") 
-            // await store.dispatch(
-            //     "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
-            // )
-            
+            // alert("현재 로그인 검수중입니다.")
+            sessionStorage.setItem("loginType", "GOOGLE") 
+            await store.dispatch(
+                "googleAuthenticationModule/requestGoogleOauthRedirectionToDjango"
+            )
         }
         const goToNaverLogin = async () => {
             alert("현재 로그인 검수중입니다.")
@@ -238,7 +237,7 @@ export default {
 
 .login_logo {
     height: 20vh;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
     overflow: hidden;
     background-image: url("@/assets/images/fixed/AIM_BI_White.png");
     background-size: contain;
@@ -255,7 +254,7 @@ export default {
     background-color: rgba(255, 255, 255, 0.08);     
     border: 1px solid rgba(128, 128, 128, 0.8);
     border-radius: 40px;    
-    padding: 70px 60px;    
+    padding: 40px 60px;    
 }
 
 /* 에러 메시지 박스 설정 */
@@ -314,6 +313,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #03C75A;
+    padding-bottom: 12px;
     border-radius: 10px;
 }
 

@@ -1,32 +1,7 @@
-<template>
-  <div>
-    <!-- <v-row class="justify-center align-center mt-15 mb-15">
-      <v-col
-        v-for="(companyReport, index) in topNCompanyReports"
-        :key="index"
-        cols="12"
-        sm="4"
-        md="3"
-        lg="2"
-      >
-        <div class="popular-company">
-          <div class="border-top"></div>
-          <div class="img">
-              <img 
-              :src="getImageUrl(companyReport.companyReportTitleImage)">
-          </div>
-          <span>{{ companyReport.companyReportName }}</span>
-          <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
-          <button 
-            @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
-            click
-          </button>
-        </div>
-      </v-col>
-    </v-row> -->
-  </div>
+<template>  
   <div class="background-image">
     <v-container class="custom-padding">
+      <!-- 관리자 페이지 계정 로그인시에만 나타나는 버튼 -->
       <v-row>
         <v-col v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" cols="auto" class="text-right">
           <v-btn
@@ -40,9 +15,15 @@
           </v-btn>
         </v-col>
       </v-row>
-          
+      <!-- 산업 필터 -->
+      <v-row>        
+        <v-col cols="1">
+          <v-btn icon @click="toggleSidebar" style="width: 120px; border-radius: 8px; margin-top: 10px; box-shadow: 0 3px 6px #0a28b0; font-weight: bold;">
+            <v-icon>mdi-file-sync-outline</v-icon>
+              직무 필터
+          </v-btn>
+        </v-col>
 
-      <v-row>
         <v-col cols="3">
           <h2 class="section-title"> 전체 보고서 </h2>
         </v-col>
@@ -59,7 +40,7 @@
           ></v-select>
         </v-col>
         
-        <v-col cols="4">
+        <v-col cols="3">
           <v-text-field
             v-model="searchQuery"
             label="검색 내용을 입력하세요"
@@ -68,16 +49,72 @@
             class="search-input"
             outlined
           ></v-text-field>
-        </v-col>        
+        </v-col>
+
+                        
       </v-row>
 
-      
-      <br>
-      <br>
-      <br>
-      <v-row
-        v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0"
+      <!-- 간단한 사이드바 시작 -->
+      <v-navigation-drawer
+        v-model="isSidebarOpen"
+        right
+        absolute
+        temporary
       >
+        <v-list-item>
+          <v-list-item-content>
+            <br>
+            <v-list-item-title><h3>산업 키워드 선택</h3></v-list-item-title>
+            <br>
+            <v-row class="justify-center align-center">
+              <v-col cols="12">          
+                <v-row class="keyword-container">
+                  <v-col cols="auto" v-for="keyword in keywords" :key="keyword" class="pa-2">
+                    <v-btn
+                      :color="selectedKeywords.includes(keyword) ? 'primary' : ''"
+                      @click="toggleKeyword(keyword)"
+                      outlined
+                      rounded
+                      class="keyword-btn"
+                    >
+                      {{ keyword }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-list-item-content>
+        </v-list-item>
+      </v-navigation-drawer>
+      <!-- 간단한 사이드바 끝 -->
+      
+      <v-row class="justify-center align-center mt-15 mb-15">
+        <v-col
+          v-for="(companyReport, index) in topNCompanyReports"
+          :key="index"
+          cols="12"
+          sm="4"
+          md="3"
+          lg="2"
+        >
+          <div class="popular-company">
+            <div class="border-top"></div>
+            <span><h5>AI - Report 추천</h5></span>
+            <div class="img">
+                <img 
+                :src="getImageUrl(companyReport.companyReportTitleImage)">
+            </div>
+            <span>{{ companyReport.companyReportName }}</span>
+            <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+            <button 
+              @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
+              click
+            </button>
+          </div>
+        </v-col>
+      </v-row>      
+      
+      <v-row v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0">
         <v-col
           v-for="(companyReport, index) in paginatedCompanyReports"
           :key="index"
@@ -155,19 +192,42 @@ export default {
     filteredCompanyReports() {
       let companyReports = this.companyReports;
 
-      if (this.selectedCategory !== "전체") {
+      // 키워드 필터링: '전체'를 선택하면 필터링을 하지 않음
+      if (!this.selectedKeywords.includes('전체')) {
+        companyReports = companyReports.filter((companyReport) => {
+          if (companyReport.keyword) {
+            // companyReport.keyword가 쉼표로 구분된 문자열이면 배열로 변환
+            const keywordsArray = companyReport.keyword.split(',');
+
+            // 선택된 키워드 중 하나라도 포함된 보고서만 필터링
+            return this.selectedKeywords.some((keyword) =>
+              keywordsArray.includes(keyword)
+            );
+          }
+          return false; // keyword가 없는 경우 필터링 제외
+        });
+      }
+
+      // 카테고리 필터링
+      if (this.selectedCategory !== '전체') {
         companyReports = companyReports.filter(
-          (companyReport) =>
-            companyReport.companyReportCategory === this.selectedCategory
+          (companyReport) => {
+            const categories = Array.isArray(companyReport.categories) 
+              ? companyReport.categories 
+              : companyReport.categories ? companyReport.categories.split(',') : [];
+            return categories.includes(this.selectedCategory);
+          }
         );
       }
 
+      // 검색 필터링
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         companyReports = companyReports.filter((companyReport) =>
           companyReport.companyReportName.toLowerCase().includes(query)
         );
       }
+
       return companyReports;
     },
     topNCompanyReports() {
@@ -182,6 +242,10 @@ export default {
   },
   data() {
     return {
+      selectedKeywords: ['전체'],
+      keywords: [
+      '플랫폼', '정보보안', '빅데이터', '소프트웨어', '하드웨어', '클라우드', '컨설팅', '헬스케어', '메타버스', '인프라', '게임', '의료', 'AI', '디스플레이', '마케팅/광고', '영상 분석', '네트워크', '금융지원'
+      ],
       categories: ["전체", "IT", "플랫폼", "은행"],
       selectedCategory: "전체",
       searchQuery: "",
@@ -191,11 +255,15 @@ export default {
       purchase: false,
       topN: 5,
       topList: [],
+      isSidebarOpen: false, // 사이드바 열림/닫힘 상태
     };
   },
   methods: {
     ...mapActions("companyReportModule", ["requestCompanyReportListToDjango", "requestTopNCompanyReportListToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]), //유저가 상품을 눌렀을 때 상품 클릭 수가 늘어남
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
     goToCompanyReportReadPage(companyReportId) {
       const email = sessionStorage.getItem('email');
       
@@ -224,7 +292,37 @@ export default {
       this.currentPage = page;
     },
     getImageUrl(imageName) {
+      if (!imageName) {
+        // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
+        return require('@/assets/images/fixed/AIM_BI_Blue.png');
+      }
       return require(`@/assets/images/uploadImages/${imageName}`);
+    },
+    toggleKeyword(keyword) {
+      if (keyword === '전체') {
+        // '전체'를 선택하면 다른 모든 키워드를 해제하고 '전체'만 선택
+        this.selectedKeywords = ['전체'];
+      } else {
+        // '전체'가 선택된 상태에서 다른 키워드를 선택하면 '전체'를 해제
+        const index = this.selectedKeywords.indexOf('전체');
+        if (index !== -1) {
+          this.selectedKeywords.splice(index, 1); // '전체' 해제
+        }
+
+        // 키워드가 이미 선택되어 있으면 해제하고, 선택되어 있지 않으면 추가
+        if (this.selectedKeywords.includes(keyword)) {
+          this.selectedKeywords = this.selectedKeywords.filter(
+            (k) => k !== keyword
+          );
+        } else {
+          this.selectedKeywords.push(keyword);
+        }
+
+        // 만약 선택된 키워드가 없으면 '전체'를 다시 추가
+        if (this.selectedKeywords.length === 0) {
+          this.selectedKeywords.push('전체');
+        }
+      }
     },
   },
   async mounted() {
@@ -237,8 +335,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 
@@ -268,9 +364,9 @@ export default {
 }
 
 ::v-deep .v-field {  
-  background-color: #ffffff !important; 
+  background-color: #83838300 !important; 
   color: rgb(37, 47, 133) !important;    
-  border-radius: 5px !important;    
+  border-radius: 15px 15px 0px 0px!important;    
 }
 
 
@@ -293,13 +389,13 @@ export default {
   font-size: 18px;
   font-weight: bold;
   margin-left: 10px;
+  padding-top: 0px;
 }
 
 .companyReport-price {  
   color: #9452ff;
   font-weight: 600;
-  margin-left: 10px;
-  margin-bottom: 10px;
+  margin-left: 10px;  
 }
 
 .companyReport-image {
@@ -307,17 +403,64 @@ export default {
 }
 
 .popular-company {
-  width: 190px;
-  height: 240px;
-  width: 190px;
-  height: 240px;
-  background: #0A28B0;
+  width: 11vw;
+  height: 240px;  
+  background: #0a28b0;
+  margin-top: 0;
+  margin-bottom: 0;  
   border-radius: 15px;
   box-shadow: 1px 5px 60px 11px #1f199d6b;
+  position: relative; /* 레이저를 감싸는 요소의 위치 지정 */
+  
 }
 
+.popular-company::before {
+  content: "";
+  position: absolute;
+  width: 6px; /* 점의 크기 */
+  height: 6px;
+  background-color: white; /* 점의 색상 */
+  border-radius: 50%; /* 점을 둥글게 만듦 */
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8), /* 빛 효과 */
+              0 0 50px 25px rgba(255, 255, 255, 0.5), /* 첫 번째 꼬리 */
+              0 0 75px 25px rgba(255, 255, 255, 0.3); /* 더 긴 꼬리 */
+  animation: shooting-star 4s linear infinite; /* 애니메이션 설정 */
+}
+
+@keyframes shooting-star {
+  0% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 처음 크기 */
+  }
+  25% {
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%) scale(1.2); /* 크기 약간 확대 */
+  }
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%) scale(1.4); /* 크기 더 확대 */
+  }
+  75% {
+    top: 100%;
+    left: 0;
+    transform: translateY(-100%) scale(1.2); /* 다시 크기 축소 */
+  }
+  100% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 원래 크기로 돌아옴 */
+  }
+}
+
+
+
 .popular-company .border-top {
-  width: 60%;
+  width: 75%;
   height: 3%;
   background: #8094F4;
   margin: auto;
@@ -343,7 +486,7 @@ export default {
 }
 
 .popular-company .img {
-  width: 100px;
+  width: 120px;
   height: 70px;
   /* background: #8094F4; */
   border-radius: 15px;
@@ -365,5 +508,12 @@ export default {
 
 .popular-company button:hover {
   background: #534bf3;
+}
+.keyword-btn{
+  border-radius: 8px;
+  color: #1e68d1;
+  padding: 4px 12px;
+  width: auto;
+  height: 4vh;
 }
 </style>
