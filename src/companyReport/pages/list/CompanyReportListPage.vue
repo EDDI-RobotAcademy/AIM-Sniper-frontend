@@ -17,17 +17,17 @@
       </v-row>
       <!-- 산업 필터 -->
       <v-row>        
-        <v-col cols="1">
-          <v-btn icon @click="toggleSidebar" style="width: 120px; border-radius: 8px; margin-top: 10px; box-shadow: 0 3px 6px #0a28b0; font-weight: bold;">
+        <v-col cols="2">
+          <v-btn icon @click="toggleSidebar" style="width: 200px; height: 35px; border-radius: 8px;  margin-top: 10px; box-shadow: 0 3px 6px #0a28b0; font-weight: bold;">
             <v-icon>mdi-file-sync-outline</v-icon>
-              직무 필터
+            직무 필터
           </v-btn>
         </v-col>
 
         <v-col cols="3">
           <h2 class="section-title"> 전체 보고서 </h2>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="2">
           <!-- 여백용 -->
         </v-col>
         
@@ -344,6 +344,11 @@ export default {
   font-weight: 400;
 }
 
+.custom-padding {
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
 .register-btn {
   font-size: 16px;
   background-color: #f5f5f5;
@@ -358,22 +363,20 @@ export default {
   color: #0A28B0;
   font-family: "Pretendard", sans-serif !important;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 24px;
   margin-left: 10px;
   margin-top: 10px;   
 }
 
-::v-deep .v-field {  
+::v-deep .v-field {
+  height: 50px;  
   background-color: #83838300 !important; 
   color: rgb(37, 47, 133) !important;    
   border-radius: 15px 15px 0px 0px!important;    
 }
 
 
-.custom-padding {
-  padding-left: 10%;
-  padding-right: 10%;
-}
+
 
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
@@ -403,8 +406,8 @@ export default {
 }
 
 .popular-company {
-  width: 11vw;
-  height: 240px;  
+  width: 10vw;
+  height: 200px;  
   background: #0a28b0;
   margin-top: 0;
   margin-bottom: 0;  
@@ -460,7 +463,7 @@ export default {
 
 
 .popular-company .border-top {
-  width: 75%;
+  width: 70%;
   height: 3%;
   background: #8094F4;
   margin: auto;
@@ -495,7 +498,7 @@ export default {
 }
 
 .popular-company button {
-  padding: 8px 25px;
+  padding: 8px 15px;
   display: block;
   margin: auto;
   border-radius: 8px;
@@ -514,6 +517,6 @@ export default {
   color: #1e68d1;
   padding: 4px 12px;
   width: auto;
-  height: 4vh;
+  height: 3vh;
 }
 </style>
