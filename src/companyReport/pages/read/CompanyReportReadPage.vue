@@ -6,7 +6,7 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col cols="12" md="5" class="d-flex align-center justify-center">
+            <v-col cols="3" class="d-flex justify-end">
               <v-img
                 :src="
                   getCompanyReportImageUrl(
@@ -15,7 +15,7 @@
                 "
                 class="custom-img grey lighten-2"
                 aspect-ratio="1"
-                style="width: 100%; height: auto; max-height: 200px"
+                style="max-width: 180px; height: 180px;"
               >
                 <template v-slot:placeholder>
                   <v-row
@@ -28,16 +28,34 @@
                 </template>
               </v-img>
             </v-col>
-            <v-col cols="12" md="6" class="d-flex flex-column justify-center">
+            
+            <v-col cols="9" md="6" class="d-flex flex-column justify-center">
+              
               <v-row>
-                <v-col cols="12">
-                  <h1 class="companyReport-name">
-                    {{ companyReport.companyReportName }}
-                  </h1>
+                <v-col cols="12" md="5">
+                  <!-- 이 상품의 태그 -->
+                  <v-row>                    
+                    <v-btn
+                      v-for="(keyword, index) in companyReport.keyword.split(',')"
+                      :key="index"
+                      outlined
+                      rounded
+                      class="keyword-btn"
+                      style="pointer-events: none;"
+                    >
+                      {{ keyword.trim() }}
+                    </v-btn>
+                    
+                  </v-row>
                 </v-col>
               </v-row>
+              
               <v-row>
-                <v-col cols="12">
+                <v-col>
+                  <h1 class="title"> {{ companyInfo.company_name }} 기업 분석 리포트 </h1>
+                </v-col>
+
+                <v-col cols="3">
                   <p class="companyReport-price">
                     {{ companyReport.companyReportPrice }}
                     <span class="original-price">{{
@@ -47,43 +65,32 @@
                   </p>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
-                    color="primary"
-                    dark
-                    @click="confirmCheckout"
-                    class="action-button"
-                    style="margin-right: 10px;"
-                  >
-                    <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>구매
-                  </v-btn>
-                  <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"
-                    color="primary"
-                    @click="onAddToCartAndAsk"
-                    class="action-button"
-                  >
-                    <v-icon left>mdi-cart-plus</v-icon>장바구니
-                  </v-btn>
-                </v-col>
+              
+              
+              <v-row style="margin-bottom: 20px;">                 
+                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
+                  @click="confirmCheckout"
+                  class="order-action-button"
+                  style="margin-right: 10px;"
+                >
+                  <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>
+                  구매하기
+                </v-btn>
+                
+                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
+                  @click="isGoToCartListDialogVisible = true"
+                  class="cart-action-button"
+                >
+                  <v-icon left>mdi-cart-plus</v-icon>
+                  장바구니 담기
+                </v-btn>                
               </v-row>
+
             </v-col>
+          
           </v-row>
-          <v-row>
-            <v-col cols="12" md="5">
-              <span>이 상품의 태그</span>
-              <v-text-field
-                class="custom-text-field"
-                v-model="companyReport.companyReportCategory"
-                readonly
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <h1 class="title text-center">🏢 {{ companyInfo.company_name }} 요약 정리 </h1>
-            </v-col>
-          </v-row>
+          
+          
           
           <v-divider class="my-4"></v-divider>
 
@@ -141,14 +148,17 @@
         </v-container>
       </v-card-text>
     </v-card>
+
+
+
     <v-alert v-else type="info">현재 등록된 상품이 없습니다!</v-alert>
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
         <v-col cols="auto">
           <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline">
-            <v-btn color="primary" class="action-button">
+            <v-btn class="return-action-button">
               <v-icon left>mdi-arrow-left</v-icon>
-              <span>돌아가기</span>
+              <span>목록으로 돌아가기</span>
             </v-btn>
           </router-link>
         </v-col>
@@ -215,7 +225,7 @@
             @click="isGoToCartListDialogVisible = false"
             >취소</v-btn
           >
-          <v-btn color="blue darken-1" text @click="goToCartList">확인</v-btn>
+          <v-btn color="blue darken-1" text @click="onAddToCartAndAsk">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -247,7 +257,8 @@ export default {
     companyReportCategory: {
       type: String,
       required: true,
-    },
+    },   
+    
   },
   data() {
     return {
@@ -258,7 +269,7 @@ export default {
       financeYears: [],
       companyInfo: [],
       maxWidth: 0,
-      financeWidth: 0,
+      financeWidth: 0,      
     };
   },
   computed: {
@@ -267,8 +278,27 @@ export default {
     ...mapState(googleAuthenticationModule, ["isAuthenticatedGoogle",'isGoogleAdmin']),
     ...mapState(accountModule, ["loginType", "isAuthenticatedNormal",'isNormalAdmin']),
     ...mapState(naverAuthenticationModule, ["isAuthenticatedNaver",'isNaverAdmin']),
+
+    
   },
   methods: {
+    // 기존 메서드들
+    async getKeywords() {
+        try {
+          const response = await axiosInst.get(`/api/keywords?reportName=${this.companyReportName}`);
+          this.keywords = response.data;  // 받아온 키워드를 저장
+        } catch (error) {
+          console.error("키워드를 불러오는 중 오류 발생:", error);
+        }
+    },
+    toggleKeyword(keyword) {
+        if (this.selectedKeywords.includes(keyword)) {
+          this.selectedKeywords = this.selectedKeywords.filter((k) => k !== keyword);
+        } else {
+          this.selectedKeywords.push(keyword);
+        }
+    },
+
     ...mapActions(companyReportModule, [
       "requestCompanyReportToDjango",
       "requestDeleteCompanyReportToDjango",
@@ -355,6 +385,7 @@ export default {
               companyReportPrice: this.companyReport.companyReportPrice,
             };
             await this.requestAddCartToDjango(cartData);
+            router.push("/cart/list");
           } catch (error) {
             console.log("장바구니 추가 과정에서 에러 발생:", error);
           }
@@ -398,10 +429,7 @@ export default {
     },
     confirmCheckout() {
       this.isCheckoutDialogVisible = true;
-    },
-    goToCartList() {
-        router.push("/cart/list");
-    },
+    },    
     goToModifyPage() {
       this.$router.push({
         name: "CompanyReportModifyPage",
@@ -648,8 +676,21 @@ svg {
   font-family: sans-serif;
 }
 .custom-img {
-  max-width: 100%;
-  height: auto;
+  max-width: 200px;
+  height: 200px;
+  border: 1px solid #ccc !important;
+  border-radius: 32px;
+  box-shadow: 0 1px 3px rgb(206, 205, 205);
+  margin-bottom: 30px;
+}
+
+.keyword-btn {
+  border-radius: 8px;
+  color: #1e68d1;
+  width: auto;
+  height: 3vh;
+  margin-top: 10px;
+  padding: 2px 12px;
 }
 
 .companyReport-name {
@@ -666,7 +707,7 @@ svg {
 
 .companyReport-price {
   font-size: 24px;
-  color: red;
+  color: grey;
 }
 
 .original-price {
@@ -676,9 +717,31 @@ svg {
   margin-left: 10px;
 }
 
-.action-button {
-  font-weight: bold;
+.order-action-button {
+  width: 158px;
+  height: 56px;
+  border-radius: 16px;
+  background: #0A28B0;
+  color: #FFFFFF;
 }
+.cart-action-button {
+  width: 158px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid #E6E8EC !important;
+  background: white;
+  color: #7B8094;
+}
+.return-action-button {
+  width: 158px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #7B8094 !important;
+  background: white;
+  color: black;
+  margin-bottom: 40px;
+}
+
 
 .no-underline {
   text-decoration: none;
