@@ -111,93 +111,92 @@
     </v-app-bar>
   </template>
   
-  <!-- <script setup>
-  import { useRouter } from 'vue-router';
-  import { useAuthStore } from '@/stores/auth';
-  import { useSurveyStore } from '@/stores/survey';
-  
-  const router = useRouter();
-  const authStore = useAuthStore();
-  const surveyStore = useSurveyStore();
-  
-  const isAuthenticated = authStore.isAuthenticated;
-  const isAdmin = authStore.isAdmin;
-  
-  // Admin 페이지 이동 리스트
-  const adminPageList = [
-    { title: '사용자 관리', action: () => router.push('/management/user') },
-    { title: '사용자 로그 현황', action: () => router.push('/management/log') },
-  ];
-  
-  // My Page 리스트
-  const myPageItems = [
-    { title: '회원 정보', action: () => router.push('/account/mypage') },
-    { title: '장바구니', action: () => router.push('/cart/list') },
-    { title: '주문 목록', action: () => router.push('/order/list') },
-  ];
-  
-  // AI Interview 페이지 리스트
-  const aiInterviewPageList = [
-    { title: '대화형', action: () => router.push('/ai-interview') },
-    { title: '단일 질문 노출형', action: () => router.push('/ai-interview/llmTest') },
-  ];
-  
-  // 네비게이션 관련 메서드
-  const goToHome = () => router.push('/');
-  const goToProductList = () => router.push('/companyReport/list');
-  const goToSurveyListPage = () => router.push('/survey/list');
-  
-  const signIn = () => router.push('/account/login');
-  const signOut = () => {
-    authStore.signOut();
-    router.push('/');
-  };
-  
-  const goToSurvey = async () => {
-    const randomString = await surveyStore.getRandomString();
-    if (randomString) {
-      router.push({ name: 'SurveyReadPage', params: { randomString } });
-    }
-  };
-  </script> -->
-  
-  <style scoped>
-  .menu-bar {
-    background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%));
-  }
-  
-  /* AIM 로고 이미지 버튼 */
-  .navbar-logo-btn {
-    display: flex;
-    align-items: center;
-    margin-left: 80px !important;
-  }
-  
-  .btn-text {
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    color: #FFF;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    padding: 0px 10px;
-    margin: 0px 10px;
-  }
-  
-  .btn-login,
-  .btn-logout {
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
-    font-weight: 700px;
-    color: #FFF;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-right: 80px !important;
-    border: 1px solid white;
-  }
-  
-  .v-list-item:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-  }
-  </style>
-  
+<script setup>
+import { useRouter } from 'vue-router';
+// import { useAuthStore } from '@/stores/auth';
+// import { useSurveyStore } from '@/stores/survey';
+
+const router = useRouter();
+// const authStore = useAuthStore();
+// const surveyStore = useSurveyStore();
+
+// const isAuthenticated = authStore.isAuthenticated;
+// const isAdmin = authStore.isAdmin;
+
+// Admin 페이지 이동 리스트
+// const adminPageList = [
+// { title: '사용자 관리', action: () => router.push('/management/user') },
+// { title: '사용자 로그 현황', action: () => router.push('/management/log') },
+// ];
+
+// My Page 리스트
+const myPageItems = [
+{ title: '회원 정보', action: () => router.push('/account/mypage') },
+{ title: '장바구니', action: () => router.push('/cart/list') },
+{ title: '주문 목록', action: () => router.push('/order/list') },
+];
+
+// AI Interview 페이지 리스트
+// const aiInterviewPageList = [
+// { title: '대화형', action: () => router.push('/ai-interview') },
+// { title: '단일 질문 노출형', action: () => router.push('/ai-interview/llmTest') },
+// ];
+
+// 네비게이션 관련 메서드
+const goToHome = () => router.push('/');
+const goToProductList = () => router.push('/companyReport/list');
+const goToSurveyListPage = () => router.push('/survey/list');
+
+const signIn = () => router.push('/account/login');
+const signOut = () => {
+// authStore.signOut();
+router.push('/');
+};
+
+// const goToSurvey = async () => {
+// const randomString = await surveyStore.getRandomString();
+// if (randomString) {
+//     router.push({ name: 'SurveyReadPage', params: { randomString } });
+// }
+// };
+</script>
+
+<style scoped>
+.menu-bar {
+background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%));
+}
+
+/* AIM 로고 이미지 버튼 */
+.navbar-logo-btn {
+display: flex;
+align-items: center;
+margin-left: 80px !important;
+}
+
+.btn-text {
+font-family: 'Pretendard', sans-serif;
+font-size: 16px;
+font-weight: 300;
+color: #FFF;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+padding: 0px 10px;
+margin: 0px 10px;
+}
+
+.btn-login,
+.btn-logout {
+font-family: 'Pretendard', sans-serif;
+font-size: 16px;
+font-weight: 700px;
+color: #FFF;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+margin-right: 80px !important;
+border: 1px solid white;
+}
+
+.v-list-item:hover {
+background-color: rgba(255, 255, 255, 0.25);
+}
+</style>
