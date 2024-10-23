@@ -1,31 +1,31 @@
 <template>
   <v-app>
       <NavigationBar/>
-      <v-main>
-          <HomePage />
-      </v-main>
-      <div class="footer-container">
-        <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
-      </div>
+        <main>
+            <NuxtPage/>
+        </main>
+        <div class="footer-container">
+          <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
+        </div>
   </v-app>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import HomePage from '~/home/pages/HomePage.vue'
 import NavigationBar from '~/navigationBar/pages/NavigationMenuBar.vue'
 
 export default defineComponent({
   name: 'IndexPage',
   components: {
-      HomePage,
       NavigationBar
   }
 })
 </script>
 
 <style>
-
+main {
+  min-height: calc(100vh-72px);
+}
 /* 폰트 설정 */
 .v-application {
   font-family: 'Pretendard', sans-serif !important;
@@ -39,12 +39,13 @@ export default defineComponent({
   font-weight: 400;
 }
 
-#app {    
-  width : 100vw;
-  height : 100vh;
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
 }
 
-/* Reset 기본 적용 */
 * {
   margin: 0;
   padding: 0;
