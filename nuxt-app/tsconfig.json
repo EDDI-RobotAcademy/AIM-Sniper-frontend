@@ -10,7 +10,7 @@
   },
   "include": [
     "nuxt.config.ts",
-    "pages/*.vue",
+    "pages/**/*.vue",
     "components/**/*.vue"
   ]
 }

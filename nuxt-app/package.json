@@ -15,6 +15,11 @@
     "pinia": "^2.2.4",
     "vue": "^3.5.12",
     "vue-router": "latest",
+    "vuetify": "^3.7.3",
     "vuetify-nuxt-module": "^0.18.3"
+  },
+  "devDependencies": {
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5"
   }
 }

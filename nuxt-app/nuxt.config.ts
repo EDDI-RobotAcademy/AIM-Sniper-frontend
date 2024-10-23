@@ -1,15 +1,12 @@
 import { defineNuxtConfig } from 'nuxt/config';
 
 export default defineNuxtConfig({
-  app: {
-    head: {
-      title: 'AIM'
-    }
-  },
+  pages: false, // Nuxt의 페이지 자동 라우팅을 비활성화
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   extends:[
-    './home/nuxt.config.ts'
+    './home/nuxt.config.ts',
+    './navigationBar/nuxt.config.ts'
   ],
   css: [
     'vuetify/styles',
@@ -26,21 +23,36 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: [
-    'vuetify-nuxt-module',
+  modules: ['vuetify-nuxt-module',
     '@pinia/nuxt',
-    '~/home/index.ts'],
-  
+    '~/home/index.ts',
+  ],
   imports: {
-      dirs: ['./stores']
-    },
+    dirs: ['./stores']
+  },
+
   runtimeConfig: {
-      public: {
-        MAIN_API_URL: process.env.VUE_APP_BASE_URL,
-        AI_BASE_URL: process.env.VUE_APP_AI_BASE_URL,
-        AWS_REGION: process.env.VUE_APP_AWS_REGION,
-        AWS_S3_IDENTITY_POOL: process.env.VUE_APP_AWS_S3_IDENTITY_POOL_ID,
-        VUE_APP_AWS_S3_BUCKET_NAME: process.env.VUE_APP_AWS_S3_BUCKET_NAME,
-      }
+    public: {
+      MAIN_API_URL: process.env.VUE_APP_BASE_URL,
+      AI_BASE_URL: process.env.VUE_APP_AI_BASE_URL,
+      AWS_REGION: process.env.VUE_APP_AWS_REGION,
+      AWS_S3_IDENTITY_POOL: process.env.VUE_APP_AWS_S3_IDENTITY_POOL_ID,
+      VUE_APP_AWS_S3_BUCKET_NAME:process.env.VUE_APP_AWS_S3_BUCKET_NAME,
     }
+  },
+
+  // 앱의 메타 태그 및 favicon 설정 추가
+  app: {
+    head: {
+      title: 'AIM', // 기본 페이지 제목
+      meta: [
+        { charset: 'utf-8' }, // 페이지 인코딩 설정
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' }, // 뷰포트 설정
+        { name: 'description', content: 'AIM: AI company-report Insight Market' }, // 페이지 설명
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' } // favicon 설정
+      ]
+    }
+  }
 })

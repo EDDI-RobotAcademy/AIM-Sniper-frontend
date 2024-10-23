@@ -1,8 +1,5 @@
 <template>
     <div class="home-container">
-      
-      
-  
       <div class="text-container">
         <h2 class="title typing-animation">
           <p style="text-transform: none; font-size: 56px;">
@@ -15,7 +12,6 @@
         <p class="subtitle">SINCE 2024</p>
         <div style="margin-bottom: 24px"></div>
   
-  
         <div class="loader">
           <div class="react-star">
             <div class="nucleus"></div>
@@ -25,14 +21,13 @@
           </div>
         </div>
   
-  
         <p class="description">
-          AIM은 한국 IT 기업 분석 보고서와 AI 모의면접 서비스를 제공하여 <br/>
+          AIM은 한국 IT 기업 분석 보고서와 AI 모의면접 서비스를 제공하여 <br />
           보다 많은 사람들에게 양질의 정보를 공유하고 도움을 드릴 수 있도록 최선을 다하겠습니다.
         </p>
         <div style="margin-bottom: 40px"></div>
         <div class="buttons">
-          <button class="goToProduct-button" @click="goToCompanyReportList">
+          <button class="goToProduct-button" @click="goToProductList">
             <b>기업 분석 보고서</b> 구경하기
           </button>
           <button class="goToSurvey-button" @click="goToSurveyList">
@@ -40,34 +35,35 @@
           </button>
         </div>
       </div>
-  
-      
     </div>
-</template>
-
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-    setup() {
-        const router = useRouter()
-        const route = userRoute()
-
-        function goToCompanyReportList(){
-            router.push('/companyReport/list')
-        }
-
-        function goToSurveyList(){
-            router.push('/survey/list')
-        }
-    
-        return {
-        goToCompanyReportList,
-        goToSurveyList
-        }
-    },
-})
-
+  </template>
+  
+  <script setup>
+  import { useRouter } from 'vue-router'
+  import { useStore } from 'vuex'
+  import { onMounted, ref } from 'vue'
+  
+  const router = useRouter();
+  const store = useStore();
+  
+  const goToProductList = () => {
+    router.push('/companyReport/list')
+  }
+  
+  const goToSurveyList = async () => {
+    try {
+      const randomString = await store.dispatch('surveyModule/requestRandomStringToDjango', 1); // surveyId를 적절히 교체
+      if (randomString) {
+        router.push({ name: 'SurveyReadPage', params: { randomString: randomString.toString() } });
+      } else {
+        alert('질문지가 아직 등록되지 않았습니다.');
+      }
+    } catch (error) {
+      console.error('질문지 정보를 불러오는 중 에러가 발생했습니다:', error);
+      alert('질문지를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
+  
 </script>
 
 <style scoped>
@@ -178,10 +174,6 @@ export default defineComponent({
 .goToSurvey-button:hover {
   background-color: rgba(255, 255, 255, 0.25);  
 }   
-
-
-
-
 
 /* From Uiverse.io by OMPRABHU8125 */ 
 .loader {
