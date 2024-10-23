@@ -1,0 +1,9 @@
+```jsx
+<template>
+    <v-app>
+        <v-main>
+            <span>확인</span>
+            <NuxtPage/>
+        </v-main>
+    </v-app>
+</template>
