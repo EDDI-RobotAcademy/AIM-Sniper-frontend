@@ -69,11 +69,11 @@
 <style scoped>
 
 .home-container {
-  position: absolute;
+  position: relative; /* 수정: 절대 위치 대신 상대적 위치 사용 */
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -138,15 +138,15 @@
   text-shadow: 2px 2px 3px rgb(136 0 136 / 50%);    
   background: linear-gradient(
     15deg,
-    #0044cc,  /* 짙은 파랑 */
-    #3d6fde,  /* 중간 파랑 */
-    #3f47cc,  /* 중간 진한 파랑 */
-    #3d6fde,  /* 밝은 파랑 */
-    #fefefe84,  /* 하늘색 */
-    #3d6fde,  /* 밝은 파랑 */
-    #3f47cc,  /* 중간 진한 파랑 */
-    #3d6fde,  /* 중간 파랑 */
-    #0044cc   /* 짙은 파랑 */
+    #0044cc,  
+    #3d6fde,  
+    #3f47cc,  
+    #3d6fde,  
+    #fefefe84,  
+    #3d6fde,  
+    #3f47cc,  
+    #3d6fde,  
+    #0044cc  
   )
   no-repeat;
   border: 1px solid #FFF;  
@@ -154,6 +154,7 @@
   background-position: left center;
   transition: background 0.3s ease;
 }
+
 .goToProduct-button:hover {
   background-size: 320%;
   background-position: right center;
@@ -171,6 +172,7 @@
   border: 1px solid #FFF;
   background: rgba(255, 255, 255, 0.08);
 }
+
 .goToSurvey-button:hover {
   background-color: rgba(255, 255, 255, 0.25);  
 }   
@@ -229,10 +231,12 @@
   border-radius: 50%;
   animation: moveElectron 1s infinite;
 }
+
 .electron2 {
   transform: rotate(60deg);
   animation-delay: -0.66s;
 }
+
 .electron2::before {
   animation-delay: -0.66s;
 }

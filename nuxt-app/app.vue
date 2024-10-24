@@ -1,12 +1,14 @@
 <template>
   <v-app>
-      <NavigationBar/>
-        <main>
-            <NuxtPage/>
-        </main>
-        <div class="footer-container">
-          <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
-        </div>
+    <!-- NavigationBar 고정 -->
+    <NavigationBar />
+    <main>
+      <!-- NuxtPage를 메인 영역으로 설정 -->
+      <NuxtPage /> 
+    </main>
+    <div class="footer-container">
+      <p class="reserved-info">2024-2025 AIM-Sniper Korea LLC. All Rights Reserved.</p>
+    </div>
   </v-app>
 </template>
 
@@ -17,107 +19,47 @@ import NavigationBar from '~/navigationBar/pages/NavigationMenuBar.vue'
 export default defineComponent({
   name: 'IndexPage',
   components: {
-      NavigationBar
+    NavigationBar
   }
 })
 </script>
 
 <style>
-main {
-  min-height: calc(100vh-72px);
-}
-/* 폰트 설정 */
-.v-application {
-  font-family: 'Pretendard', sans-serif !important;
-}
-.template {
-  font-family: 'Pretendard', sans-serif !important;
-}
-@font-face {
-  font-family:'Pretendard';
-  src: url('assets/fonts/Pretendard.ttf') format('truetype');
-  font-weight: 400;
-}
-
+/* v-app 전체 영역 설정 */
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  width: 100vw;
-}
-
-* {
+  min-height: 100vh; /* 화면 전체 높이를 차지하도록 설정 */
   margin: 0;
   padding: 0;
-  box-sizing: border-box;  
+  overflow: hidden; /* 스크롤바 문제 방지 */
 }
 
+/* v-main을 flex로 설정하여 남은 공간 차지 */
+v-main {
+  flex-grow: 1; /* 메인 컨텐츠가 가능한 모든 공간을 차지 */
+}
+
+/* 전체적으로 스크롤을 막고, 필요 시만 스크롤 허용 */
 html, body {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
-  /* font-size: 100%; 기본 폰트 크기 */
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden; /* 가로 스크롤 제거 */
+  overflow-y: auto; /* 세로 스크롤만 허용 */
 }
 
-/* 특정 요소에 폰트 적용을 원하면 추가로 정의할 수 있음 */
-h1, h2, h3, h4, h5, h6, p, b, a {
-  font-family: 'Pretendard', sans-serif;
-} 
-
-/* Flexbox 레이아웃 */
-.container {
-  display: flex;
-  flex-direction: row;
+/* 네비게이션바 관련 CSS */
+.menu-bar {
+  background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%));
+  position: fixed;
+  top: 0;
   width: 100%;
-  height: 100%;
+  z-index: 999; /* 네비게이션바가 항상 맨 위에 위치 */
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-button {
-  cursor: pointer;
-}
-
-/* 반응형 레이아웃 */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-
-  /* 작은 화면일 때 폰트 크기 조정 */
-  body {
-    font-size: calc(1vw + 1vh + 0.4vmin);
-  }
-}
-
-@media (max-width: 480px) {
-  /* 아주 작은 화면에서는 더 작은 폰트 크기 */
-  body {
-    font-size: calc(1vw + 1vh + 0.3vmin);
-  }
-
-  /* 이미지의 크기를 화면에 맞춤 */
-  img {
-    width: 100%;
-    height: auto;
-  }
-}
-
-/* 해상도별 추가 대응 */
-@media (max-width: 1024px) {
-  .container {
-    padding: 20px;
-  }
-}
-
-
+/* 푸터 설정 */
 .footer-container {
   background-color: rgba(255, 255, 255, 0.025);
   color: rgba(255, 255, 255, 0.75);
@@ -130,6 +72,6 @@ button {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 3px 5px black;  
+  box-shadow: 0 3px 5px black;
 }
 </style>
