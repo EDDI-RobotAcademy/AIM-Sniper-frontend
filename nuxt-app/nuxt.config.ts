@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     './account/nuxt.config.ts',
     './authentication/nuxt.config.ts',
     './naverAuthentication/nuxt.config.ts',
+    './companyReport/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -51,6 +52,7 @@ export default defineNuxtConfig({
     '~/account/index.ts',
     '~/authentication/index.ts',
     '~/naverAuthentication/index.ts',
+    '~/companyReport/index.ts',
   ],
   components: {
     dirs: [
