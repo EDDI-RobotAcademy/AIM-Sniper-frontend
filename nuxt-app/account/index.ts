@@ -17,6 +17,11 @@ export default defineNuxtModule({
 					path: '/account/login',
 					file: resolve(themeDir, "account/pages/login/AccountLoginPage.vue"),
 				},
+				{
+					name: "AccountMyPage",
+					path: '/account/mypage',
+					file: resolve(themeDir, "account/pages/my/AccountMyPage.vue"),
+				},
 			);
 		});
 
