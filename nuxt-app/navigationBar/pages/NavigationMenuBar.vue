@@ -114,12 +114,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '../../account/stores/accountStore';
 import { useAuthenticationStore } from '../../authentication/stores/authenticationStore';
+import { useNaverAuthenticationStore } from '../../naverAuthentication/stores/naverAuthenticationStore';
 
 // import { useSurveyStore } from '@/stores/surveyStore';
 
 // Pinia 스토어 사용
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
+const naverAuthenticationStore = useNaverAuthenticationStore();
 // const surveyStore = useSurveyStore();
 
 const router = useRouter();
@@ -239,6 +241,10 @@ onMounted(() => {
       authenticationStore.isAuthenticatedKakao = true;
     }
 
+    const naverUserToken = sessionStorage.getItem("naverUserToken");
+    if (naverUserToken) {
+      naverAuthenticationStore.isAuthenticatedNaver = true;
+    }
 
     const normalToken = sessionStorage.getItem("normalToken");
     if (normalToken) {
