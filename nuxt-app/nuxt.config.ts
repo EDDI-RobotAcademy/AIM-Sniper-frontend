@@ -23,8 +23,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   extends:[
     './home/nuxt.config.ts',    
-    './aiInterview/nuxt.config.ts',
-    // './account/nuxt.config.ts'
+    // './aiInterview/nuxt.config.ts',
+    './home/nuxt.config.ts',
+    './account/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -44,8 +45,8 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module',
     '@pinia/nuxt',
     '~/home/index.ts',
-    '~/aiInterview/index.ts',
-    // '~/account/index.ts',    
+    // '~/aiInterview/index.ts', 
+    '~/account/index.ts',
   ],
   components: {
     dirs: [
