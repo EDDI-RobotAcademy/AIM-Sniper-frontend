@@ -122,6 +122,24 @@ export const accountAction = {
             throw error
         }
     },
+    async requestPasswordModifyToDjango(payload:{email:string, newPassword: string}):Promise<void>{
+        const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+        try{
+            await djangoAxiosInst.post('/account/modify-password',{email:payload.email,newPassword: payload.newPassword})
+        } catch(error){
+            console.error('비밀번호 변경 실패:', error);
+            throw error;
+        }
+    },
+    async requestNicknameModifyToDjango(payload:{email:string, newNickname: string}):Promise<void>{
+        const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+        try{
+            await djangoAxiosInst.post('/account/modify-nickname', { email: payload.email, newNickname: payload.newNickname });
+        }catch (error) {
+            console.error('닉네임 변경 실패:', error);
+            throw error;
+        }
+    },
     async requestRoleTypeToDjango(email: string):Promise<void>{
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
         try{
