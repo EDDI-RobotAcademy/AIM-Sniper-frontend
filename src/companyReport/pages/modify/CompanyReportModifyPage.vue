@@ -66,6 +66,7 @@ export default {
       companyReportName: '',
       content: '',
       companyReportPrice: 0,
+      keyword: '',
     }
   },
   computed: {
