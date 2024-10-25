@@ -1,48 +1,39 @@
 <template>
-    <v-app-bar color="transparent" app dark height="72" class="menu-bar">
+  <v-app-bar color="transparent" app dark height="72" class="menu-bar">        
     
-      <v-btn text @click="goToHome" class="navbar-logo-btn">
-        <v-img
-          class="home-icon"
-          src="@/assets/images/fixed/AIM_BI_White.png"
-          alt="AIM LOGO"
-          contain
-          height="56"
-          width="56"
-          cover
-        />
-      </v-btn>
-  
-      <v-spacer></v-spacer>
-  
-      <v-btn text @click="goToHome" class="btn-text">
-        HOME
-      </v-btn>
-  
-      <v-btn
-        v-if="isAdmin"
-        text
-        @click="goToSurveyListPage"
-        class="btn-text"
-      >
-        SURVEY
-      </v-btn>
-      <v-btn
-        v-else
-        text
-        @click="goToSurvey"
-        class="btn-text"
-      >
-        SURVEY
-      </v-btn>
-  
-      <v-btn text @click="goToProductList" class="btn-text">
-        COMPANY REPORT
-      </v-btn>
-      
-      <!-- AI Interview 메뉴 -->
-      <v-menu>
-        <template v-slot:activator="{ props }">
+    <v-btn text @click="goToHome" class="navbar-logo-btn">
+      <v-img
+        class="home-icon"
+        src="@/assets/images/fixed/AIM_BI_White.png"
+        alt="AIM LOGO"
+        contain
+        height="56" 
+        width="56"
+        cover
+      ></v-img>       
+    </v-btn>   
+    
+    <v-spacer></v-spacer>
+
+    <v-btn text @click="goToHome" class="btn-text">
+      HOME
+    </v-btn>
+
+    <v-btn v-if= " isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
+      SURVEY
+    </v-btn>
+    <v-btn v-if=" !isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="goToSurvey" class="btn-text">
+      SURVEY
+    </v-btn>
+
+    <v-btn text @click="goToProductList" class="btn-text">
+      COMPANY REPORT
+    </v-btn>   
+    <!-- <v-btn text @click="goToAiInterviewPage" class="btn-text">
+      AI INTERVIEW
+    </v-btn> -->
+    <v-menu>
+      <template v-slot:activator="{ props }">
           <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
             <b>AI Interview</b>
           </v-btn>
@@ -56,114 +47,220 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-menu>
-  
-      <v-spacer></v-spacer>
-  
-      <v-menu v-if="isAuthenticated" close-on-content-click>
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
-            <b>My Page</b>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in myPageItems"
-            :key="index"
-            @click="item.action"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-  
-      <v-menu v-if="isAdmin" close-on-content-click>
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
-            <b>ADMIN</b>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in adminPageList"
-            :key="index"
-            @click="item.action"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-  
-      <v-btn
-        v-if="!isAuthenticated"
-        text
-        @click="signIn"
-        class="btn-login"
-      >
-        LOGIN
-      </v-btn>
-      <v-btn
-        v-else
-        text
-        @click="signOut"
-        class="btn-logout"
-      >
-        LOGOUT
-      </v-btn>
-    </v-app-bar>
-</template>
-  
-<script setup>
-import { useRouter } from 'vue-router';
-// import { useAuthStore } from '@/stores/auth';
-// import { useSurveyStore } from '@/stores/survey';
+    </v-menu>
 
-const router = useRouter();
-// const authStore = useAuthStore();
+    <v-spacer></v-spacer>
+
+    <v-menu
+      v-if="
+        authenticationStore.isAuthenticatedKakao ||
+        isAuthenticatedGoogle ||
+        naverAuthenticationStore.isAuthenticatedNaver
+      "
+      close-on-content-click
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
+          <b>My Page</b>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in myPageItems"
+          :key="index"
+          @click="item.action"
+        >
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu
+      v-if=" isGoogleAdmin ||
+      authenticationStore.isKakaoAdmin ||
+      naverAuthenticationStore.isNaverAdmin"
+      close-on-content-click
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
+          <b>ADMIN</b>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in adminPageList"
+          :key="index"
+          @click="item.action"
+        >
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>    
+
+    <v-btn v-if="!authenticationStore.isAuthenticatedKakao && !isAuthenticatedGoogle && !naverAuthenticationStore.isAuthenticatedNaver && !authenticationStore.isKakaoAdmin && !isGoogleAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="signIn" class="btn-login">
+      <!-- <v-icon left>mdi-login</v-icon> -->
+       LOGIN
+    </v-btn>
+    
+    <v-btn v-else text @click="signOut" class="btn-logout">
+      <!-- <v-icon left>mdi-logout</v-icon> -->
+       LOGOUT
+    </v-btn>
+    
+  </v-app-bar>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAccountStore } from '../../account/stores/accountStore';
+import { useAuthenticationStore } from '../../authentication/stores/authenticationStore';
+import { useNaverAuthenticationStore } from '../../naverAuthentication/stores/naverAuthenticationStore';
+
+// import { useSurveyStore } from '@/stores/surveyStore';
+
+// Pinia 스토어 사용
+const accountStore = useAccountStore();
+const authenticationStore = useAuthenticationStore();
+const naverAuthenticationStore = useNaverAuthenticationStore();
 // const surveyStore = useSurveyStore();
 
-// const isAuthenticated = authStore.isAuthenticated;
-// const isAdmin = authStore.isAdmin;
+const router = useRouter();
 
-// Admin 페이지 이동 리스트
-// const adminPageList = [
-// { title: '사용자 관리', action: () => router.push('/management/user') },
-// { title: '사용자 로그 현황', action: () => router.push('/management/log') },
-// ];
+// 데이터 선언
+const adminPageList = ref([
+  {
+    title: "사용자 관리",
+    action: () => goToManagementUserPage(),
+  },
+  {
+    title: "사용자 로그 현황",
+    action: () => goToManagementUserLogList(),
+  },
+]);
 
-// My Page 리스트
-const myPageItems = [
-{ title: '회원 정보', action: () => router.push('/account/mypage') },
-{ title: '장바구니', action: () => router.push('/cart/list') },
-{ title: '주문 목록', action: () => router.push('/order/list') },
-];
+const myPageItems = ref([
+  {
+    title: "회원 정보",
+    action: () => goToMyPage(),
+  },
+  {
+    title: "장바구니",
+    action: () => goToCart(),
+  },
+  {
+    title: "주문 목록",
+    action: () => goToOrder(),
+  },
+]);
 
-// AI Interview 페이지 리스트
-const aiInterviewPageList = [
-  { title: '대화형', action: () => router.push('/ai-interview') },
-  { title: '단일 질문 노출형', action: () => router.push('/ai-interview/llmTest') },
-];
+const aiInterviewPageList = ref([
+  {
+    title: "대화형",
+    action: () => goToAiInterviewPage(),
+  },
+  {
+    title: "단일 질문 노출형",
+    action: () => goToLlmTestPage(),
+  },
+]);
 
-// 네비게이션 관련 메서드
+const surveyId = ref(1);
+const isUserAuthenticated = ref(null);
+
+// 브라우저 환경에서만 실행되도록 수정
+if (process.client) {
+  isUserAuthenticated.value = sessionStorage.getItem("isUserAuthenticated");
+}
+
+// 라우터 이동 함수들
+const signIn = () => router.push('/account/login')
 const goToHome = () => router.push('/');
 const goToProductList = () => router.push('/companyReport/list');
+const goToCart = () => router.push('/cart/list');
+const goToOrder = () => router.push('/order/list');
+const goToMyPage = () => router.push('/account/mypage');
 const goToSurveyListPage = () => router.push('/survey/list');
+const goToManagementUserPage = () => router.push('/management/user');
+const goToManagementUserLogList = () => router.push('/management/log');
+const goToAiInterviewPage = () => router.push('/ai-interview');
+const goToLlmTestPage = () => router.push('/ai-interview/llmTest');
 
-const signIn = () => router.push('/account/login');
-const signOut = () => {
-// authStore.signOut();
-router.push('/');
+// 로그아웃 처리
+const signOut = async () => {
+  if (process.client) {
+    const loginType = sessionStorage.getItem("loginType");
+
+    if (loginType === "KAKAO") {
+      await authenticationStore.requestKakaoLogoutToDjango();
+      authenticationStore.isAuthenticatedKakao = false;
+      authenticationStore.isKakaoAdmin = false;
+    } else if (loginType === "GOOGLE") {
+      await googleAuthenticationStore.requestGoogleLogoutToDjango();
+      googleAuthenticationStore.isAuthenticatedGoogle = false;
+    } else if (loginType === "NAVER") {
+      await naverAuthenticationStore.requestNaverLogoutToDjango();
+      naverAuthenticationStore.isAuthenticatedNaver = false;
+    } else if (loginType === "NORMAL") {
+      sessionStorage.removeItem("normalToken");
+      sessionStorage.removeItem("email");
+      sessionStorage.removeItem("loginType");
+      sessionStorage.removeItem('adminToken');
+
+      if (sessionStorage.getItem("fileKey")) {
+        sessionStorage.removeItem("fileKey");
+      }
+
+      accountStore.isAuthenticatedNormal = false;
+      accountStore.isNormalAdmin = false;
+      authenticationStore.isKakaoAdmin = false;
+      googleAuthenticationStore.isGoogleAdmin = false;
+      naverAuthenticationStore.isNaverAdmin = false;
+    }
+
+    router.push('/');
+  }
 };
 
-// const goToSurvey = async () => {
-// const randomString = await surveyStore.getRandomString();
-// if (randomString) {
-//     router.push({ name: 'SurveyReadPage', params: { randomString } });
-// }
-// };
+// 설문조사 페이지 이동
+const goToSurvey = async () => {
+  const randomString = await surveyStore.requestRandomStringToDjango();
+  
+  if (randomString) {
+    router.push({
+      name: 'SurveyReadPage',
+      params: { randomString: randomString.toString() },
+    });
+  }
+};
+
+// 사용자 상태 복원
+onMounted(() => {
+  if (process.client) {
+    const userToken = sessionStorage.getItem("userToken");
+    if (userToken) {
+      authenticationStore.isAuthenticatedKakao = true;
+    }
+
+    const naverUserToken = sessionStorage.getItem("naverUserToken");
+    if (naverUserToken) {
+      naverAuthenticationStore.isAuthenticatedNaver = true;
+    }
+
+    const normalToken = sessionStorage.getItem("normalToken");
+    if (normalToken) {
+      accountStore.isAuthenticatedNormal = true;
+    }
+
+    const adminToken = sessionStorage.getItem("adminToken");
+    if (adminToken) {
+      authenticationStore.isKakaoAdmin = true;
+      // googleAuthenticationStore.isGoogleAdmin = true;
+      // naverAuthenticationStore.isNaverAdmin = true;
+      accountStore.isNormalAdmin = true;
+    }
+  }
+});
 </script>
-
-
 
 
 
