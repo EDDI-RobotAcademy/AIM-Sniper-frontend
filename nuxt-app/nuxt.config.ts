@@ -23,7 +23,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   extends:[
     './home/nuxt.config.ts',    
-    // './aiInterview/nuxt.config.ts',
+    './aiInterview/nuxt.config.ts',
     './home/nuxt.config.ts',
     './account/nuxt.config.ts',
     './authentication/nuxt.config.ts',
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   modules: ['vuetify-nuxt-module',
     '@pinia/nuxt',
     '~/home/index.ts',
-    // '~/aiInterview/index.ts', 
+    '~/aiInterview/index.ts', 
     '~/account/index.ts',
     '~/authentication/index.ts',
     '~/naverAuthentication/index.ts',
