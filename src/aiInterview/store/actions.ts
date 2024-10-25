@@ -7,7 +7,15 @@ export type AIInterviewActions = {
     requestInferNextQuestionToFastAPI(
         context: ActionContext<any, any>,
         payload: { answer: string, nextIntent: string }): Promise<string>
+    requestInferScoreResultToFastAPI(
+        context: ActionContext<any, any>,
+        payload: { interviewResult: any[] }): Promise<string>
     requestInferedResultToFastAPI(context: ActionContext<any, any>): Promise<string>
+    requestSaveInterviewResultToDjango(
+        context: ActionContext<any, any>,
+        payload: { scoreResultList: [], userToken: string }): Promise<string>
+    requestGetScoreResultListToDjango(
+        context: ActionContext<any, any>, payload: { userToken: string }): Promise<string>
 }   
 
 const actions: AIInterviewActions = {
@@ -30,6 +38,23 @@ const actions: AIInterviewActions = {
             return response.data
         } catch (error) {
             console.log('requestInferToFastAPI() 중 문제 발생:', error)
+            throw error
+        }
+    },
+    async requestInferScoreResultToFastAPI(
+        context: ActionContext<any, any>,
+        payload: {  interviewResult: any[] }): Promise<string> {
+        console.log("payload:", payload)
+        const interviewResult = payload.interviewResult
+        try {
+            // console.log('requestInferScoreResultToFastAPI()')
+            const command = 8
+
+            const response = await axiosInst.fastapiAxiosInst.post(
+                '/request-ai-command', { command, "data": interviewResult })
+            return response.data
+        } catch (error) {
+            console.log('requestInferScoreResultToFastAPI() 중 문제 발생:', error)
             throw error
         }
     },
@@ -60,6 +85,19 @@ const actions: AIInterviewActions = {
             throw error
         }
     },
+    async requestSaveInterviewResultToDjango(
+        context: ActionContext<any, any>,
+        payload: { scoreResultList: [], userToken: string }): Promise<string>{
+
+            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview/save-interview-result', payload)
+            return res.data
+    },
+    async requestGetScoreResultListToDjango(
+        context: ActionContext<any, any>, payload: { userToken: string }): Promise<string>{
+            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview/get-interview-result', payload)
+            return res.data
+        }
+
 }
 
 export default actions;

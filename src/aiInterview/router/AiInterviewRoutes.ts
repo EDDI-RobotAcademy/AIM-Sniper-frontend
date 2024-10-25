@@ -1,5 +1,6 @@
 import AiInterviewPage from "@/aiInterview/pages/AiInterviewPage.vue"
 import AIInterviewLLMTestPage from "@/aiInterview/pages/llmTest/AIInterviewLLMTestPage.vue"
+import AIInterviewAnswerResultPage from "@/aiInterview/pages/result/AIInterviewAnswerResultPage.vue"
 const AiInterviewRoutes = [
     {
         path: '/ai-interview',
@@ -13,6 +14,13 @@ const AiInterviewRoutes = [
         name: 'AIInterviewLLMTestPage',
         components: {
             default: AIInterviewLLMTestPage
+        }
+    },
+    {
+        path: '/ai-interview/result',
+        name: 'AIInterviewAnswerResult.vue',
+        components: {
+            default: AIInterviewAnswerResultPage
         }
     },
 ]
