@@ -1,8 +1,6 @@
 <template>
     <v-app>
-        <v-main>
-            <nav>
-            </nav>
+        <v-main>            
             <HomePage />
         </v-main>
     </v-app>

@@ -1,5 +1,6 @@
 <template>
     <v-app-bar color="transparent" app dark height="72" class="menu-bar">
+    
       <v-btn text @click="goToHome" class="navbar-logo-btn">
         <v-img
           class="home-icon"
@@ -38,7 +39,8 @@
       <v-btn text @click="goToProductList" class="btn-text">
         COMPANY REPORT
       </v-btn>
-  
+      
+      <!-- AI Interview 메뉴 -->
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
@@ -109,7 +111,7 @@
         LOGOUT
       </v-btn>
     </v-app-bar>
-  </template>
+</template>
   
 <script setup>
 import { useRouter } from 'vue-router';
@@ -137,10 +139,10 @@ const myPageItems = [
 ];
 
 // AI Interview 페이지 리스트
-// const aiInterviewPageList = [
-// { title: '대화형', action: () => router.push('/ai-interview') },
-// { title: '단일 질문 노출형', action: () => router.push('/ai-interview/llmTest') },
-// ];
+const aiInterviewPageList = [
+  { title: '대화형', action: () => router.push('/ai-interview') },
+  { title: '단일 질문 노출형', action: () => router.push('/ai-interview/llmTest') },
+];
 
 // 네비게이션 관련 메서드
 const goToHome = () => router.push('/');
@@ -161,42 +163,78 @@ router.push('/');
 // };
 </script>
 
+
+
+
+
 <style scoped>
 .menu-bar {
-background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%));
+  background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%)) !important;
 }
-
 /* AIM 로고 이미지 버튼 */
 .navbar-logo-btn {
-display: flex;
-align-items: center;
-margin-left: 80px !important;
+  display: flex;
+  align-items: center;
+  margin-left: 80px !important;
 }
 
 .btn-text {
-font-family: 'Pretendard', sans-serif;
-font-size: 16px;
-font-weight: 300;
-color: #FFF;
-letter-spacing: 0.5px;
-text-transform: uppercase;
-padding: 0px 10px;
-margin: 0px 10px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0px 10px;
+  margin: 0px 10px;
 }
 
-.btn-login,
+.btn-login {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700px;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;  
+  margin-right: 80px !important;
+  border: 1px solid white;
+  color: white; /* 텍스트 색상도 흰색으로 변경 */  
+}
+
 .btn-logout {
-font-family: 'Pretendard', sans-serif;
-font-size: 16px;
-font-weight: 700px;
-color: #FFF;
-letter-spacing: 0.5px;
-text-transform: uppercase;
-margin-right: 80px !important;
-border: 1px solid white;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 700px;
+  color: #FFF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;  
+  margin-right: 80px !important;
+  border: 1px solid white;
+  color: white; /* 텍스트 색상도 흰색으로 변경 */  
+}
+
+
+.btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  
+}
+/* 클릭해서 선택되었을시 표시 */
+.btn-text:focus {
+  background-color: rgba(255, 255, 255, 0.25); 
+  color: white;
+  
+}
+
+.v-menu > .v-overlay__content > .v-card,
+.v-menu > .v-overlay__content > .v-sheet,
+.v-menu > .v-overlay__content > .v-list {  
+  background-color: rgba(0, 0, 0, 0.25);
+  color: white;
+  border: 3px solid white
 }
 
 .v-list-item:hover {
-background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.25);
+  
 }
 </style>
