@@ -38,6 +38,14 @@ export default defineNuxtModule({
 						"account/pages/withdraw/AccountWithdrawPage.vue"
 					),
 				},
+                {
+					name: "AccountModifyPage",
+					path: '/account/modify',
+					file: resolve(
+						themeDir,
+						"account/pages/modify/AccountModifyPage.vue"
+					),
+				}
 			);
 		});
 
