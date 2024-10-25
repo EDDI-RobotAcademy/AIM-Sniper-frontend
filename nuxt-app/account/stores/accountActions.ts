@@ -86,6 +86,18 @@ export const accountAction = {
             throw error;
         }
     },
+    async requestWithdrawalToDjango(payload:{reason: string}): Promise<AxiosResponse>{
+        const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+        const userToken = sessionStorage.getItem("userToken");
+        const { reason } = payload
+        try{
+            const res: AxiosResponse = await djangoAxiosInst.post('/account/withdraw',{reason: reason, userToken: userToken})
+            return res.data
+        } catch (error) {
+            alert('requestWithdrawalToDjango() 문제 발생!')
+            throw error
+        }
+    },
     async requestGenderToDjango(email: string): Promise<any>{
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
         const accountStore = useAccountStore()
