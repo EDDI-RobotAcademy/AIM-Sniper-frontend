@@ -1,7 +1,32 @@
-<template>  
+<template>
+  <div>
+    <v-row class="justify-center align-center mt-15 mb-15">
+      <v-col
+        v-for="(companyReport, index) in topNCompanyReports"
+        :key="index"
+        cols="12"
+        sm="4"
+        md="3"
+        lg="2"
+      >
+        <div class="popular-company">
+          <div class="border-top"></div>
+          <div class="img">
+              <img 
+              :src="getImageUrl(companyReport.companyReportTitleImage)">
+          </div>
+          <span>{{ companyReport.companyReportName }}</span>
+          <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+          <button 
+            @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
+            click
+          </button>
+        </div>
+      </v-col>
+    </v-row>
+  </div>
   <div class="background-image">
     <v-container class="custom-padding">
-      <!-- 관리자 페이지 계정 로그인시에만 나타나는 버튼 -->
       <v-row>
         <v-col v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" cols="auto" class="text-right">
           <v-btn
@@ -15,19 +40,13 @@
           </v-btn>
         </v-col>
       </v-row>
-      <!-- 산업 필터 -->
-      <v-row>        
-        <v-col cols="2">
-          <v-btn icon @click="toggleSidebar" style="width: 200px; height: 35px; border-radius: 8px;  margin-top: 10px; box-shadow: 0 3px 6px #0a28b0; font-weight: bold;">
-            <v-icon>mdi-file-sync-outline</v-icon>
-            직무 필터
-          </v-btn>
-        </v-col>
+          
 
+      <v-row>
         <v-col cols="3">
           <h2 class="section-title"> 전체 보고서 </h2>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="3">
           <!-- 여백용 -->
         </v-col>
         
@@ -40,7 +59,7 @@
           ></v-select>
         </v-col>
         
-        <v-col cols="3">
+        <v-col cols="4">
           <v-text-field
             v-model="searchQuery"
             label="검색 내용을 입력하세요"
@@ -49,72 +68,34 @@
             class="search-input"
             outlined
           ></v-text-field>
+        </v-col>        
+      </v-row>
+      <v-row class="justify-center align-center">
+        <v-col cols="12">
+          <h3 class="mb-4">산업 키워드 선택</h3>
+          <v-row class="keyword-container">
+            <v-col cols="auto" v-for="keyword in keywords" :key="keyword" class="pa-2">
+              <v-btn
+                :color="selectedKeywords.includes(keyword) ? 'primary' : ''"
+                @click="toggleKeyword(keyword)"
+                outlined
+                rounded
+                class="keyword-btn"
+              >
+                {{ keyword }}
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
-
-                        
       </v-row>
 
-      <!-- 간단한 사이드바 시작 -->
-      <v-navigation-drawer
-        v-model="isSidebarOpen"
-        right
-        absolute
-        temporary
+      
+      <br>
+      <br>
+      <br>
+      <v-row
+        v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0"
       >
-        <v-list-item>
-          <v-list-item-content>
-            <br>
-            <v-list-item-title><h3>산업 키워드 선택</h3></v-list-item-title>
-            <br>
-            <v-row class="justify-center align-center">
-              <v-col cols="12">          
-                <v-row class="keyword-container">
-                  <v-col cols="auto" v-for="keyword in keywords" :key="keyword" class="pa-2">
-                    <v-btn
-                      :color="selectedKeywords.includes(keyword) ? 'primary' : ''"
-                      @click="toggleKeyword(keyword)"
-                      outlined
-                      rounded
-                      class="keyword-btn"
-                    >
-                      {{ keyword }}
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-list-item-content>
-        </v-list-item>
-      </v-navigation-drawer>
-      <!-- 간단한 사이드바 끝 -->
-      
-      <v-row class="justify-center align-center mt-15 mb-15">
-        <v-col
-          v-for="(companyReport, index) in topNCompanyReports"
-          :key="index"
-          cols="12"
-          sm="4"
-          md="3"
-          lg="2"
-        >
-          <div class="popular-company">
-            <div class="border-top"></div>
-            <span><h5>AI - Report 추천</h5></span>
-            <div class="img">
-                <img 
-                :src="getImageUrl(companyReport.companyReportTitleImage)">
-            </div>
-            <span>{{ companyReport.companyReportName }}</span>
-            <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
-            <button 
-              @click="goToCompanyReportReadPage(companyReport.companyReportId)"> 
-              click
-            </button>
-          </div>
-        </v-col>
-      </v-row>      
-      
-      <v-row v-if="allCompanyReportsVisible && paginatedCompanyReports.length > 0">
         <v-col
           v-for="(companyReport, index) in paginatedCompanyReports"
           :key="index"
@@ -255,15 +236,11 @@ export default {
       purchase: false,
       topN: 5,
       topList: [],
-      isSidebarOpen: false, // 사이드바 열림/닫힘 상태
     };
   },
   methods: {
     ...mapActions("companyReportModule", ["requestCompanyReportListToDjango", "requestTopNCompanyReportListToDjango"]),
     ...mapActions("userLogModule", ["requestCountClickToDjango"]), //유저가 상품을 눌렀을 때 상품 클릭 수가 늘어남
-    toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen;
-    },
     goToCompanyReportReadPage(companyReportId) {
       const email = sessionStorage.getItem('email');
       
@@ -344,11 +321,6 @@ export default {
   font-weight: 400;
 }
 
-.custom-padding {
-  padding-left: 2%;
-  padding-right: 2%;
-}
-
 .register-btn {
   font-size: 16px;
   background-color: #f5f5f5;
@@ -363,20 +335,22 @@ export default {
   color: #0A28B0;
   font-family: "Pretendard", sans-serif !important;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 30px;
   margin-left: 10px;
   margin-top: 10px;   
 }
 
-::v-deep .v-field {
-  height: 50px;  
-  background-color: #83838300 !important; 
+::v-deep .v-field {  
+  background-color: #ffffff !important; 
   color: rgb(37, 47, 133) !important;    
-  border-radius: 15px 15px 0px 0px!important;    
+  border-radius: 5px !important;    
 }
 
 
-
+.custom-padding {
+  padding-left: 10%;
+  padding-right: 10%;
+}
 
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
@@ -392,13 +366,13 @@ export default {
   font-size: 18px;
   font-weight: bold;
   margin-left: 10px;
-  padding-top: 0px;
 }
 
 .companyReport-price {  
   color: #9452ff;
   font-weight: 600;
-  margin-left: 10px;  
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
 .companyReport-image {
@@ -406,64 +380,17 @@ export default {
 }
 
 .popular-company {
-  width: 10vw;
-  height: 200px;  
-  background: #0a28b0;
-  margin-top: 0;
-  margin-bottom: 0;  
+  width: 190px;
+  height: 240px;
+  width: 190px;
+  height: 240px;
+  background: #0A28B0;
   border-radius: 15px;
   box-shadow: 1px 5px 60px 11px #1f199d6b;
-  position: relative; /* 레이저를 감싸는 요소의 위치 지정 */
-  
 }
-
-.popular-company::before {
-  content: "";
-  position: absolute;
-  width: 6px; /* 점의 크기 */
-  height: 6px;
-  background-color: white; /* 점의 색상 */
-  border-radius: 50%; /* 점을 둥글게 만듦 */
-  top: 0;
-  left: 0;
-  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8), /* 빛 효과 */
-              0 0 50px 25px rgba(255, 255, 255, 0.5), /* 첫 번째 꼬리 */
-              0 0 75px 25px rgba(255, 255, 255, 0.3); /* 더 긴 꼬리 */
-  animation: shooting-star 4s linear infinite; /* 애니메이션 설정 */
-}
-
-@keyframes shooting-star {
-  0% {
-    top: 0;
-    left: 0;
-    transform: scale(1); /* 처음 크기 */
-  }
-  25% {
-    top: 0;
-    left: 100%;
-    transform: translateX(-100%) scale(1.2); /* 크기 약간 확대 */
-  }
-  50% {
-    top: 100%;
-    left: 100%;
-    transform: translate(-100%, -100%) scale(1.4); /* 크기 더 확대 */
-  }
-  75% {
-    top: 100%;
-    left: 0;
-    transform: translateY(-100%) scale(1.2); /* 다시 크기 축소 */
-  }
-  100% {
-    top: 0;
-    left: 0;
-    transform: scale(1); /* 원래 크기로 돌아옴 */
-  }
-}
-
-
 
 .popular-company .border-top {
-  width: 70%;
+  width: 60%;
   height: 3%;
   background: #8094F4;
   margin: auto;
@@ -489,7 +416,7 @@ export default {
 }
 
 .popular-company .img {
-  width: 120px;
+  width: 100px;
   height: 70px;
   /* background: #8094F4; */
   border-radius: 15px;
@@ -498,7 +425,7 @@ export default {
 }
 
 .popular-company button {
-  padding: 8px 15px;
+  padding: 8px 25px;
   display: block;
   margin: auto;
   border-radius: 8px;
@@ -517,6 +444,6 @@ export default {
   color: #1e68d1;
   padding: 4px 12px;
   width: auto;
-  height: 3vh;
+  height: 4vh;
 }
 </style>
