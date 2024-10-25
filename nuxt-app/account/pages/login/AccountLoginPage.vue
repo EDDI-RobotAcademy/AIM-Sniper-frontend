@@ -126,9 +126,9 @@ const goToKakaoLogin = async () => {
 };
 
 const goToGoogleLogin = async () => {
-  // alert("현재 로그인 검수 중입니다.");
-  sessionStorage.setItem("loginType", "GOOGLE");
-  await googleAuthentication.requestGoogleOauthRedirectionToDjango();
+  alert("현재 로그인 검수 중입니다.");
+  // sessionStorage.setItem("loginType", "GOOGLE");
+  // await googleAuthentication.requestGoogleOauthRedirectionToDjango();
 };
 
 const goToNaverLogin = async () => {
