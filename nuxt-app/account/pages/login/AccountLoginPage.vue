@@ -98,7 +98,7 @@ import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore'; 
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
-import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationstore';
+// import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationstore';
 
 // import { useSessionStorage } from '@vueuse/core'; // 세션 스토리지 관리를 위해 VueUse 사용
 
@@ -116,7 +116,7 @@ const isPasswordCollect = ref(false);
 // Pinia store 상태
 const account = useAccountStore();
 const authentication = useAuthenticationStore();
-const googleAuthentication = useGoogleAuthenticationStore();
+// const googleAuthentication = useGoogleAuthenticationStore();
 const naverAuthentication = useNaverAuthenticationStore();
 
 // Google, Kakao, Naver 로그인 함수들
@@ -142,7 +142,7 @@ const isAuthenticatedKakao = computed(() => authentication.isAuthenticatedKakao)
 const isAuthenticatedNormal = computed(() => account.isAuthenticatedNormal);
 const loginType = computed(() => account.loginType);
 const isKakaoAdmin = computed(() => account.isKakaoAdmin);
-const isAuthenticatedGoogle = computed(() => googleAuthentication.isAuthenticatedGoogle);
+// const isAuthenticatedGoogle = computed(() => googleAuthentication.isAuthenticatedGoogle);
 const isAuthenticatedNaver = computed(() => naverAuthentication.isAuthenticatedNaver);
 
 // Methods
