@@ -1,19 +1,6 @@
 <template>
   <div class="background-image">
     <v-container class="custom-padding">
-      <!-- <v-row>
-            <v-col v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin" cols="auto" class="text-right">
-            <v-btn
-                :to="{ name: 'CompanyReportRegisterPage' }"
-                class="register-btn"
-                width="100vw"
-                color="white"
-                outlined
-            >
-                상품 등록
-            </v-btn>
-            </v-col>
-        </v-row> -->
       <div>
         <v-row>
           <v-col cols="12">
@@ -21,10 +8,10 @@
           </v-col>
         </v-row>
 
-        <!-- 산업 필터 -->
+        <!-- 기업 필터 -->
         <v-row>
           <v-col cols="12">
-            <p @click="toggleFilter" class="filter-text" ㅡ>
+            <p @click="toggleFilter" class="filter-text">
               <v-icon left class="filter-icon">mdi-filter-variant</v-icon>
               기업 필터 <v-icon>mdi-chevron-down</v-icon>
             </p>
