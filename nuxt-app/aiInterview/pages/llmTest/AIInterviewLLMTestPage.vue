@@ -1,6 +1,6 @@
 <template>
   <main>
-    <v-container v-if="!start"  align=center height="100%">
+    <v-container v-if="!start" align=center height="100%">
       <br><br><br><br><br><br><br><br><br><br><br><br>
       <h2>안녕하십니까? AI 모의 면접 서비스입니다.</h2><br>
       <v-container class="draw-line" align=start>

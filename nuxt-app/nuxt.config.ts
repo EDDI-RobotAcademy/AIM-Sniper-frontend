@@ -23,11 +23,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   extends:[
     './home/nuxt.config.ts',    
-    './aiInterview/nuxt.config.ts',
-    './home/nuxt.config.ts',
+    './aiInterview/nuxt.config.ts',    
     './account/nuxt.config.ts',
     './authentication/nuxt.config.ts',
     './naverAuthentication/nuxt.config.ts',
+    './survey/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     '~/account/index.ts',
     '~/authentication/index.ts',
     '~/naverAuthentication/index.ts',
+    '~/survey/index.ts',
   ],
   components: {
     dirs: [
