@@ -115,14 +115,15 @@ import { useRouter } from 'vue-router';
 import { useAccountStore } from '../../account/stores/accountStore';
 import { useAuthenticationStore } from '../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../naverAuthentication/stores/naverAuthenticationStore';
+import { useSurveyStore } from '../../survey/stores/surveyStore';
 
-// import { useSurveyStore } from '@/stores/surveyStore';
+
 
 // Pinia 스토어 사용
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
 const naverAuthenticationStore = useNaverAuthenticationStore();
-// const surveyStore = useSurveyStore();
+const surveyStore = useSurveyStore();
 
 const router = useRouter();
 
