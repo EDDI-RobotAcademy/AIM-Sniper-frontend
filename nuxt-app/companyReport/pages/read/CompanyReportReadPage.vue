@@ -1,29 +1,23 @@
 <template>
-  <v-container>
-    <v-col cols="2" class="d-flex align-center justify-center"> </v-col>
-
+  <v-container class="template">   
     <v-card v-if="companyReport">
       <v-card-text>
         <v-container>
           <v-row>
             <v-col cols="3" class="d-flex justify-end">
               <v-img
-                :src="
-                  getImageUrl(
-                    companyReport.companyReportTitleImage
-                  )
-                "
+                :src=" getImageUrl(companyReport.companyReportTitleImage)"
                 class="custom-img grey lighten-2"
                 aspect-ratio="1"
-                style="max-width: 180px; height: 180px;"
-              >
+                style="max-width: 150px; height: 150px;"
+                >
                 <template v-slot:placeholder>
                   <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
+                  class="fill-height ma-0"
+                  align="center"
+                  justify="center"
                   >
-                    <v-progress-circular indeterminate color="grey lighten-5" />
+                  <v-progress-circular indeterminate color="grey lighten-5" />
                   </v-row>
                 </template>
               </v-img>
@@ -36,14 +30,14 @@
                   <!-- 이 상품의 태그 -->
                   <v-row>                    
                     <v-btn
-                      v-for="(keyword, index) in companyReport.keyword.split(',')"
-                      :key="index"
-                      outlined
-                      rounded
-                      class="keyword-btn"
-                      style="pointer-events: none;"
+                    v-for="(keyword, index) in companyReport.keyword.split(',')"
+                    :key="index"
+                    outlined
+                    rounded
+                    class="keyword-btn"
+                    style="pointer-events: none;"
                     >
-                      {{ keyword.trim() }}
+                    {{ keyword.trim() }}
                     </v-btn>
                     
                   </v-row>
@@ -52,9 +46,9 @@
               
               <v-row>
                 <v-col>
-                  <h1 class="title"> {{ companyInfo.company_name }} 기업 분석 리포트 </h1>
+                  <h2> {{ companyInfo.company_name }} 기업 분석 리포트 </h2>
                 </v-col>
-
+                
                 <v-col cols="3">
                   <p class="companyReport-price">
                     {{ companyReport.companyReportPrice }}
@@ -65,36 +59,31 @@
                   </p>
                 </v-col>
               </v-row>
-              
-              
-              <v-row style="margin-bottom: 20px;">                 
-                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
-                  @click="confirmCheckout"
-                  class="order-action-button"
-                  style="margin-right: 10px;"
-                >
-                  {{ keyword.trim() }}
-                </v-btn>
                 
+              <v-row style="margin-bottom: 20px;">                 
+                <v-btn v-if="!(isAdmin)"                 
+                @click="confirmCheckout"
+                class="order-action-button"
+                style="margin-right: 10px;"
+                >
+                  <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
+                  구매하기
+                </v-btn>
+
+                <v-btn v-if="!(isAdmin)"                 
+                @click="isGoToCartListDialogVisible = true"
+                class="cart-action-button"
+                  >
+                  <v-icon left>mdi-cart-plus</v-icon>
+                  장바구니 담기
+                </v-btn>                
               </v-row>
-
-            </v-col>
+            </v-col> 
           </v-row>
-          
-          <v-divider class="my-4"></v-divider>
-            <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
-            구매하기
-            <v-btn v-if="!(isAdmin)"                 
-              @click="isGoToCartListDialogVisible = true"
-              class="cart-action-button"
-            >
-              <v-icon left>mdi-cart-plus</v-icon>
-              장바구니 담기
-            </v-btn>                
 
-    <v-card v-if="companyReport">
-      <v-card-text>
-        <v-container>
+          <v-divider class="my-4"></v-divider>
+
+          
           <v-row ref="overviewRow" class="overview" justify="center">
             <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
@@ -156,46 +145,40 @@
     <v-alert v-else type="info">현재 등록된 상품이 없습니다!</v-alert>
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
-        <v-col cols="auto">
-          <!-- <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline"> -->
-            <v-btn class="return-action-button">
-              <v-icon left>mdi-arrow-left</v-icon>
-              <span>목록으로 돌아가기</span>
-            </v-btn>
-          <!-- </router-link> -->
-        </v-col>
-  
-        <button
-          v-if="isAdmin"
-          class="Btn"
-          @click="deleteCompanyReport"
-        >
-          <div class="sign">
-            <svg
-              viewBox="0 0 16 16"
-              class="bi bi-trash3-fill"
-              fill="currentColor"
-              height="18"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
-              ></path>
-            </svg>
-          </div>
-          <div class="text">Delete</div>
-        </button>
-  
-        <button
-          v-if="isAdmin"
-          class="pushable"
-          @click="goToModifyPage"
-        >
-          <span class="shadow"></span>
-          <span class="edge"></span>
-          <span class="front"> Modify </span>
-        </button>
+      <v-col cols="auto">
+        <!-- <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline"> -->
+          <v-btn class="return-action-button">
+            <v-icon left>mdi-arrow-left</v-icon>
+            <span>목록으로 돌아가기</span>
+          </v-btn>
+        <!-- </router-link> -->
+      </v-col>
+
+      <button v-if="isAdmin"
+        class="Btn"
+        @click="deleteCompanyReport">
+        <div class="sign">
+          <svg
+            viewBox="0 0 16 16"
+            class="bi bi-trash3-fill"
+            fill="currentColor"
+            height="18"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"></path>
+          </svg>
+        </div>
+        <div class="text">Delete</div>
+      </button>
+
+      <button v-if="isAdmin"
+        class="pushable"
+        @click="goToModifyPage">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front"> Modify </span>
+      </button>
     </v-row>
     <v-dialog v-model="isCheckoutDialogVisible" max-width="500">
       <v-card>
@@ -294,6 +277,7 @@ function checkAuthenticated() {
 
 const onPurchase = async () => {
   isCheckoutDialogVisible.value = false
+  
   try {
     const email = sessionStorage.getItem("email")
     const payload = {
@@ -301,6 +285,7 @@ const onPurchase = async () => {
       companyReportId: companyReportId.value,
     }
     const isDuplicatedOrderItem = await orderStore.requestOrderItemDuplicationCheckToDjango(payload)
+    
     if (isDuplicatedOrderItem) {
       alert("이미 구매하신 보고서입니다.")
     } else {
@@ -612,6 +597,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.template {
+  margin-top: 100px;
+}
+
 svg {
   font-family: sans-serif;
 }
@@ -647,7 +636,7 @@ svg {
 }
 
 .companyReport-price {
-  font-size: 24px;
+  font-size: 20px;
   color: grey;
 }
 
@@ -659,16 +648,16 @@ svg {
 }
 
 .order-action-button {
-  width: 158px;
-  height: 56px;
-  border-radius: 16px;
+  width: 130px;
+  height: 45px;
+  border-radius: 13px;
   background: #0A28B0;
   color: #FFFFFF;
 }
 .cart-action-button {
-  width: 158px;
-  height: 56px;
-  border-radius: 16px;
+  width: 130px;
+  height: 45px;
+  border-radius: 13px;
   border: 1px solid #E6E8EC !important;
   background: white;
   color: #7B8094;
@@ -869,13 +858,6 @@ a:visited {
 
 a:active {
   color: rgb(27, 59, 173); 
-}
-
-.auto-width-divider {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .overview-content span {
