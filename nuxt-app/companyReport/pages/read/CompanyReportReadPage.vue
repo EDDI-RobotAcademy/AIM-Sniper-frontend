@@ -73,24 +73,28 @@
                   class="order-action-button"
                   style="margin-right: 10px;"
                 >
-                  <v-icon v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)" left>mdi-cart</v-icon>
-                  구매하기
+                  {{ keyword.trim() }}
                 </v-btn>
                 
-                <v-btn v-if="!(isKakaoAdmin || isGoogleAdmin || isNaverAdmin || isNormalAdmin)"                 
-                  @click="isGoToCartListDialogVisible = true"
-                  class="cart-action-button"
-                >
-                  <v-icon left>mdi-cart-plus</v-icon>
-                  장바구니 담기
-                </v-btn>                
               </v-row>
 
             </v-col>
           </v-row>
           
           <v-divider class="my-4"></v-divider>
+            <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
+            구매하기
+            <v-btn v-if="!(isAdmin)"                 
+              @click="isGoToCartListDialogVisible = true"
+              class="cart-action-button"
+            >
+              <v-icon left>mdi-cart-plus</v-icon>
+              장바구니 담기
+            </v-btn>                
 
+    <v-card v-if="companyReport">
+      <v-card-text>
+        <v-container>
           <v-row ref="overviewRow" class="overview" justify="center">
             <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
@@ -149,8 +153,6 @@
       </v-card-text>
     </v-card>
 
-
-
     <v-alert v-else type="info">현재 등록된 상품이 없습니다!</v-alert>
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
@@ -164,7 +166,7 @@
         </v-col>
   
         <button
-          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          v-if="isAdmin"
           class="Btn"
           @click="deleteCompanyReport"
         >
@@ -186,7 +188,7 @@
         </button>
   
         <button
-          v-if="isNormalAdmin || isGoogleAdmin || isKakaoAdmin || isNaverAdmin"
+          v-if="isAdmin"
           class="pushable"
           @click="goToModifyPage"
         >
@@ -265,14 +267,30 @@ const chartRef = ref(null);
 const overviewRef = ref(null);
 const financeRef = ref(null);
 
+const isAdmin = ref(false);
+const isAuthenticated = ref(false);
+
 const companyReport = computed(() => companyReportStore.companyReport);
 const companyReports = computed(() => companyReportStore.companyReportList);
-const isKakaoAdmin = computed(() => authenticationStore.isKakaoAdmin);
-const isAuthenticatedKakao = computed(() => authenticationStore.isAuthenticatedKakao);
-// const isGoogleAdmin = computed(() => authenticationStore.isGoogleAdmin);
-const isNormalAdmin = computed(() => accountStore.isNormalAdmin);
-const isAuthenticatedNormal = computed(() => accountStore.isAuthenticatedNormal);
-const isNaverAdmin = computed(() => naverAuthenticationStore.isNaverAdmin);
+
+
+function checkAdmin() {
+  if (authenticationStore.isKakaoAdmin ||
+    naverAuthenticationStore.isNaverAdmin ||
+    // googleAuthenticationStore.isGoogleAdmin ||
+    accountStore.isNormalAdmin) {
+      isAdmin.value = true
+    }
+}
+
+function checkAuthenticated() {
+  if (authenticationStore.isAuthenticatedKakao ||
+      naverAuthenticationStore.isAuthenticatedNaver ||
+      isAdmin.value) {
+      isAuthenticated.value = true
+      console.log(accountStore.isAuthenticatedNormal)
+    }
+}
 
 const onPurchase = async () => {
   isCheckoutDialogVisible.value = false
@@ -280,7 +298,7 @@ const onPurchase = async () => {
     const email = sessionStorage.getItem("email")
     const payload = {
       email: email,
-      company1ReportId: companyReportId.value,
+      companyReportId: companyReportId.value,
     }
     const isDuplicatedOrderItem = await orderStore.requestOrderItemDuplicationCheckToDjango(payload)
     if (isDuplicatedOrderItem) {
@@ -582,10 +600,9 @@ onMounted(async () => {
   
   calculateMaxWidth();
   window.addEventListener('resize', calculateMaxWidth);
-});
 
-watchEffect(() => {
-  console.log('maxWidth changed:', maxWidth.value); // 값이 변경될 때마다 출력 확인
+  checkAdmin()
+  checkAuthenticated()
 });
 
 onBeforeUnmount(() => {
