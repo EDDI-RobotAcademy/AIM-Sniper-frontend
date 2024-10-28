@@ -291,20 +291,25 @@ const onPurchase = async () => {
     } else {
       try {
         const email = sessionStorage.getItem("email")
+        const clickPayload = {
+          email: email,
+          companyReport_id: companyReportId.value,
+          purchase: purchase.value,
+        }
+        
         const orderPayload = {
           email,
           companyReportId: companyReportId.value,
           companyReportPrice: companyReport.companyReportPrice,
         }
         const response = await orderStore.requestCompanyReportReadToAddOrderToDjango(payload)
-        userLogStore.requestCountClickToDjango({
-          companyReport_id: companyReport.companyReportId,
-          purchase: purchase.value,
-        })
+        await userLogStore.requestCountClickToDjango(clickPayload)
+
         await createStore.requestDeleteCartItemToDjango({
           companyReportId: [companyReport.companyReportId],
         })
         alert("구매가 완료되었습니다.");
+
       } catch (error) {
             console.log("상품 구매 중 에러 발생:", error);
       }
