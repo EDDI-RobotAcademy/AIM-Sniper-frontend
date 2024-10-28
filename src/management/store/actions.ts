@@ -8,6 +8,7 @@ export type ManagementActions = {
   requestUserLogListToDjango(context: ActionContext<ManagementState, any>): Promise<void>;
   grantAdminRoleInDjango(context: ActionContext<ManagementState,any>,email: string): Promise<any>
   revokeAdminRoleInDjango(context: ActionContext<ManagementState,any>,email: string): Promise<any>
+  requestUserDataToDjango(context: ActionContext<ManagementState, any>): Promise<void>;
 };
 
 const actions: ManagementActions = {
@@ -53,6 +54,18 @@ const actions: ManagementActions = {
         } catch(error){
             console.error('roleType 변경 실패:',error)
             throw error
+        }
+    },
+    async requestUserDataToDjango({ commit }: ActionContext<ManagementState, any>) {
+        try {
+            const response: AxiosResponse<User[]> = await axiosInst.djangoAxiosInst.post('/management/data');
+            // console.log("API response data:", response.data); // API 응답 확인
+            const userData = response.data;
+            // Vuex 상태 업데이트
+            commit('REQUEST_USER_DATA_TO_DJANGO', userData);
+        } catch (error) {
+            console.error("Error fetching user list:", error);
+            // 에러 처리 로직 추가 가능
         }
     }
 };
