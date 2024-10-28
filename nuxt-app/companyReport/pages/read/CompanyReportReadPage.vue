@@ -210,7 +210,7 @@
             @click="isGoToCartListDialogVisible = false"
             >취소</v-btn
           >
-          <v-btn color="blue darken-1" text @click="onAddToCartAndAsk">확인</v-btn>
+          <v-btn color="blue darken-1" text @click="goToCartList">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -226,6 +226,8 @@ import { useAccountStore } from '../../../account/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
 import { useUserLogStore } from '../../../userLog/store/userLogStore';
+import { useCartStore } from '../../../cart/stores/cartStore';
+import { useOrderStore } from '../../../order/stores/orderStore';
 
 const route = useRoute();
 const router = useRouter();
@@ -234,7 +236,8 @@ const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
 const naverAuthenticationStore = useNaverAuthenticationStore();
 const userLogStore = useUserLogStore();
-// const orderStore = useOrderStore();
+const cartStore = useCartStore();
+const orderStore = useOrderStore();
 
 const companyReportId = ref(route.params.id);
 const isCheckoutDialogVisible = ref(false);
@@ -271,7 +274,6 @@ function checkAuthenticated() {
       naverAuthenticationStore.isAuthenticatedNaver ||
       isAdmin.value) {
       isAuthenticated.value = true
-      console.log(accountStore.isAuthenticatedNormal)
     }
 }
 
@@ -291,20 +293,26 @@ const onPurchase = async () => {
     } else {
       try {
         const email = sessionStorage.getItem("email")
-        const orderPayload = {
-          email,
-          companyReportId: companyReportId.value,
-          companyReportPrice: companyReport.companyReportPrice,
-        }
-        const response = await orderStore.requestCompanyReportReadToAddOrderToDjango(payload)
-        userLogStore.requestCountClickToDjango({
-          companyReport_id: companyReport.companyReportId,
+        const clickPayload = {
+          email: email,
+          companyReport_id: companyReportId.value,
           purchase: purchase.value,
-        })
-        await createStore.requestDeleteCartItemToDjango({
-          companyReportId: [companyReport.companyReportId],
-        })
-        alert("구매가 완료되었습니다.");
+        }
+        await userLogStore.requestCountClickToDjango(clickPayload)
+        
+        // const orderPayload = {
+        //   email: email,
+        //   companyReportId: Number(companyReportId.value),
+        //   companyReportPrice: Number(companyReport.companyReportPrice),
+        // }
+        console.log("orderPayload", orderPayload)
+        // await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload)
+
+        // await createStore.requestDeleteCartItemToDjango({
+        //   companyReportId: [companyReportId.value],
+        // })
+        // alert("구매가 완료되었습니다.");
+
       } catch (error) {
             console.log("상품 구매 중 에러 발생:", error);
       }
@@ -319,12 +327,14 @@ const onAddToCartAndAsk = async () => {
     const email = sessionStorage.getItem("email");
     const payload = {
         email: email,
-        companyReportId: companyReport.companyReportId,
+        companyReportId: companyReportId.value,
     };
+
     const isDuplicatedOrderItem =
       await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
     const isDuplicatedCartItem =
       await cartStore.requestCartItemDuplicationCheckToDjango(payload);
+
     if (isDuplicatedOrderItem) {
       alert("이미 구매하신 보고서입니다.");
     } else if (isDuplicatedCartItem) {
@@ -333,9 +343,10 @@ const onAddToCartAndAsk = async () => {
       try {
         isGoToCartListDialogVisible.value = true;
         const cartData = {
-          companyReportId: companyReport.companyReportId,
-          companyReportName: companyReport.companyReportName,
-          companyReportPrice: companyReport.companyReportPrice,
+          companyReportId: companyReportId.value,
+          companyReportName: companyReport.value.companyReportName,
+          companyReportPrice: companyReport.value.companyReportPrice,
+          email: email,
         };
         await cartStore.requestAddCartToDjango(cartData);
       } catch (error) {
@@ -406,7 +417,7 @@ function goToCartList() {
   router.push(`/cart/list`);
 }
 function goToModifyPage() {
-  router.push(`/companyReport/modify/${companyReport.companyReportId}`);
+  router.push(`/companyReport/modify/${companyReportId.value}`);
 }
 
 function createChart() {

@@ -2,30 +2,29 @@ import * as axiosUtility from "../../utility/axiosInstance";
 import { AxiosResponse } from "axios"
 
 export const cartAction = {
-    async requestAddCartToDjango():Promise<AxiosResponse>{
+    async requestAddCartToDjango(payload):Promise<AxiosResponse>{
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
+
         try {
-            const email = sessionStorage.getItem('email');
-            if (!email) {
+            // const email = sessionStorage.getItem('email');
+            if (!payload.email) {
                 throw new Error('User token not found');
             }
-            const requestData = {...this.cartData,email};
-            const response = await djangoAxiosInst.post('/cart/register', requestData);
-            return response.data;
+            await djangoAxiosInst.post('/cart/register', payload);
         } catch (error) {
             console.error('Error adding to cart:', error);
             throw error;
         }
     },
-    async requestCartListToDjango():Promise<AxiosResponse> {
+    async requestCartListToDjango(email: string):Promise<AxiosResponse> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
-            const email = sessionStorage.getItem('email');
+            // const email = sessionStorage.getItem('email');
             if (!email) {
                 throw new Error('User token not found');
             }
 
-            const response = await djangoAxiosInst.post('/cart/list', email);
+            const response = await djangoAxiosInst.post('/cart/list', {email});
             return response.data;
         } catch (error) {
             console.error('Error fetching cart list:', error);

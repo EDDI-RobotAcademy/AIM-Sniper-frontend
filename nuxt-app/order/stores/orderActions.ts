@@ -29,17 +29,14 @@ export const orderAction = {
             throw error
         }
     },
-    async requestCompanyReportReadToAddOrderToDjango(payload: {userToken: string, companyReportId: number, companyReportPrice: number}): Promise<void> {
+    async requestCompanyReportReadToAddOrderToDjango(payload: {email: string, companyReportId: number, companyReportPrice: number}): Promise<void> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
-            const { userToken, companyReportId, companyReportPrice } = payload
-            
-            // console.log('payload:', payload)
+            console.log('payload:', payload)
 
             const response = await djangoAxiosInst.post('/orders/company_report', payload )
-            // console.log('response data:', response.data)
+            console.log('response data:', response.data)
             
-            return response.data
         } catch (error) { 
             console.error('상품 페이지에서 상품 구매 시 에러 발생:', error)
             throw error
@@ -70,11 +67,10 @@ export const orderAction = {
             throw error
         }
     },
-    async requestOrderItemDuplicationCheckToDjango(payload: {userToken: string, companyReportId: number}): Promise<void> {
+    async requestOrderItemDuplicationCheckToDjango(payload: {email: string, companyReportId: number}): Promise<void> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try{
-            const { userToken, companyReportId } = payload
-            const res = await djangoAxiosInst.post('/orders/order-item-duplication-check', { payload })
+            const res = await djangoAxiosInst.post('/orders/order-item-duplication-check', { "payload": payload })
             return res.data
         } catch(error){
             console.error('requestOrderItemDuplicationCheckToDjango() 문제 발생:', error);

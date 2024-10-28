@@ -13,9 +13,9 @@ export default defineNuxtModule({
     // pages:extend 훅 사용
     nuxt.hook("pages:extend", (pages) => {
       pages.push({
-        name: "CartListPage",
+        name: "cartListPage",
         path: "/cart/list",
-        file: resolve(themeDir, "cart/pages/CartListPage.vue"), // 경로 수정
+        file: resolve(themeDir, "cart/pages/CartListPage.vue")
       });
     });
 

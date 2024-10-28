@@ -78,8 +78,12 @@ export default defineNuxtConfig({
       AWS_REGION: process.env.VUE_APP_AWS_REGION,
       AWS_S3_IDENTITY_POOL: process.env.VUE_APP_AWS_S3_IDENTITY_POOL_ID,
       VUE_APP_AWS_S3_BUCKET_NAME:process.env.VUE_APP_AWS_S3_BUCKET_NAME,
+      GA_MEASUREMENT_ID:process.env.VUE_APP_VUE_APP_GA_MEASUREMENT_ID,
     }
   },
 
-  
+  plugins: [
+    { src: '~/plugins/vgtag.js', mode: 'client' }
+  ],
+
 })
