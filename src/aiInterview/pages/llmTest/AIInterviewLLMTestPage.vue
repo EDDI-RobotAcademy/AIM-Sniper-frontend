@@ -53,11 +53,13 @@ import { mapActions } from 'vuex'
 import markdownIt from 'markdown-it'
 import '@mdi/font/css/materialdesignicons.css'
 const aiInterviewModule = 'aiInterviewModule'
+const accountModule = 'accountModule'
 import router from "@/router";
 
 export default ({
   data() {
     return {
+      accountId: '',
       start: false,
       finished: false,
       visible: true,
@@ -77,6 +79,16 @@ export default ({
       intentIndex: -1,
     };
   },
+  async created() {
+        const email = sessionStorage.getItem("email");
+        if (email){
+          this.accountId = await this.requestAccountIdToDjango(email)
+        }
+        else {
+          alert('로그인이 필요합니다.')
+          router.push('/account/login')
+        }
+  },
   watch: {
     start(newVal) {
       if (newVal === true) {
@@ -93,7 +105,10 @@ export default ({
     ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango',
                                       'requestInferNextQuestionToFastAPI',
                                       'requestInferedResultToFastAPI',
-                                      'requestInferScoreResultToFastAPI']),
+                                      'requestInferScoreResultToFastAPI',
+                                      'requestSaveInterviewResultToDjango']),
+    ...mapActions(accountModule, ['requestAccountIdToDjango']),
+
     startInterview() {
       this.start = true;
     },
@@ -208,14 +223,15 @@ export default ({
               const response = await this.requestInferedResultToFastAPI();
               console.log('response: ', response)
               for (let i = 0; i < response.length; i += 1) {
-                console.log('result', i, ':', response[i])
-                const scoreResultList = pairedContents[i].push(response[i])
-                const userToken = sessionStorage.getItem("userToken");
-                const payload = {scoreResultList: scoreResultList, userToken: userToken}
-                this.requestSaveInterviewResultToDjango(payload)
+                pairedContents[i].push(response[i])
                 // 평가 페이지로 이동
+                }
+              console.log('pairedContents', pairedContents)
+              const result = {scoreResultList: pairedContents, accountId: this.accountId}
+              const saveDone = this.requestSaveInterviewResultToDjango(result)
+              if (saveDone) {
                 alert('면접 결과 확인하기') 
-                this.$router.push('/ai-interview/result' );
+                this.$router.push(`/ai-interview/result/${this.accountId}` );
               }
             }// 여기까지
           } else {

@@ -30,34 +30,31 @@ import '@mdi/font/css/materialdesignicons.css'
 const aiInterviewModule = 'aiInterviewModule'
 
 export default ({
+    props: {
+      accountId: {
+          type: String,
+          required: true,
+      }
+    },
     data() {
         return {
             isDone: false,
-            inputList: [
-                ["일을 하다가 지원자님과 동료 직원이 추구하는 디자인이 서로 다를 경우에 어떻게 대처하실 생각이십니까",
-                "상대방의 의견이 더 좋은지 아닌지는 미처 제가 생각하지 못한 부분은 없는지 재점검해 보겠습니다. 그리고 이렇게 다시 생각해 보았음에도 제 의견에도 타당성이 있다면 상대방에게 어떤 부분이 잘 전달되지 않았는지를 파악하고 상대방의 화법에 맞춰 이야기하겠습니다. 평소에도 학과 과제나 동아리 활동에서 서로 의견을 나눌 때 이러한 방식으로 대해 왔습니다. 그렇게 서로 의견을 주고 받다 보면 상대방도 저에게 충분히 이야기하였고 저도 제 의견을 충분히 전달하였기 때문에 보통은 서로의 타협점을 찾거나 더 좋은 의견으로 합해지는 경우가 많았습니다. 간혹 의견 조율이 안 될 때에는 토론이 너무 과열되지 않도록 잠깐의 시간을 가지고 다시 생각한 후 이야기하는 방법을 사용하겠습니다. 그럴 때면 잠시 화장실이 급하다거나 커피 한잔 사겠다는 등 적당한 이유를 들었습니다. 상대방이 기분이 나쁘지 않게 눈치채지 않도록 했기 때문에 큰 충돌 없이 사람들과의 의견을 나눌 수 있었습니다.",
-                "협업 능력",
-                "score:85점<s>feedback:상대방의 의견을 잘 반영한 답변입니다. 상대방의 의견을 경청하고, 자신의 의견을 전달하는 방식이 좋았습니다. 다만, 상대방의 의견이 더 좋은지 아닌지에 대한 구체적인 이유가 있었다면 더 좋았을 것 같습니다. 예를 들어, 상대방이 커피를 사겠다는 이유를 들었다면, 더 좋은 결과를 얻을 수 있었을 것입니다."],
-                ["과거 직면한 어려운 문제를 해결하기 위해서 지원자님이 어떤 아이디어를 제안하였고 또 무엇을 하셨는지 과정을 말씀해 주세요",
-                "저는 어려운 문제에 직면했을 때 여러 가지 방법으로 어려운 문제를 해결한 경험이 있습니다. 예를 들어 제가 어떤 일을 하고자 할 때 자금이 모자라서 일을 시작하지 못할 때 어떤 방법이라도 강구해야 될 때 그때는 제가 참으로 좋은 방법을 연구하는 그런 자세를 가진 적도 있습니다. 항상 어떤 일이 있을 때는 일이 일어났을 때 어떤 대책이 나오는 것이지 미럭 가정하고 어떤 아이디어가 나오는 것은 아닌 것 같습니다. 왜냐하면 눈앞에 현실이 닥치거나 이렇게 급박한 상황이 도래했을 때만 사람 머리에서는 아이디어가 빨리 이 나오는 것 같습니다. 그렇게 해서 어려운 문제를 많이 해결해 본 경험이 있습니다. 그래서 지금도 만약에 어떤 환경에 어려움이 닥치거나 제 앞에 또 난관이 부닥쳤을 때는 그때그때 아이디어가 나오는 것 같습니다. 그때 상황에 따라 어떤 일이든 잘 헤쳐 나온 것 같습니다. 그래서 지금까지 어려운 난관도 무난히 잘 헤쳐서 여기까지 온 것 같습니다. 앞으로도 어떤 어려운 난관이나 문제가 됐을 때는 그때마다 새로운 아이디어와 새로운 방법이 생각날 것이라고 판단하고 있습니다. 미리 생각하고 미리 아이디어를 내고 이런 것 보다는 현장의 상황에 따라 달라지는 그런 일이 있기 때문에 그때마다 새로운 아이디어와 좋은 생각을 떠올릴 수 있다고 생각합니다.",
-                "대처 능력",
-                "s>예시를 잘 설명하셨습니다. 구체적인 상황이나 감정이나 감정을 포함하면 더욱 설득력 있는 답변이 될 것입니다. 다만, 구체적인 예나 어떤 결과를 강조하면 더욱 강력한 인상을 줄 수 있습니다."],
-                ["지원자분께서 지금까지 살아오시면서 완전히 새로운 환경에서 한 번도 맡아보지 못했던 일을 맡아서 해 보신 경험이 있으시다고 한다면 경험이 어떤 경험이었는지에 대해서 저희에게 소개해 주시기 바랍니다",
-                "제가 여태까지 살아오면서 낯선 환경에 가장 낯선 환경에 처해 본 곳은 군 입대였습니다. 저는 서울에서 태어났습니다. 서울에서 태어나고 군 생활은 강원도 원통에서 했습니다. 저는 태어나서 군대 가기 전까지 이십 이 년 동안 해본 삽질보다 군대에 가서 일 주일 동안 한 삽질이 더 많 많을 겁니다. 서울에서 태어난 제가 어디에서 삽질을 해봤겠습니까. 군 생활은 정말 낯설고 힘들었습니다. 그런데도 역시 자리가 사람을 만든다는 말을 저는 정말 공감합니다. 어리버리하던 이등병이 일 병이 되고 상병이 되고 병장이 됐을 무렵에는 저는 군대가 제 체질이라는 생각까지 했습니다. 누구나 환경에 적응을 한다고 생각을 합니다. 다만 그게 낯설고 새로와서 거기에 적응하는 데 시간이 걸릴 뿐이라고 생각을 합니다. 아무리 어디버리한 이등병도 결국에 병장이 됐을 때는 책무와 의무와 의무를 다 하게 됩니다. 저는 인간은 환경에 적응하는 사람 동물이고 환경을 이겨낼 수 있는 사람이라고 생각을 합니다. 저는 이 경험을 통해서 많은 성장해서 군생활을 통해서 많이 성장했으며 그것은 제 사회생활에 많은 도움이 되고 있다고 생각합니다.",
-                "적응력",
-                "은 명확한 접근을 잘 제시하고, 구체적인 예시가 포함되어 설득력 있습니다. 그러나 더 세부 사항이나 감정이나 감정이나 감정이나 감정이나 감정이나 감정이나 감정을 강조하면 더욱 강력한 감정이나 감정을 강조한 점은 좋습니다."]
-            ],
+            inputList: [],
             scoreResult: [],
             md: new markdownIt()
         }
     },
-    created() {
-        const userToken = sessionStorage.getItem("userToken");
-        this.getScoreResultList(userToken)
+    async created() {
+
+        this.getScoreResultList(this.accountId)
     },
-    mounted() {
-        
-        this.inputList.forEach(item => {
+    methods: {
+        ...mapActions(aiInterviewModule, ['requestGetScoreResultListToDjango']),
+
+        async getScoreResultList(accountId) {
+            this.inputList = await this.requestGetScoreResultListToDjango({accountId : accountId}) //
+            
+            this.inputList.forEach(item => {
             const feedback = item[3];
             if (feedback) {
                 const returnResult = this.splitScoreFeedback(feedback)
@@ -66,13 +63,7 @@ export default ({
                 item.push(returnResult[1])
                 this.isDone= true
             }
-        })
-    },
-    methods: {
-        ...mapActions(aiInterviewModule, ['requestGetScoreResultListToDjango']),
-
-        async getScoreResultList(userToken) {
-            const inputList = await this.requestGetScoreResultListToDjango({userToken :userToken}) // 나중에 this.inputList
+            })
         },
         splitScoreFeedback(feedback) {
             const feedbackParts = feedback.split('<s>');
@@ -81,7 +72,7 @@ export default ({
                 return [feedbackParts[0].replace('score:', ''), feedbackParts[1].replace('feedback:', '')]
             }
             else {
-                return ['문제 발생', feedbackParts[0]]
+                return ['문제 발생', feedbackParts[0].replace('<s', '').replace('s>', '')]
             }
         }
   

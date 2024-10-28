@@ -17,12 +17,14 @@ const AiInterviewRoutes = [
         }
     },
     {
-        path: '/ai-interview/result',
-        name: 'AIInterviewAnswerResult.vue',
+        path: '/ai-interview/result/:accountId',
+        name: 'AIInterviewAnswerResult',
         components: {
             default: AIInterviewAnswerResultPage
+        },
+        props: {
+            default: true
         }
     },
 ]
-
 export default AiInterviewRoutes
