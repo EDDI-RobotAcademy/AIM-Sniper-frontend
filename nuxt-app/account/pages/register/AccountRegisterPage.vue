@@ -113,14 +113,14 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
-// import { useGoogleAuthenticationStore } from '@/stores/googleAuthenticationStore';
-// import { useNaverAuthenticationStore } from '@/stores/naverAuthenticationStore';
+import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationstore';
+import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
 
 // Pinia 스토어 사용
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
-// const googleAuthenticationStore = useGoogleAuthenticationStore();
-// const naverAuthenticationStore = useNaverAuthenticationStore();
+const googleAuthenticationStore = useGoogleAuthenticationStore();
+const naverAuthenticationStore = useNaverAuthenticationStore();
 
 // Router 사용
 const router = useRouter();

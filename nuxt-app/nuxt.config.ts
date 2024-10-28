@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     './naverAuthentication/nuxt.config.ts',
     './survey/nuxt.config.ts',
     './companyReport/nuxt.config.ts',
-
+    './googleAuthentication/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -55,6 +55,7 @@ export default defineNuxtConfig({
     '~/naverAuthentication/index.ts',
     '~/survey/index.ts',
     '~/companyReport/index.ts',
+    '~/googleAuthentication/index.ts',
   ],
   components: {
     dirs: [

@@ -19,10 +19,10 @@
       HOME
     </v-btn>
 
-    <v-btn v-if= " isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
+    <v-btn v-if= " googleAuthenticationStore.isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
       SURVEY
     </v-btn>
-    <v-btn v-if=" !isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="goToSurvey" class="btn-text">
+    <v-btn v-if=" !googleAuthenticationStore.isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="goToSurvey" class="btn-text">
       SURVEY
     </v-btn>
 
@@ -54,7 +54,7 @@
     <v-menu
       v-if="
         authenticationStore.isAuthenticatedKakao ||
-        isAuthenticatedGoogle ||
+        googleAuthenticationStore.isAuthenticatedGoogle ||
         naverAuthenticationStore.isAuthenticatedNaver
       "
       close-on-content-click
@@ -75,7 +75,7 @@
       </v-list>
     </v-menu>
     <v-menu
-      v-if=" isGoogleAdmin ||
+      v-if=" googleAuthenticationStore.isGoogleAdmin ||
       authenticationStore.isKakaoAdmin ||
       naverAuthenticationStore.isNaverAdmin"
       close-on-content-click
@@ -96,7 +96,7 @@
       </v-list>
     </v-menu>    
 
-    <v-btn v-if="!authenticationStore.isAuthenticatedKakao && !isAuthenticatedGoogle && !naverAuthenticationStore.isAuthenticatedNaver && !authenticationStore.isKakaoAdmin && !isGoogleAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="signIn" class="btn-login">
+    <v-btn v-if="!authenticationStore.isAuthenticatedKakao && !googleAuthenticationStore.isAuthenticatedGoogle && !naverAuthenticationStore.isAuthenticatedNaver && !authenticationStore.isKakaoAdmin && !googleAuthenticationStore.isGoogleAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="signIn" class="btn-login">
       <!-- <v-icon left>mdi-login</v-icon> -->
        LOGIN
     </v-btn>
@@ -117,11 +117,13 @@ import { useAuthenticationStore } from '../../authentication/stores/authenticati
 import { useNaverAuthenticationStore } from '../../naverAuthentication/stores/naverAuthenticationStore';
 import { useSurveyStore } from '../../survey/stores/surveyStore';
 
+import { useGoogleAuthenticationStore } from '../../googleAuthentication/stores/googleAuthenticationstore'
 
 
 // Pinia 스토어 사용
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
+const googleAuthenticationStore = useGoogleAuthenticationStore();
 const naverAuthenticationStore = useNaverAuthenticationStore();
 const surveyStore = useSurveyStore();
 
@@ -240,6 +242,11 @@ onMounted(() => {
     const userToken = sessionStorage.getItem("userToken");
     if (userToken) {
       authenticationStore.isAuthenticatedKakao = true;
+    }
+
+    const googleUserToken = sessionStorage.getItem("googleUserToken");
+    if (googleUserToken) {
+      googleAuthenticationStore.isAuthenticatedGoogle = true;
     }
 
     const naverUserToken = sessionStorage.getItem("naverUserToken");
