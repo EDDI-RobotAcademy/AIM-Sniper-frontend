@@ -20,6 +20,11 @@ export default defineNuxtModule({
                 name: 'CompanyReportReadPage',
                 path: '/companyReport/read/:id',
                 file: resolve(themeDir, 'companyReport/pages/read/CompanyReportReadPage.vue'),
+            },
+            {
+                name: 'CompanyReportModifyPage',
+                path: '/companyReport/modify/:id',
+                file: resolve(themeDir, 'companyReport/pages/modify/CompanyReportModifyPage.vue'),
             }
             )
         })
