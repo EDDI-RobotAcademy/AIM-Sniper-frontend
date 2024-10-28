@@ -73,7 +73,7 @@
     </v-container>
   </template>
   
-  <script>
+<script>
 import { mapActions, mapState } from 'vuex'
 import router from "@/router";
 const surveyModule = 'surveyModule'
