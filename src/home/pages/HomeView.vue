@@ -56,11 +56,6 @@ const surveyModule = "surveyModule"
 
 export default defineComponent({
   name: "HomeView",
-  data() {
-    return {
-      imageSrc,
-      surveyId:2,
-    };
   },
   computed: {
     ...mapState(authenticationModule, ["isAuthenticated"]),
