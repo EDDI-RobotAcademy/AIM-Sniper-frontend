@@ -13,9 +13,9 @@ export type AIInterviewActions = {
     requestInferedResultToFastAPI(context: ActionContext<any, any>): Promise<string>
     requestSaveInterviewResultToDjango(
         context: ActionContext<any, any>,
-        payload: { scoreResultList: [], userToken: string }): Promise<string>
+        payload: { scoreResultList: [], accountId: string }): Promise<string>
     requestGetScoreResultListToDjango(
-        context: ActionContext<any, any>, payload: { userToken: string }): Promise<string>
+        context: ActionContext<any, any>, payload: { accountId: string }): Promise<string>
 }   
 
 const actions: AIInterviewActions = {
@@ -87,15 +87,15 @@ const actions: AIInterviewActions = {
     },
     async requestSaveInterviewResultToDjango(
         context: ActionContext<any, any>,
-        payload: { scoreResultList: [], userToken: string }): Promise<string>{
+        payload: { scoreResultList: [], accountId: string }): Promise<string>{
 
-            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview/save-interview-result', payload)
+            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview_result/save-interview-result', payload)
             return res.data
     },
     async requestGetScoreResultListToDjango(
-        context: ActionContext<any, any>, payload: { userToken: string }): Promise<string>{
-            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview/get-interview-result', payload)
-            return res.data
+        context: ActionContext<any, any>, payload: { accountId: string }): Promise<string>{
+            const res: AxiosResponse = await axiosInst.djangoAxiosInst.post('/interview_result/get-interview-result', payload)
+            return res.data.interviewResultList
         }
 
 }
