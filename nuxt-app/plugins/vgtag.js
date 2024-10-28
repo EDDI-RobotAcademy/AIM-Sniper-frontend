@@ -8,7 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!isDev) {
     nuxtApp.vueApp.use(VueGtag, {
       property: {
-        id: process.env.GA_TRACKING_ID, // GA 측정 ID
+        id: process.env.GA_TRACKING_ID, 
       },
     });
   }
