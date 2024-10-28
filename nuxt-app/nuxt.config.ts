@@ -30,6 +30,7 @@ export default defineNuxtConfig({
     './survey/nuxt.config.ts',
     './companyReport/nuxt.config.ts',
     './googleAuthentication/nuxt.config.ts',
+    './cart/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -56,6 +57,7 @@ export default defineNuxtConfig({
     '~/survey/index.ts',
     '~/companyReport/index.ts',
     '~/googleAuthentication/index.ts',
+    '~/cart/index.ts',
   ],
   components: {
     dirs: [
