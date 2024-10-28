@@ -1,6 +1,7 @@
 export interface ManagementState {
     userLogList: UserLog[]
     userLog: UserLog | null
+    userData: UserData | null
     userList: User[]
     user: User | null 
 }
@@ -12,6 +13,12 @@ export interface UserLog {
     clickCount: number,
     purchase:boolean
     last_click:Date
+}
+export interface UserData{
+    userCount: number,
+    accountCount: number,
+    purchaseCount: number,
+    revenueCount: number,
 }
 
 export interface User {
@@ -27,6 +34,7 @@ export interface User {
 const state: ManagementState = {
     userLogList: [],
     userLog: null,
+    userData: null,
     userList: [],
     user: null,
 }

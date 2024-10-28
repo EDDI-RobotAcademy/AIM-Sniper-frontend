@@ -53,10 +53,13 @@ import { mapActions } from 'vuex'
 import markdownIt from 'markdown-it'
 import '@mdi/font/css/materialdesignicons.css'
 const aiInterviewModule = 'aiInterviewModule'
+const accountModule = 'accountModule'
+import router from "@/router";
 
 export default ({
   data() {
     return {
+      accountId: '',
       start: false,
       finished: false,
       visible: true,
@@ -76,6 +79,16 @@ export default ({
       intentIndex: -1,
     };
   },
+  async created() {
+        const email = sessionStorage.getItem("email");
+        if (email){
+          this.accountId = await this.requestAccountIdToDjango(email)
+        }
+        else {
+          alert('로그인이 필요합니다.')
+          router.push('/account/login')
+        }
+  },
   watch: {
     start(newVal) {
       if (newVal === true) {
@@ -91,12 +104,15 @@ export default ({
   methods: {
     ...mapActions(aiInterviewModule, ['requestGetQuestionListToDjango',
                                       'requestInferNextQuestionToFastAPI',
-                                      'requestInferedResultToFastAPI',]),
+                                      'requestInferedResultToFastAPI',
+                                      'requestInferScoreResultToFastAPI',
+                                      'requestSaveInterviewResultToDjango']),
+    ...mapActions(accountModule, ['requestAccountIdToDjango']),
+
     startInterview() {
       this.start = true;
     },
-    async getAIQuestions() { 
-      // console.log('getAIQuestions()')   
+    async getAIQuestions() {  
       if (this.aiResponseList.length === 0) {
         const sessionId = Math.floor(Math.random() * 200) + 1;
         this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
@@ -105,8 +121,6 @@ export default ({
       this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
         this.intentIndex++
 
-      // this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
-      // this.questionIndex++;
       
       this.chatHistory.push({
         type: "ai",
@@ -149,7 +163,6 @@ export default ({
         this.chatHistory[lastIndex].content = this.currentAIMessage;
       } else {
         this.chatHistory.push({ type: 'ai', content: this.currentAIMessage });
-        // console.log('chathistroy에 AI 질문 추가: ', this.chatHistory)
       }
     },
 
@@ -174,7 +187,6 @@ export default ({
       }
       if (this.userInput.trim()) {
         this.chatHistory.push({ type: 'user', content: this.userInput });
-        // console.log('chathistroy에 User 답변 추가: ', this.chatHistory);
         this.userInput = '';
         this.adjustTextareaHeight();
         this.isLoading = true; 
@@ -182,7 +194,6 @@ export default ({
 
         setTimeout(async () => {
           if (this.aiResponseList.length === 0) {
-            // console.log('나오면 안됨')
             const sessionId = Math.floor(Math.random() * 200) + 1;
             this.aiResponseList = await this.requestGetQuestionListToDjango({ sessionId: sessionId });
           }
@@ -194,6 +205,35 @@ export default ({
               content: this.currentAIMessage,
             });
             this.finished = true
+            // 여기서 평가가 진행됨
+            if (this.finished) {
+              this.chatHistory.shift();
+              this.chatHistory.pop();
+              const contents = this.chatHistory.map(item => item.content);
+              const pairedContents = [];
+              const intentList = ['자기 분석', '대처 능력', '소통 능력', '프로젝트 경험', '자기 개발']
+
+              for (let i = 0; i < contents.length; i += 2) {
+                pairedContents.push([contents[i], contents[i + 1], intentList[Math.floor(i / 2)]]);
+              }
+
+              console.log('result: ', pairedContents);
+              const payload = {'interviewResult': pairedContents}
+              await this.requestInferScoreResultToFastAPI(payload)
+              const response = await this.requestInferedResultToFastAPI();
+              console.log('response: ', response)
+              for (let i = 0; i < response.length; i += 1) {
+                pairedContents[i].push(response[i])
+                // 평가 페이지로 이동
+                }
+              console.log('pairedContents', pairedContents)
+              const result = {scoreResultList: pairedContents, accountId: this.accountId}
+              const saveDone = this.requestSaveInterviewResultToDjango(result)
+              if (saveDone) {
+                alert('면접 결과 확인하기') 
+                this.$router.push(`/ai-interview/result/${this.accountId}` );
+              }
+            }// 여기까지
           } else {
             const nextIntent = this.intentList[this.intentIndex]
             this.intentIndex++
@@ -207,7 +247,7 @@ export default ({
             }
 
             const payload = { answer: lastUserInput, nextIntent: nextIntent}
-            await this.requestInferNextQuestionToFastAPI(payload)
+           await this.requestInferNextQuestionToFastAPI(payload)
 
             const response = await this.requestInferedResultToFastAPI();
             if (response && response.nextQuestion) {
@@ -219,15 +259,6 @@ export default ({
               content: this.currentAIMessage,
             })
           }
-          
-          // this.currentAIMessage = this.aiResponseList.questionList[this.questionIndex] || 
-          //   "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
-          // this.questionIndex++;
-
-          // this.chatHistory.push({
-          //   type: "ai",
-          //   content: this.currentAIMessage,
-          // });
 
           const chunks = this.chunkText(this.currentAIMessage, 1);
           this.streamText(chunks);
