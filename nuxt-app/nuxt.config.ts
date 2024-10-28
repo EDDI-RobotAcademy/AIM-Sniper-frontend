@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     './companyReport/nuxt.config.ts',
     './googleAuthentication/nuxt.config.ts',
     './cart/nuxt.config.ts',
+    './order/nuxt.config.ts',
   ],
   css: [
     'vuetify/styles',
@@ -58,6 +59,7 @@ export default defineNuxtConfig({
     '~/companyReport/index.ts',
     '~/googleAuthentication/index.ts',
     '~/cart/index.ts',
+    '~/order/index.ts',
   ],
   components: {
     dirs: [
