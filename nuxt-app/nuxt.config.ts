@@ -8,9 +8,59 @@ export default defineNuxtConfig({
     head: {
       title: 'AIM', // 기본 페이지 제목
       meta: [
-        { charset: 'utf-8' }, // 페이지 인코딩 설정
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' }, // 뷰포트 설정
-        { name: 'description', content: 'AIM: AI company-report Insight Market' }, // 페이지 설명
+        // 페이지 인코딩 설정
+        { charset: 'utf-8' }, 
+        
+        // 뷰포트 설정
+        { 
+          name: 'viewport', 
+          content: 'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' 
+        },
+        
+        // 페이지 설명
+        { 
+          name: 'description', 
+          content: '귀찮았던 기업 분석, 나 혼자 하기 힘든 면접 준비 🎯AIM Sniper가 도와드리겠습니다!' 
+        },
+        
+        // SEO 키워드 설정
+        {
+					hid: 'keywords',
+					name: 'keywords',
+					content: '취업 준비, 자소서 준비, 면접 준비, 인성면접 준비, 기술면접 준비, 기업 분석, 회사소개, 회사 사업 소개, DART 분석, 지원동기 작성, 모의면접'
+				},
+
+        // Open Graph Title : 페이지가 SNS에서 공유될 때 표시될 제목 설정
+        {
+					property: 'og:title',
+					content: 'AIM | AIM-Sniper Team'
+				},
+
+        // Open Graph Description : SNS에서 페이지가 공유될 때 표시될 설명을 제공
+				{
+					property: 'og:description',
+					content: '귀찮았던 기업 분석, 나 혼자 하기 힘든 면접 준비 🎯AIM Sniper가 도와드리겠습니다!'
+				},
+
+        // Open Graph Image : 소셜 미디어에서 페이지가 공유될 때 함께 표시될 이미지를 지정
+				{
+					property: 'og:image',
+					content: './public/favicon.png'
+				},
+
+        // Open Graph Type : 컨텐츠의 유형을 정의
+				{
+					property: 'og:type',
+					content: 'website'
+				},
+				
+        // robots : 검색 엔진 크롤러에게 페이지의 인덱싱과 링크 추적 허용 여부를 지시
+				{
+					hid: 'robots',
+					name: 'robots',
+					content: 'index, follow'
+				}
+
       ],
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' } // favicon 설정
