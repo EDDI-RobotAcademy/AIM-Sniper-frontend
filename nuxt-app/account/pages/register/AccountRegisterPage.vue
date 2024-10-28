@@ -113,7 +113,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
-import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationstore';
+import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
 
 // Pinia 스토어 사용

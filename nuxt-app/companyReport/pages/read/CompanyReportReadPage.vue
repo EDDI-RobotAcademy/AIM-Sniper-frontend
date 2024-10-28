@@ -1,54 +1,40 @@
 <template>
-  <v-container class="template">   
+  <v-container class="template">
     <v-card v-if="companyReport">
       <v-card-text>
         <v-container>
           <v-row>
             <v-col cols="3" class="d-flex justify-end">
-              <v-img
-                :src=" getImageUrl(companyReport.companyReportTitleImage)"
-                class="custom-img grey lighten-2"
-                aspect-ratio="1"
-                style="max-width: 150px; height: 150px;"
-                >
+              <v-img :src="getImageUrl(companyReport.companyReportTitleImage)" class="custom-img grey lighten-2"
+                aspect-ratio="1" style="max-width: 150px; height: 150px;">
                 <template v-slot:placeholder>
-                  <v-row
-                  class="fill-height ma-0"
-                  align="center"
-                  justify="center"
-                  >
-                  <v-progress-circular indeterminate color="grey lighten-5" />
+                  <v-row class="fill-height ma-0" align="center" justify="center">
+                    <v-progress-circular indeterminate color="grey lighten-5" />
                   </v-row>
                 </template>
               </v-img>
             </v-col>
-            
+
             <v-col cols="9" md="6" class="d-flex flex-column justify-center">
-              
+
               <v-row>
                 <v-col cols="12" md="5">
                   <!-- 이 상품의 태그 -->
-                  <v-row>                    
-                    <v-btn
-                    v-for="(keyword, index) in companyReport.keyword.split(',')"
-                    :key="index"
-                    outlined
-                    rounded
-                    class="keyword-btn"
-                    style="pointer-events: none;"
-                    >
-                    {{ keyword.trim() }}
+                  <v-row>
+                    <v-btn v-for="(keyword, index) in companyReport.keyword.split(',')" :key="index" outlined rounded
+                      class="keyword-btn" style="pointer-events: none;">
+                      {{ keyword.trim() }}
                     </v-btn>
-                    
+
                   </v-row>
                 </v-col>
               </v-row>
-              
+
               <v-row>
                 <v-col>
                   <h2> {{ companyInfo.company_name }} 기업 분석 리포트 </h2>
                 </v-col>
-                
+
                 <v-col cols="3">
                   <p class="companyReport-price">
                     {{ companyReport.companyReportPrice }}
@@ -59,52 +45,46 @@
                   </p>
                 </v-col>
               </v-row>
-                
-              <v-row style="margin-bottom: 20px;">                 
-                <v-btn v-if="!(isAdmin)"                 
-                @click="confirmCheckout"
-                class="order-action-button"
-                style="margin-right: 10px;"
-                >
+
+              <v-row style="margin-bottom: 20px;">
+                <v-btn v-if="!(isAdmin)" @click="confirmCheckout" class="order-action-button"
+                  style="margin-right: 10px;">
                   <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
                   구매하기
                 </v-btn>
 
-                <v-btn v-if="!(isAdmin)"                 
-                @click="isGoToCartListDialogVisible = true"
-                class="cart-action-button"
-                  >
+                <v-btn v-if="!(isAdmin)" @click="isGoToCartListDialogVisible = true" class="cart-action-button">
                   <v-icon left>mdi-cart-plus</v-icon>
                   장바구니 담기
-                </v-btn>                
+                </v-btn>
               </v-row>
-            </v-col> 
+            </v-col>
           </v-row>
 
           <v-divider class="my-4"></v-divider>
 
-          
+
           <v-row ref="overviewRow" class="overview" justify="center">
             <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>주소</b>  {{ companyInfo.address }}
+                    <b>주소</b> {{ companyInfo.address }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>대표이사</b>  {{ companyInfo.ceo_name }}
+                    <b>대표이사</b> {{ companyInfo.ceo_name }}
                   </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
                   <span>
-                    <b>설립연도</b>  {{ companyInfo.est_date }}
+                    <b>설립연도</b> {{ companyInfo.est_date }}
                   </span>
                 </v-col>
                 <v-col cols="auto">
                   <span>
-                    <b>웹사이트  </b>
+                    <b>웹사이트 </b>
                     <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
                       {{ companyInfo.website }}
                     </a>
@@ -113,8 +93,8 @@
               </v-row>
             </v-col>
           </v-row>
-          
-          <div :style="{ width: maxWidth + 'px',  margin: '0 auto' }" >
+
+          <div :style="{ width: maxWidth + 'px', margin: '0 auto' }">
             <v-divider class="my-2"></v-divider>
           </div>
 
@@ -124,15 +104,11 @@
             </v-col>
           </v-row>
 
-          <div class="width-divider my-2" 
-                :style="{ width: maxWidth + 'px',  margin: '0 auto' }"
-          >
+          <div class="width-divider my-2" :style="{ width: maxWidth + 'px', margin: '0 auto' }">
             <v-divider></v-divider>
           </div>
 
-          <v-row 
-              :style="{ width: financeWidth + 'px' }"
-              class="summary my-5 d-flex justify-center align-center">
+          <v-row :style="{ width: financeWidth + 'px' }" class="summary my-5 d-flex justify-center align-center">
             <v-col cols="auto">
               <span v-html="companyInfo.business_summary"></span>
             </v-col>
@@ -147,34 +123,26 @@
     <v-row justify="center" class="mt-4">
       <v-col cols="auto">
         <!-- <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline"> -->
-          <v-btn class="return-action-button">
-            <v-icon left>mdi-arrow-left</v-icon>
-            <span>목록으로 돌아가기</span>
-          </v-btn>
+        <v-btn class="return-action-button">
+          <v-icon left>mdi-arrow-left</v-icon>
+          <span>목록으로 돌아가기</span>
+        </v-btn>
         <!-- </router-link> -->
       </v-col>
 
-      <button v-if="isAdmin"
-        class="Btn"
-        @click="deleteCompanyReport">
+      <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
         <div class="sign">
-          <svg
-            viewBox="0 0 16 16"
-            class="bi bi-trash3-fill"
-            fill="currentColor"
-            height="18"
-            width="18"
+          <svg viewBox="0 0 16 16" class="bi bi-trash3-fill" fill="currentColor" height="18" width="18"
             xmlns="http://www.w3.org/2000/svg">
             <path
-              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"></path>
+              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5">
+            </path>
           </svg>
         </div>
         <div class="text">Delete</div>
       </button>
 
-      <button v-if="isAdmin"
-        class="pushable"
-        @click="goToModifyPage">
+      <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front"> Modify </span>
@@ -186,12 +154,7 @@
         <v-card-text> 정말 구매하시겠습니까? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="isCheckoutDialogVisible = false"
-            >취소</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="isCheckoutDialogVisible = false">취소</v-btn>
           <v-btn color="blue darken-1" text @click="onPurchase">확인</v-btn>
         </v-card-actions>
       </v-card>
@@ -204,12 +167,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="isGoToCartListDialogVisible = false"
-            >취소</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="isGoToCartListDialogVisible = false">취소</v-btn>
           <v-btn color="blue darken-1" text @click="goToCartList">확인</v-btn>
         </v-card-actions>
       </v-card>
@@ -265,21 +223,21 @@ function checkAdmin() {
     naverAuthenticationStore.isNaverAdmin ||
     // googleAuthenticationStore.isGoogleAdmin ||
     accountStore.isNormalAdmin) {
-      isAdmin.value = true
-    }
+    isAdmin.value = true
+  }
 }
 
 function checkAuthenticated() {
   if (authenticationStore.isAuthenticatedKakao ||
-      naverAuthenticationStore.isAuthenticatedNaver ||
-      isAdmin.value) {
-      isAuthenticated.value = true
-    }
+    naverAuthenticationStore.isAuthenticatedNaver ||
+    isAdmin.value) {
+    isAuthenticated.value = true
+  }
 }
 
 const onPurchase = async () => {
   isCheckoutDialogVisible.value = false
-  
+
   try {
     const email = sessionStorage.getItem("email")
     const payload = {
@@ -287,7 +245,7 @@ const onPurchase = async () => {
       companyReportId: companyReportId.value,
     }
     const isDuplicatedOrderItem = await orderStore.requestOrderItemDuplicationCheckToDjango(payload)
-    
+
     if (isDuplicatedOrderItem) {
       alert("이미 구매하신 보고서입니다.")
     } else {
@@ -299,7 +257,7 @@ const onPurchase = async () => {
           purchase: purchase.value,
         }
         await userLogStore.requestCountClickToDjango(clickPayload)
-        
+
         // const orderPayload = {
         //   email: email,
         //   companyReportId: Number(companyReportId.value),
@@ -314,11 +272,11 @@ const onPurchase = async () => {
         // alert("구매가 완료되었습니다.");
 
       } catch (error) {
-            console.log("상품 구매 중 에러 발생:", error);
+        console.log("상품 구매 중 에러 발생:", error);
       }
     }
   } catch (error) {
-        console.log("이미 구매한 상품인지 확인 중 에러 발생:", error);
+    console.log("이미 구매한 상품인지 확인 중 에러 발생:", error);
   }
 }
 
@@ -326,8 +284,8 @@ const onAddToCartAndAsk = async () => {
   try {
     const email = sessionStorage.getItem("email");
     const payload = {
-        email: email,
-        companyReportId: companyReportId.value,
+      email: email,
+      companyReportId: companyReportId.value,
     };
 
     const isDuplicatedOrderItem =
@@ -431,25 +389,25 @@ function createChart() {
     function formatKoreanNumber(number) {
       const isNegative = number < 0; // 음수 여부 확인
       number = Math.abs(number); // 절대값으로 변환하여 처리
-      
+
       let result = '';
-      
+
       if (number >= 1e12) {
         const trillion = Math.floor(number / 1e12);
         const billion = Math.round((number % 1e12) / 1e8);
         result = `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
       } else if (number >= 1e8) {
-          result = `${Math.round(number / 1e8)}억`;
-        } else if (number >= 1e6) {
-          result = `${Math.round(number / 1e6)}백만`;
-        } else if (number >= 1e3) {
-          result = `${Math.round(number / 1e3)}천`;
-        } else {
-          result = number.toLocaleString();
-        }
-        
-        return isNegative ? `-${result}` : result; // 음수인 경우 '-' 추가
+        result = `${Math.round(number / 1e8)}억`;
+      } else if (number >= 1e6) {
+        result = `${Math.round(number / 1e6)}백만`;
+      } else if (number >= 1e3) {
+        result = `${Math.round(number / 1e3)}천`;
+      } else {
+        result = number.toLocaleString();
       }
+
+      return isNegative ? `-${result}` : result; // 음수인 경우 '-' 추가
+    }
 
     // 각 지표에 대한 막대 생성
     const metrics = [
@@ -507,72 +465,72 @@ function createChart() {
       // 막대 색상 설정
       const getBarColor = (value, preValue) => {
         if (preValue !== undefined) {
-            const change = (() => {
-                if (preValue > 0) {
-                    return ((value - preValue) / preValue) * 100;
-                } else if (preValue < 0) {
-                    if (value > 0) {
-                        return ((value - preValue) / Math.abs(preValue)) * 100;
-                    } else {
-                        return ((Math.abs(preValue) - Math.abs(value)) / Math.abs(preValue)) * 100;
-                    }
-                } else {
-                    // preValue가 0일 때 처리
-                    return value > 0 ? 100 : (value < 0 ? -100 : 0);
-                }
-            })();
-            if (change >= 5) return "#77DD77"; // 초록색 (증가)
-            if (change <= -5) return "#FF6961"; // 빨간색 (감소)
-            return "#AEC6CF"; // 파란색 (변화 거의 없음)
+          const change = (() => {
+            if (preValue > 0) {
+              return ((value - preValue) / preValue) * 100;
+            } else if (preValue < 0) {
+              if (value > 0) {
+                return ((value - preValue) / Math.abs(preValue)) * 100;
+              } else {
+                return ((Math.abs(preValue) - Math.abs(value)) / Math.abs(preValue)) * 100;
+              }
+            } else {
+              // preValue가 0일 때 처리
+              return value > 0 ? 100 : (value < 0 ? -100 : 0);
+            }
+          })();
+          if (change >= 5) return "#77DD77"; // 초록색 (증가)
+          if (change <= -5) return "#FF6961"; // 빨간색 (감소)
+          return "#AEC6CF"; // 파란색 (변화 거의 없음)
         }
         return "#D3D3D3"; // 회색 (기본값)
       };
 
       // 막대 추가
       svg.selectAll(`.${metric.key}`)
-          .data(years.map((year, index) => {
-              const value = financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0;
-              const preValue = index > 0 ? financeData.value[years[index - 1]].length > 0 ? financeData.value[years[index - 1]][0][metric.key] : 0 : undefined;
-              return {
-                  year,
-                  value,
-                  color: index === years.length - 1 ? getBarColor(value, preValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
-              };
-          }))
-          .enter()
-          .append('rect')
-          .attr('class', metric.key)
-          .attr('x', d => x0(d.year))
-          .attr('y', d => d.value >= 0 ? y(d.value) : y(0))
-          .attr('width', x0.bandwidth())
-          .attr('height', d => Math.abs(y(d.value) - y(0)))  // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
-          .attr('fill', d => d.color);
+        .data(years.map((year, index) => {
+          const value = financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0;
+          const preValue = index > 0 ? financeData.value[years[index - 1]].length > 0 ? financeData.value[years[index - 1]][0][metric.key] : 0 : undefined;
+          return {
+            year,
+            value,
+            color: index === years.length - 1 ? getBarColor(value, preValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
+          };
+        }))
+        .enter()
+        .append('rect')
+        .attr('class', metric.key)
+        .attr('x', d => x0(d.year))
+        .attr('y', d => d.value >= 0 ? y(d.value) : y(0))
+        .attr('width', x0.bandwidth())
+        .attr('height', d => Math.abs(y(d.value) - y(0)))  // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
+        .attr('fill', d => d.color);
 
 
       // 막대 상단에 값 표시
       svg.selectAll(`.${metric.key}-label`)
-          .data(years.map(year => ({
-              year: year,
-              value: financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0,
-          })))
-          .enter()
-          .append('text')
-          .attr('class', `${metric.key}-label`)
-          .attr('x', d => x0(d.year) + x0.bandwidth() / 2)
-          .attr('y', d => y(d.value) - 7)
-          .attr('text-anchor', 'middle')
-          .attr('fill', '#6b6b6b')
-          .attr('font-size', 10)
-          .text(d => formatKoreanNumber(d.value));
+        .data(years.map(year => ({
+          year: year,
+          value: financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0,
+        })))
+        .enter()
+        .append('text')
+        .attr('class', `${metric.key}-label`)
+        .attr('x', d => x0(d.year) + x0.bandwidth() / 2)
+        .attr('y', d => y(d.value) - 7)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#6b6b6b')
+        .attr('font-size', 10)
+        .text(d => formatKoreanNumber(d.value));
 
       // 제목 추가
       svg.append('text')
-          .attr('class', 'chart-title')
-          .attr('x', width / 2) // 가운데 정렬
-          .attr('y', -40) // Y축 위쪽으로 위치 조정
-          .attr('text-anchor', 'middle')
-          .attr('font-weight', 'bold')
-          .text(metric.label);
+        .attr('class', 'chart-title')
+        .attr('x', width / 2) // 가운데 정렬
+        .attr('y', -40) // Y축 위쪽으로 위치 조정
+        .attr('text-anchor', 'middle')
+        .attr('font-weight', 'bold')
+        .text(metric.label);
     });
   } else {
     console.error('chartRef is not available');
@@ -582,7 +540,7 @@ function createChart() {
 const calculateMaxWidth = () => {
   const overviewWidth = overviewRef.value.$el.getBoundingClientRect().width
   const financeWidthLocal = financeRef.value.$el.getBoundingClientRect().width
-  
+
   financeWidth.value = financeWidthLocal;
   maxWidth.value = Math.max(overviewWidth, financeWidthLocal);
 };
@@ -593,7 +551,7 @@ onMounted(async () => {
   await getCompanyInfo();
 
   createChart();
-  
+
   calculateMaxWidth();
   window.addEventListener('resize', calculateMaxWidth);
 
@@ -665,6 +623,7 @@ svg {
   background: #0A28B0;
   color: #FFFFFF;
 }
+
 .cart-action-button {
   width: 130px;
   height: 45px;
@@ -673,6 +632,7 @@ svg {
   background: white;
   color: #7B8094;
 }
+
 .return-action-button {
   width: 158px;
   height: 40px;
@@ -692,11 +652,14 @@ svg {
   vertical-align: baseline;
   margin-left: 3px;
 }
+
 .category-text {
   color: rgb(183, 100, 93);
-  font-size: 18px; /* 원하는 크기로 조정 */
+  font-size: 18px;
+  /* 원하는 크기로 조정 */
 }
-/* From Uiverse.io by Tsiangana */ 
+
+/* From Uiverse.io by Tsiangana */
 .Btn {
   display: flex;
   align-items: center;
@@ -711,11 +674,9 @@ svg {
   transition-duration: 0.3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
   background: rgb(255, 135, 65);
-  background: linear-gradient(
-    250deg,
-    rgba(255, 135, 65, 1) 15%,
-    rgba(255, 65, 65, 1) 65%
-  );
+  background: linear-gradient(250deg,
+      rgba(255, 135, 65, 1) 15%,
+      rgba(255, 65, 65, 1) 65%);
 }
 
 /* plus sign */
@@ -734,6 +695,7 @@ svg {
 .sign svg path {
   fill: white;
 }
+
 /* text */
 .text {
   position: absolute;
@@ -745,6 +707,7 @@ svg {
   font-weight: 600;
   transition-duration: 0.3s;
 }
+
 /* hover effect on button width */
 .Btn:hover {
   width: 125px;
@@ -757,6 +720,7 @@ svg {
   transition-duration: 0.3s;
   padding-left: 20px;
 }
+
 /* hover effect button's text */
 .Btn:hover .text {
   opacity: 1;
@@ -764,11 +728,13 @@ svg {
   transition-duration: 0.3s;
   padding-right: 10px;
 }
+
 /* button click effect*/
 .Btn:active {
   transform: translate(2px, 2px);
 }
-/* From Uiverse.io by PriyanshuGupta28 */ 
+
+/* From Uiverse.io by PriyanshuGupta28 */
 .pushable {
   position: relative;
   background: transparent;
@@ -802,13 +768,11 @@ svg {
   height: 100%;
   width: 100%;
   border-radius: 8px;
-  background: linear-gradient(
-    to right,
-    hsl(248, 39%, 39%) 0%,
-    hsl(248, 39%, 49%) 8%,
-    hsl(248, 39%, 39%) 92%,
-    hsl(248, 39%, 29%) 100%
-  );
+  background: linear-gradient(to right,
+      hsl(248, 39%, 39%) 0%,
+      hsl(248, 39%, 49%) 8%,
+      hsl(248, 39%, 39%) 92%,
+      hsl(248, 39%, 29%) 100%);
 }
 
 .front {
@@ -856,7 +820,7 @@ svg {
 
 a {
   color: rgb(107, 107, 107);
-  text-decoration: none; 
+  text-decoration: none;
 }
 
 a:hover {
@@ -864,11 +828,11 @@ a:hover {
 }
 
 a:visited {
-  color: rgb(107, 107, 107); 
+  color: rgb(107, 107, 107);
 }
 
 a:active {
-  color: rgb(27, 59, 173); 
+  color: rgb(27, 59, 173);
 }
 
 .overview-content span {
@@ -889,14 +853,13 @@ a:active {
   line-height: 1.8;
 }
 
-::v-deep .summary span > ul > li {
+::v-deep .summary span>ul>li {
   list-style-type: none;
   margin-bottom: 30px;
 }
 
 ::v-deep .summary li ul {
-  padding-left: 20px; 
+  padding-left: 20px;
   margin: 10px 0 10px 10px;
 }
-
 </style>
