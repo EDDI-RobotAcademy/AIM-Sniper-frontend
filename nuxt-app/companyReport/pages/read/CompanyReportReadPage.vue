@@ -47,7 +47,7 @@
               </v-row>
 
               <v-row style="margin-bottom: 20px;">
-                <v-btn v-if="!(isAdmin)" @click="confirmCheckout" class="order-action-button"
+                <v-btn v-if="!(isAdmin)" @click="onPurchase" class="order-action-button"
                   style="margin-right: 10px;">
                   <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
                   구매하기
@@ -168,7 +168,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="isCheckoutDialogVisible = false">취소</v-btn>
-          <v-btn color="blue darken-1" text @click="onPurchase">확인</v-btn>
+          <v-btn color="blue darken-1" text @click="confirmCheckout">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -251,7 +251,6 @@ function checkAuthenticated() {
 }
 
 const onPurchase = async () => {
-  isCheckoutDialogVisible.value = false
 
   try {
     const payload = {
@@ -264,25 +263,24 @@ const onPurchase = async () => {
       alert("이미 구매하신 보고서입니다.")
     } else {
       try {
+        isCheckoutDialogVisible.value = true
         const clickPayload = {
           email: email.value,
           companyReport_id: companyReportId.value,
           purchase: purchase.value,
         }
         await userLogStore.requestCountClickToDjango(clickPayload)
+        const orderPayload = {
+          email: email.value,
+          companyReportId: Number(companyReportId.value),
+          companyReportPrice: Number(companyReport.value.companyReportPrice),
+        }
+        // console.log("orderPayload", orderPayload)
+        await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload)
 
-        // const orderPayload = {
-        //   email: email.value,
-        //   companyReportId: Number(companyReportId.value),
-        //   companyReportPrice: Number(companyReport.companyReportPrice),
-        // }
-        console.log("orderPayload", orderPayload)
-        // await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload)
-
-        // await createStore.requestDeleteCartItemToDjango({
-        //   companyReportId: [companyReportId.value],
-        // })
-        // alert("구매가 완료되었습니다.");
+        await cartStore.requestDeleteCartItemToDjango({
+          companyReportId: [companyReportId.value],
+        })
 
       } catch (error) {
         console.log("상품 구매 중 에러 발생:", error);
@@ -301,7 +299,7 @@ const onAddToCartAndAsk = async () => {
     };
     
     const isDuplicatedOrderItem =
-    await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
+      await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
     const isDuplicatedCartItem =
       await cartStore.requestCartItemDuplicationCheckToDjango(payload);
 
@@ -380,7 +378,8 @@ const getImageUrl = (imageName) => {
 };
 
 function confirmCheckout() {
-  isCheckoutDialogVisible.value = true;
+  alert("구매가 완료되었습니다.");
+  isCheckoutDialogVisible.value = false
 }
 
 function goToCartList() {
@@ -582,7 +581,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .template {
-  margin-top: 100px;
+  margin-top: 10vh;
 }
 
 svg {

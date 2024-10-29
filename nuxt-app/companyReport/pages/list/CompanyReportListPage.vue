@@ -18,10 +18,10 @@
           </v-col>
         </v-row>
         <!-- 필터가 열리고 닫히는 부분 -->
-        <v-slide-y-transition @after-leave="clearSelectedKeywords">
+        <v-slide-y-transition >
           <v-row v-show="showFilterTags" class="filter-tags-container">
             <v-col cols="12">
-              <v-chip-group v-model="selectedKeywords" multiple column>
+              <v-chip-group v-if="!resetChips" v-model="selectedKeywords" multiple column>
                 <v-chip
                   v-for="(keyword, index) in keywords"
                   :key="index"
@@ -34,6 +34,10 @@
                 >
                   {{ keyword }}
                 </v-chip>
+                <v-btn @click="clearSelectedKeywords" class="reset-chip" outlined elevation="1">
+                  <v-icon left>mdi-refresh</v-icon>
+                  초기화
+                </v-btn>
               </v-chip-group>
             </v-col>
           </v-row>
@@ -174,7 +178,7 @@ const currentPage = ref(1);
 const itemsPerPage = ref(30);
 
 // 필터링 및 검색 관련 변수
-const selectedKeywords = ref(["전체"]);
+const selectedKeywords = ref([]);
 const keywords = ref([ "플랫폼", "정보보안", "빅데이터", "소프트웨어", "하드웨어", "클라우드", "컨설팅", "헬스케어", "메타버스", "인프라", "게임", "의료", "AI", "디스플레이", "마케팅/광고", "영상 분석", "네트워크", "금융지원",]);
 const categories = ref(["전체", "IT", "플랫폼", "은행"]);
 const selectedCategory = ref("전체");
@@ -211,8 +215,8 @@ onMounted(async () => {
 const filteredCompanyReportList = computed(() => {
   let reports = companyReportStore.companyReportList;
 
-  // 키워드 필터링
-  if (!selectedKeywords.value.includes("전체")) {
+  // 키워드 필터링 - selectedKeywords가 비어있거나 첫 번째 값이 "전체"인 경우 전체 보고서를 반환
+  if (selectedKeywords.value.length > 0 && selectedKeywords.value.length == 0) {
     reports = reports.filter((report) => {
       if (report.keyword) {
         const keywordsArray = report.keyword.split(",");
@@ -244,6 +248,27 @@ const filteredCompanyReportList = computed(() => {
     );
   }
 
+  // 키워드와의 일치 개수에 따라 정렬
+  if (selectedKeywords.value.length > 0 && selectedKeywords.value[0] !== "") {
+    reports = reports.map((report) => {
+      if (report.keyword) {
+        const keywordsArray = report.keyword.split(",");
+        // 일치하는 키워드의 수 계산
+        report.matchCount = selectedKeywords.value.reduce(
+          (count, keyword) =>
+            keywordsArray.includes(keyword) ? count + 1 : count,
+          0
+        );
+      } else {
+        report.matchCount = 0;
+      }
+      return report;
+    });
+
+    // 일치 개수를 기준으로 내림차순 정렬
+    reports.sort((a, b) => b.matchCount - a.matchCount);
+  }
+
   return reports;
 });
 
@@ -273,8 +298,20 @@ function toggleSidebar() {
 function toggleFilter() {
   showFilterTags.value = !showFilterTags.value;
 }
+const resetChips = ref(false);
+
 function clearSelectedKeywords() {
-  selectedKeywords.value = ["전체"];
+  // selectedKeywords가 이미 빈 배열인 경우 아무 것도 하지 않음
+  if (selectedKeywords.value.length === 0) return;
+
+  // 키워드를 완전히 초기화하기 위해 splice 사용
+  selectedKeywords.value.splice(0, selectedKeywords.value.length);
+
+  // 강제로 reset 플래그를 변경해 갱신 유도
+  resetChips.value = true;
+  nextTick(() => {
+    resetChips.value = false;
+  });
 }
 
 // 페이지 이동
@@ -338,7 +375,7 @@ function toggleKeyword(keyword) {
 
 <style scoped>
 .background-image {
-  margin-top: 100px;
+  margin-top: 10vh;
 }
 
 @font-face {
