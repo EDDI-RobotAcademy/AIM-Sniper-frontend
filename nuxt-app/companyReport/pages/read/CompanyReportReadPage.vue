@@ -53,7 +53,10 @@
                   구매하기
                 </v-btn>
 
-                <v-btn v-if="!(isAdmin)" @click="isGoToCartListDialogVisible = true" class="cart-action-button">
+                <v-btn v-if="!(isAdmin)"                 
+                @click="onAddToCartAndAsk"
+                class="cart-action-button"
+                  >
                   <v-icon left>mdi-cart-plus</v-icon>
                   장바구니 담기
                 </v-btn>
@@ -197,6 +200,7 @@ const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
+const email = ref(null);
 const companyReportId = ref(route.params.id);
 const isCheckoutDialogVisible = ref(false);
 const isGoToCartListDialogVisible = ref(false);
@@ -216,6 +220,7 @@ const isAuthenticated = ref(false);
 
 const companyReport = computed(() => companyReportStore.companyReport);
 const companyReports = computed(() => companyReportStore.companyReportList);
+
 
 
 function checkAdmin() {
@@ -239,9 +244,8 @@ const onPurchase = async () => {
   isCheckoutDialogVisible.value = false
 
   try {
-    const email = sessionStorage.getItem("email")
     const payload = {
-      email: email,
+      email: email.value,
       companyReportId: companyReportId.value,
     }
     const isDuplicatedOrderItem = await orderStore.requestOrderItemDuplicationCheckToDjango(payload)
@@ -250,16 +254,15 @@ const onPurchase = async () => {
       alert("이미 구매하신 보고서입니다.")
     } else {
       try {
-        const email = sessionStorage.getItem("email")
         const clickPayload = {
-          email: email,
+          email: email.value,
           companyReport_id: companyReportId.value,
           purchase: purchase.value,
         }
         await userLogStore.requestCountClickToDjango(clickPayload)
 
         // const orderPayload = {
-        //   email: email,
+        //   email: email.value,
         //   companyReportId: Number(companyReportId.value),
         //   companyReportPrice: Number(companyReport.companyReportPrice),
         // }
@@ -282,14 +285,13 @@ const onPurchase = async () => {
 
 const onAddToCartAndAsk = async () => {
   try {
-    const email = sessionStorage.getItem("email");
     const payload = {
-      email: email,
-      companyReportId: companyReportId.value,
+        email: email.value,
+        companyReportId: companyReportId.value,
     };
-
+    
     const isDuplicatedOrderItem =
-      await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
+    await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
     const isDuplicatedCartItem =
       await cartStore.requestCartItemDuplicationCheckToDjango(payload);
 
@@ -304,7 +306,7 @@ const onAddToCartAndAsk = async () => {
           companyReportId: companyReportId.value,
           companyReportName: companyReport.value.companyReportName,
           companyReportPrice: companyReport.value.companyReportPrice,
-          email: email,
+          email: email.value,
         };
         await cartStore.requestAddCartToDjango(cartData);
       } catch (error) {
@@ -343,7 +345,6 @@ const deleteCompanyReport = async () => {
   router.push("/companyReport/list")
 }
 
-
 async function fetchCompanyReportData(companyReportId) {
   await companyReportStore.requestCompanyReportToDjango(companyReportId);
 };
@@ -371,9 +372,11 @@ const getImageUrl = (imageName) => {
 function confirmCheckout() {
   isCheckoutDialogVisible.value = true;
 }
+
 function goToCartList() {
   router.push(`/cart/list`);
 }
+
 function goToModifyPage() {
   router.push(`/companyReport/modify/${companyReportId.value}`);
 }
@@ -557,6 +560,8 @@ onMounted(async () => {
 
   checkAdmin()
   checkAuthenticated()
+
+  email.value = sessionStorage.getItem("email")
 });
 
 onBeforeUnmount(() => {

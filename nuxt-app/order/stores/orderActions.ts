@@ -69,6 +69,7 @@ export const orderAction = {
     },
     async requestOrderItemDuplicationCheckToDjango(payload: {email: string, companyReportId: number}): Promise<void> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
+        
         try{
             const res = await djangoAxiosInst.post('/orders/order-item-duplication-check', { "payload": payload })
             return res.data
