@@ -133,6 +133,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useCompanyReportStore } from "../../stores/companyReportStore";
 import { useAccountStore } from "../../../account/stores/accountStore";
 import { useAuthenticationStore } from "../../../authentication/stores/authenticationStore";
+import { useGoogleAuthenticationStore } from "../../../googleAuthentication/stores/googleAuthenticationStore";
 import { useNaverAuthenticationStore } from "../../../naverAuthentication/stores/naverAuthenticationStore";
 import { useUserLogStore } from "../../../userLog/store/userLogStore";
 
@@ -141,8 +142,8 @@ const companyReportStore = useCompanyReportStore();
 const userLogStore = useUserLogStore();
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
-// const googleauthenticationStore = useGoogleAuthenticationStore();
-const naverauthenticationStore = useNaverAuthenticationStore();
+const googleAuthenticationStore = useGoogleAuthenticationStore();
+const naverAuthenticationStore = useNaverAuthenticationStore();
 
 // 페이지 관련 변수
 const currentPage = ref(1);
@@ -243,14 +244,23 @@ function clearSelectedKeywords() {
 function goToCompanyReportReadPage(companyReportId) {
   router.push(`/companyReport/read/${companyReportId}`);
   
-  // if (googleAuthenticationStore.isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin || accountStore.isNormalAdmin ) {
-    //   return
-    // }
+  // 로그인한 일반 사용자의 상품 클릭 수 기록
+  const email = sessionStorage.getItem("email");
+  const isAdmin = (
+    authenticationStore.isKakaoAdmin ||
+    naverAuthenticationStore.isNaverAdmin ||
+    googleAuthenticationStore.isGoogleAdmin ||
+    accountStore.isNormalAdmin
+  )
+
+  if (email && !isAdmin) {
+    console.log("log 카운트", isAdmin)
     userLogStore.requestCountClickToDjango({
       email: email,
       companyReport_id: companyReportId,
       purchase: false,
-    });
+    })
+  }
 };
 
 function changePage(page) {

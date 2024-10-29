@@ -196,6 +196,7 @@ import * as d3 from 'd3';
 import { useAccountStore } from '../../../account/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
+import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
 import { useUserLogStore } from '../../../userLog/store/userLogStore';
 import { useCartStore } from '../../../cart/stores/cartStore';
 import { useOrderStore } from '../../../order/stores/orderStore';
@@ -206,6 +207,7 @@ const companyReportStore = useCompanyReportStore();
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
 const naverAuthenticationStore = useNaverAuthenticationStore();
+const googleAuthenticationStore = useGoogleAuthenticationStore();
 const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
@@ -228,19 +230,17 @@ const chartRef = ref(null);
 const overviewRef = ref(null);
 const financeRef = ref(null);
 
-const isAdmin = ref(false);
-const isAuthenticated = ref(false);
-
-const companyReport = computed(() => companyReportStore.companyReport);
-const companyReports = computed(() => companyReportStore.companyReportList);
-
+// 계정 변수
+const email = ref(null);
+const isAdmin = ref(false); // true면 관리자
+const isAuthenticated = ref(false); // true면 로그인한 사용자
 
 const companyReport = ref(null);
 
 function checkAdmin() {
   if (authenticationStore.isKakaoAdmin ||
     naverAuthenticationStore.isNaverAdmin ||
-    // googleAuthenticationStore.isGoogleAdmin ||
+    googleAuthenticationStore.isGoogleAdmin ||
     accountStore.isNormalAdmin) {
     isAdmin.value = true
   }
@@ -249,7 +249,7 @@ function checkAdmin() {
 function checkAuthenticated() {
   if (authenticationStore.isAuthenticatedKakao ||
     naverAuthenticationStore.isAuthenticatedNaver ||
-    isAdmin.value) {
+    googleAuthenticationStore.isAuthenticatedGoogle) {
     isAuthenticated.value = true
   }
 }
