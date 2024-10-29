@@ -1,111 +1,92 @@
 <template>
-  <v-app-bar color="transparent" app dark height="72" class="menu-bar">        
-    
+  <v-app-bar color="transparent" app dark height="72" class="menu-bar">
+
     <v-btn text @click="goToHome" class="navbar-logo-btn">
-      <v-img
-        class="home-icon"
-        src="@/assets/images/fixed/AIM_BI_White.png"
-        alt="AIM LOGO"
-        contain
-        height="56" 
-        width="56"
-        cover
-      ></v-img>       
-    </v-btn>   
-    
+      <v-img class="home-icon" src="@/assets/images/fixed/AIM_BI_White.png" alt="AIM LOGO" contain height="56"
+        width="56" cover></v-img>
+    </v-btn>
+
     <v-spacer></v-spacer>
 
     <v-btn text @click="goToHome" class="btn-text">
       HOME
     </v-btn>
 
-    <v-btn v-if= " googleAuthenticationStore.isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin" text @click="goToSurveyListPage" class="btn-text">
+    <v-btn
+      v-if="googleAuthenticationStore.isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin"
+      text @click="goToSurveyListPage" class="btn-text">
       SURVEY
     </v-btn>
-    <v-btn v-if=" !googleAuthenticationStore.isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="goToSurvey" class="btn-text">
+    <v-btn
+      v-if="!googleAuthenticationStore.isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin"
+      text @click="goToSurvey" class="btn-text">
       SURVEY
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
       COMPANY REPORT
-    </v-btn>   
+    </v-btn>
     <!-- <v-btn text @click="goToAiInterviewPage" class="btn-text">
       AI INTERVIEW
     </v-btn> -->
     <v-menu>
       <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
-            <b>AI Interview</b>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in aiInterviewPageList"
-            :key="index"
-            @click="item.action"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
+        <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
+          <b>AI Interview</b>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item v-for="(item, index) in aiInterviewPageList" :key="index" @click="item.action">
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
     </v-menu>
 
     <v-spacer></v-spacer>
 
-    <v-menu
-      v-if="
-        authenticationStore.isAuthenticatedKakao ||
-        googleAuthenticationStore.isAuthenticatedGoogle ||
-        naverAuthenticationStore.isAuthenticatedNaver
-      "
-      close-on-content-click
-    >
+    <v-menu v-if="
+      authenticationStore.isAuthenticatedKakao ||
+      googleAuthenticationStore.isAuthenticatedGoogle ||
+      naverAuthenticationStore.isAuthenticatedNaver
+    " close-on-content-click>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
           <b>My Page</b>
         </v-btn>
       </template>
       <v-list>
-        <v-list-item
-          v-for="(item, index) in myPageItems"
-          :key="index"
-          @click="item.action"
-        >
+        <v-list-item v-for="(item, index) in myPageItems" :key="index" @click="item.action">
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
-    <v-menu
-      v-if=" googleAuthenticationStore.isGoogleAdmin ||
+    <v-menu v-if="googleAuthenticationStore.isGoogleAdmin ||
       authenticationStore.isKakaoAdmin ||
-      naverAuthenticationStore.isNaverAdmin"
-      close-on-content-click
-    >
+      naverAuthenticationStore.isNaverAdmin" close-on-content-click>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
           <b>ADMIN</b>
         </v-btn>
       </template>
       <v-list>
-        <v-list-item
-          v-for="(item, index) in adminPageList"
-          :key="index"
-          @click="item.action"
-        >
+        <v-list-item v-for="(item, index) in adminPageList" :key="index" @click="item.action">
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-menu>    
+    </v-menu>
 
-    <v-btn v-if="!authenticationStore.isAuthenticatedKakao && !googleAuthenticationStore.isAuthenticatedGoogle && !naverAuthenticationStore.isAuthenticatedNaver && !authenticationStore.isKakaoAdmin && !googleAuthenticationStore.isGoogleAdmin && !naverAuthenticationStore.isNaverAdmin" text @click="signIn" class="btn-login">
+    <v-btn
+      v-if="!authenticationStore.isAuthenticatedKakao && !googleAuthenticationStore.isAuthenticatedGoogle && !naverAuthenticationStore.isAuthenticatedNaver && !authenticationStore.isKakaoAdmin && !googleAuthenticationStore.isGoogleAdmin && !naverAuthenticationStore.isNaverAdmin"
+      text @click="signIn" class="btn-login">
       <!-- <v-icon left>mdi-login</v-icon> -->
-       LOGIN
+      LOGIN
     </v-btn>
-    
+
     <v-btn v-else text @click="signOut" class="btn-logout">
       <!-- <v-icon left>mdi-logout</v-icon> -->
-       LOGOUT
+      LOGOUT
     </v-btn>
-    
+
   </v-app-bar>
 </template>
 
@@ -116,8 +97,7 @@ import { useAccountStore } from '../../account/stores/accountStore';
 import { useAuthenticationStore } from '../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../naverAuthentication/stores/naverAuthenticationStore';
 import { useSurveyStore } from '../../survey/stores/surveyStore';
-
-import { useGoogleAuthenticationStore } from '../../googleAuthentication/stores/googleAuthenticationstore'
+import { useGoogleAuthenticationStore } from '../../googleAuthentication/stores/googleAuthenticationStore'
 
 
 // Pinia 스토어 사용
@@ -227,7 +207,7 @@ const signOut = async () => {
 // 설문조사 페이지 이동
 const goToSurvey = async () => {
   const randomString = await surveyStore.requestRandomStringToDjango();
-  
+
   if (randomString) {
     router.push({
       name: 'SurveyReadPage',
@@ -276,6 +256,7 @@ onMounted(() => {
 .menu-bar {
   background: var(--Gradient-Liner-1, linear-gradient(94deg, #0A28B0 1.69%, #8094F4 116.61%)) !important;
 }
+
 /* AIM 로고 이미지 버튼 */
 .navbar-logo-btn {
   display: flex;
@@ -300,10 +281,11 @@ onMounted(() => {
   font-weight: 700px;
   color: #FFF;
   letter-spacing: 0.5px;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   margin-right: 80px !important;
   border: 1px solid white;
-  color: white; /* 텍스트 색상도 흰색으로 변경 */  
+  color: white;
+  /* 텍스트 색상도 흰색으로 변경 */
 }
 
 .btn-logout {
@@ -312,27 +294,29 @@ onMounted(() => {
   font-weight: 700px;
   color: #FFF;
   letter-spacing: 0.5px;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   margin-right: 80px !important;
   border: 1px solid white;
-  color: white; /* 텍스트 색상도 흰색으로 변경 */  
+  color: white;
+  /* 텍스트 색상도 흰색으로 변경 */
 }
 
 
 .btn-text:hover {
   background-color: rgba(255, 255, 255, 0.25);
-  
-}
-/* 클릭해서 선택되었을시 표시 */
-.btn-text:focus {
-  background-color: rgba(255, 255, 255, 0.25); 
-  color: white;
-  
+
 }
 
-.v-menu > .v-overlay__content > .v-card,
-.v-menu > .v-overlay__content > .v-sheet,
-.v-menu > .v-overlay__content > .v-list {  
+/* 클릭해서 선택되었을시 표시 */
+.btn-text:focus {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+
+}
+
+.v-menu>.v-overlay__content>.v-card,
+.v-menu>.v-overlay__content>.v-sheet,
+.v-menu>.v-overlay__content>.v-list {
   background-color: rgba(0, 0, 0, 0.25);
   color: white;
   border: 3px solid white
@@ -340,6 +324,6 @@ onMounted(() => {
 
 .v-list-item:hover {
   background-color: rgba(255, 255, 255, 0.25);
-  
+
 }
 </style>

@@ -6,7 +6,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { useAccountStore } from '../../account/stores/accountStore'
   import { onMounted } from 'vue'
-  import { useGoogleAuthenticationStore } from '../stores/googleAuthenticationstore';
+  import { useGoogleAuthenticationStore } from '../stores/googleAuthenticationStore';
   
   const googleAuthStore = useGoogleAuthenticationStore()
   const accountStore = useAccountStore()
