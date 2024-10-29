@@ -32,15 +32,14 @@ export const companyReportActions = {
 
 	async requestCreateCompanyReportToDjango(imageFormData: FormData): Promise<void> {
 		const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
-
+	
 		try {
-			const res = await djangoAxiosInst.post('/company_report/register', imageFormData, {
+			await djangoAxiosInst.post('/company_report/register', imageFormData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
 			});
 			alert('보고서를 성공적으로 등록하셨습니다.');
-			return res;
 		} catch (error) {
 			console.log('requestCreateCompanyReportToDjango() -> error:', error);
 			throw error;
