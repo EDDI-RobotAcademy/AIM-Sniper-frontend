@@ -33,7 +33,20 @@ export const aiInterviewActions = {
             throw error
         }
     },
+    async requestInferScoreResultToFastAPI(payload: {interviewResult: any[]}): Promise<string>{
+        const { fastapiAxiosInst } = axiosUtility.createAxiosInstances();
+        const interviewResult = payload.interviewResult
+        try{
+            const command = 8
 
+            const response = await fastapiAxiosInst.post(
+                '/request-ai-command', { command, "data": interviewResult })
+            return response.data
+        }catch (error) {
+            console.log('requestInferScoreResultToFastAPI() 중 문제 발생:', error)
+            throw error
+        }
+    },
     async requestInferedResultToFastAPI(): Promise<string> {
         const { fastapiAxiosInst } = axiosUtility.createAxiosInstances();
         try {
@@ -58,6 +71,27 @@ export const aiInterviewActions = {
             throw new Error('결과를 가져오는 데 실패했습니다.');
         } catch (error) {
             console.log('requestInferedResultToFastAPI() 중 문제 발생:', error)
+            throw error
+        }
+    },
+    async requestSaveInterviewResultToDjango(payload: { scoreResultList: [], accountId: string }): Promise<string>{
+        const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
+        try{
+            const res: AxiosResponse = await djangoAxiosInst.post('/interview_result/save-interview-result', payload)
+            return res.data
+        } catch(error){
+            console.log('requestSaveInterviewResultToDjango() 중 문제 발생:', error)
+            throw error
+        }
+    },
+    async requestGetScoreResultListToDjango(payload: { accountId: string }): Promise<string>{
+        const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
+        try{
+            const res: AxiosResponse = await djangoAxiosInst.post('/interview_result/get-interview-result', payload)
+            return res.data.interviewResultList
+
+        }catch(error){
+            console.log('requestGetScoreResultListToDjango() 중 문제 발생:', error)
             throw error
         }
     },
