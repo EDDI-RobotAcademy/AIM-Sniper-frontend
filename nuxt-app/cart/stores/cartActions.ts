@@ -2,26 +2,26 @@ import * as axiosUtility from "../../utility/axiosInstance";
 import { AxiosResponse } from "axios"
 
 export const cartAction = {
-    async requestAddCartToDjango(payload):Promise<AxiosResponse>{
-        const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
-
+    async requestAddCartToDjango(payload): Promise<AxiosResponse> {
+        const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+    
         try {
-            // const email = sessionStorage.getItem('email');
             if (!payload.email) {
                 throw new Error('User token not found');
             }
-            await djangoAxiosInst.post('/cart/register', payload);
+            const response = await djangoAxiosInst.post('/cart/register', payload);
+            return response; // AxiosResponse 타입 반환
         } catch (error) {
             console.error('Error adding to cart:', error);
             throw error;
         }
-    },
+    },    
     async requestCartListToDjango(email: string):Promise<AxiosResponse> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
-            // const email = sessionStorage.getItem('email');
+            const email = sessionStorage.getItem('email');
             if (!email) {
-                throw new Error('User token not found');
+                throw new Error('email not found');
             }
 
             const response = await djangoAxiosInst.post('/cart/list', {email});
