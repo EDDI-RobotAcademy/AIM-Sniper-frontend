@@ -263,6 +263,21 @@ const showStartMessage = () => {
     visible.value = false;
   }, 2500);
 };
+
+useHead({
+  title: `AI 모의면접 & 인성면접 | `,
+  meta: [
+    {
+      name: 'description',
+      content: 'AI 모의면접, AI 인성면접 🎯AIM에서 확인해보세요.',
+    },
+    {
+      hid: 'keywords',
+      name: 'keywords',
+      content: '모의면접, ai 모의면접, 인성면접, ai 인성면접, 인적성 검사 준비, ai 인적, ai 면접, aim 모의면접, aim ai 모의면접, 에임 모의면접, 에임, 애임, AIM, AIM Sniper',
+    },
+  ],
+});
 </script>
 
 <style scoped>
