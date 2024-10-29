@@ -121,6 +121,7 @@ const router = useRouter();
 onMounted(async () => {
   try {
     const storedEmail = sessionStorage.getItem('email');
+    await accountStore.requestProfileToDjango({'email':storedEmail})
     if (storedEmail) {
       const nicknameValue = await accountStore.nickname;
       const genderValue = await accountStore.gender;
