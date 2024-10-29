@@ -181,6 +181,7 @@ async function proceedToOrder() {
     console.log("dddd", cartItems.value)
     const orderItems = selectedCartItems.map((item) => ({
       cartItemId: item.cartItemId,
+      quantity: item.quantity,
       orderPrice: item.companyReportPrice,
     }));
     const orderedCartItemIdList = selectedCartItems.map(
