@@ -76,7 +76,7 @@ const sendCount = ref(0);
 const maxMessages = 5;
 const aiResponseList = ref([]);
 const questionIndex = ref(0);
-const intentList = ['대처 능력', '적응력', '프로젝트 경험', '자기 개발'];
+const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
 const intentIndex = ref(-1);
 
 // Computed Properties

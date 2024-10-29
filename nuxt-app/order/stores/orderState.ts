@@ -8,6 +8,7 @@ export const orderState = () => ({
 type orderItem = {
 	companyReportId: 0;
     companyReportName: "",
+    companyReportTitleImage: "",
     companyReportPrice: 0;
 };
 
