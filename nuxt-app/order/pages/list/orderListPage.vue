@@ -2,7 +2,7 @@
     <div class="background-image">
       <v-container>
         <!-- 주문 목록 있을 때 -->
-        <v-row justify="center" v-if="orderList.length > 0">
+        <v-row justify="center" v-if="orderStore.orderList.length > 0">
           <v-col cols="12" md="10" lg="8">
             <h2 class="title">
               <span>구매한 보고서 목록</span>
@@ -25,7 +25,7 @@
               <v-col cols="auto">
                 <v-pagination
                   v-model="pagination.page"
-                  :length="Math.ceil(orderList.length / perPage)"
+                  :length="Math.ceil(orderStore.orderList.length / perPage)"
                   total-visible="7"
                   size="small"
                   color="primary"

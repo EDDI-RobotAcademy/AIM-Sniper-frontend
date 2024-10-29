@@ -17,8 +17,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in orderItemList" :key="item.orderItemId">
+                  <tr v-for="item in orderItemList" :key="item.companyReportId">
                     <td>
+                      <!-- <p>{{ item.companyReportTitleImage }}</p> -->
                       <v-img
                         :src="getImageUrl(item.companyReportTitleImage)"
                         aspect-ratio="1"
@@ -57,15 +58,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useOrderStore } from '@/stores/orderStore'; // Pinia store import
 
 // Props 정의
 const props = defineProps({
-  ordersId: {
-    type: String,
-    required: true,
-  },
   companyReportId: {
     type: String,
     required: true,
@@ -73,6 +70,8 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const route = useRoute()
+const ordersId = ref(route.params.ordersId)
 const orderStore = useOrderStore();
 
 // 반응형 변수 설정
@@ -81,14 +80,13 @@ const orderItem = ref([]);
 // Pinia의 상태 참조
 const orderItemList = computed(() => orderStore.orderItemList);
 
-async function getImageUrl(imageName) {
+function getImageUrl(imageName) {
   if (!imageName) {
-    // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
-    return new URL('@/assets/images/fixed/AIM_BI_Blue.png', import.meta.url).href;
+    console.warn("No image name provided, using default image.");
+    return new URL('/assets/images/fixed/AIM_BI_Blue.png', import.meta.url).href;
   }
-  return new URL(`../assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
 }
-
 
 function goToLastPage() {
   router.go(-1);
@@ -96,8 +94,9 @@ function goToLastPage() {
 
 // 마운트 시 데이터 로드
 onMounted(async () => {
-  const response = await orderStore.requestMyOrderItemListToDjango(props.ordersId);
+  const response = await orderStore.requestMyOrderItemListToDjango(ordersId.value);
   orderItem.value = response;
+  // console.log(orderItem.value)
 });
 </script>
 

@@ -7,7 +7,7 @@ export const orderAction = {
         try {
             const email = sessionStorage.getItem('email')
             if (!email) {
-                throw new Error('User token not found')
+                throw new Error('email not found')
             }
             
             // console.log('payload:', payload)
@@ -32,7 +32,7 @@ export const orderAction = {
     async requestCompanyReportReadToAddOrderToDjango(payload: {email: string, companyReportId: number, companyReportPrice: number}): Promise<void> {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
-            console.log('payload:', payload)
+            // console.log('payload:', payload)
 
             const response = await djangoAxiosInst.post('/orders/company_report', payload )
             console.log('response data:', response.data)
@@ -60,8 +60,8 @@ export const orderAction = {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
             const res = await djangoAxiosInst.post(`/orders/read/${ordersId}`);
-            // console.log('order item list data:', res.data)
             this.orderItemList = res.data
+            return this.orderItemList
         } catch (error) {
             console.error('requestMyOrderItemListToDjango() 문제 발생:', error);
             throw error
