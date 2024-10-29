@@ -210,18 +210,20 @@ const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
-const selectedCompanyName = ref(null);
-const email = ref(null);
 const companyReportId = ref(route.params.id);
+const selectedCompanyName = ref(null);
 const isCheckoutDialogVisible = ref(false);
 const isGoToCartListDialogVisible = ref(false);
 const maxWidth = ref(0);
+
+// 보고서 관련 변수
 const financeWidth = ref(0);
 const purchase = ref(true);
 const financeData = ref([]);
 const financeYears = ref([]);
 const companyInfo = ref([]);
 
+// DOM ref 변수
 const chartRef = ref(null);
 const overviewRef = ref(null);
 const financeRef = ref(null);
@@ -233,6 +235,7 @@ const companyReport = computed(() => companyReportStore.companyReport);
 const companyReports = computed(() => companyReportStore.companyReportList);
 
 
+const companyReport = ref(null);
 
 function checkAdmin() {
   if (authenticationStore.isKakaoAdmin ||
@@ -559,19 +562,29 @@ const calculateMaxWidth = () => {
 };
 
 onMounted(async () => {
-  await fetchCompanyReportData(companyReportId.value);
-  await getFinanceData();
-  await getCompanyInfo();
+  watch(
+    () => companyReportStore.companyReportList,
+    async (newList) => {
+      if (newList.length > 0) {
+        // companyReportList가 채워지고 데이터 가져오기
+        companyReport.value = newList[companyReportId.value - 1];
 
-  createChart();
-
-  calculateMaxWidth();
+        await getFinanceData();
+        await getCompanyInfo();
+        createChart();
+        calculateMaxWidth();
+      }
+    },
+    { immediate: true } // 데이터가 이미 있을 경우 바로 실행
+  );
+  
   window.addEventListener('resize', calculateMaxWidth);
 
   checkAdmin()
   checkAuthenticated()
 
   email.value = sessionStorage.getItem("email")
+
   selectedCompanyName.value = companyInfo.value.company_name
   
   useHead({
