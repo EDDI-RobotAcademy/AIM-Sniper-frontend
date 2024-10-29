@@ -1,7 +1,7 @@
 <template>
-  <main>
-    <v-container v-if="!start" align=center height="100%">
-      <br><br><br><br><br><br><br><br><br><br><br><br>
+  <main style="margin-top: 20vh;">
+    <v-container v-if="!start"  align=center height="100%">
+      <br><br><br>
       <h2>안녕하십니까? AI 모의 면접 서비스입니다.</h2><br>
       <v-container class="draw-line" align=start>
         <v-card-title align=center><strong>※ 사전 공지 ※</strong></v-card-title><br>
@@ -49,185 +49,221 @@
 </template>
 
 <script setup>
-import { useAiInterviewStore } from '@/stores/aiInterviewStore'  // Pinia store 가져오기
-import markdownIt from 'markdown-it'
-import '@mdi/font/css/materialdesignicons.css'
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue';
+import { useAiInterviewStore } from '@/stores/aiInterviewStore'; // Pinia store import
+import { useAccountStore } from '../../../account/stores/accountStore';
+import markdownIt from 'markdown-it';
+import { useRouter } from 'vue-router';
+import '@mdi/font/css/materialdesignicons.css';
 
-const start = ref(false)
-const finished = ref(false)
-const visible = ref(true)
-const userInput = ref('')
-const aiOutput = ref('')
-const startMessage = '안녕하세요. AI 모의 면접 서비스입니다. 제한 시간 내에 답변 작성 부탁드립니다. 지금부터 면접을 시작하겠습니다.'
-const currentAIMessage = ref('')
-const chatHistory = reactive([
-  { type: 'ai', content: '' }
-])
-const isLoading = ref(false)
-const sendCount = ref(0)
-const maxMessages = 5
-const aiResponseList = reactive([])  // AI 질문 리스트 저장
-const questionIndex = ref(0)
-const intentList = ['대처 능력', '적응력', '프로젝트 경험', '자기 개발']
-const intentIndex = ref(-1)
+// Pinia Stores
+const aiInterviewStore = useAiInterviewStore();
+const accountStore = useAccountStore();
+const router = useRouter();
 
-const aiInterviewStore = useAiInterviewStore()  // Pinia store 인스턴스 가져오기
-const md = new markdownIt()  // markdown-it 인스턴스 생성
+// Component State
+const accountId = ref('');
+const start = ref(false);
+const finished = ref(false);
+const visible = ref(true);
+const userInput = ref('');
+const aiOutput = ref('');
+const startMessage = '안녕하세요. AI 모의 면접 서비스입니다. 제한 시간 내에 답변 작성 부탁드립니다. 지금부터 면접을 시작하겠습니다.';
+const currentAIMessage = ref('');
+const chatHistory = ref([{ type: 'ai', content: '' }]);
+const isLoading = ref(false);
+const sendCount = ref(0);
+const maxMessages = 5;
+const aiResponseList = ref([]);
+const questionIndex = ref(0);
+const intentList = ['대처 능력', '적응력', '프로젝트 경험', '자기 개발'];
+const intentIndex = ref(-1);
 
+// Computed Properties
+const isCheckoutDisabled = computed(() => sendCount.value >= maxMessages);
+
+// Watchers
 watch(start, (newVal) => {
   if (newVal === true) {
-    showStartMessage()
+    showStartMessage();
   }
-})
+});
 
 watch(visible, (newVal) => {
   if (newVal === false) {
-    getAIQuestions()
+    getAIQuestions();
   }
-})
+});
 
-function startInterview() {
-  start.value = true
-}
-
-async function getAIQuestions() {
-  if (aiResponseList.length === 0) {
-    const sessionId = Math.floor(Math.random() * 200) + 1
-    aiResponseList.push(...(await aiInterviewStore.requestGetQuestionListToDjango({ sessionId })))
+// Lifecycle Hooks
+onMounted(async () => {
+  const email = sessionStorage.getItem("email");
+  if (email) {
+    accountId.value = await accountStore.requestAccountIdToDjango(email);
+  } else {
+    alert('로그인이 필요합니다.');
+    router.push('/account/login');
   }
+});
 
-  currentAIMessage.value = aiResponseList.questionList[questionIndex.value] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.'
-  intentIndex.value++
+// Methods
+const startInterview = () => {
+  start.value = true;
+};
 
-  chatHistory.push({
-    type: "ai",
-    content: currentAIMessage.value,
-  })
+const getAIQuestions = async () => {
+  if (aiResponseList.value.length === 0) {
+    const sessionId = Math.floor(Math.random() * 200) + 1;
+    aiResponseList.value = await aiInterviewStore.requestGetQuestionListToDjango({ sessionId: sessionId });
+  }
+  currentAIMessage.value = aiResponseList.value.questionList[questionIndex.value] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
+  intentIndex.value++;
+  chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
 
-  const chunks = chunkText(currentAIMessage.value, 1)
-  streamText(chunks)
-}
+  const chunks = chunkText(currentAIMessage.value, 1);
+  streamText(chunks);
+};
 
-function renderMessageContent(message) {
+const renderMessageContent = (message) => {
   if (message.type !== 'user') {
-    return `<h2>${md.render(message.content)}</h2>`
+    return `<h2>${markdownIt().render(message.content)}</h2>`;
   }
-}
+};
 
-function chunkText(text, chunkSize) {
-  const chunks = []
+const chunkText = (text, chunkSize) => {
+  const chunks = [];
   for (let i = 0; i < text.length; i += chunkSize) {
-    chunks.push(text.substring(i, i + chunkSize))
+    chunks.push(text.substring(i, i + chunkSize));
   }
-  return chunks
-}
+  return chunks;
+};
 
-async function streamText(chunks) {
-  currentAIMessage.value = ''
-  let index = 0
+const streamText = async (chunks) => {
+  currentAIMessage.value = '';
+  let index = 0;
   const interval = setInterval(() => {
     if (index < chunks.length) {
-      currentAIMessage.value += chunks[index]
-      updateAIMessage()
-      index++
+      currentAIMessage.value += chunks[index];
+      updateAIMessage();
+      index++;
     } else {
-      clearInterval(interval)
+      clearInterval(interval);
     }
-  }, 10)
-}
+  }, 10);
+};
 
-function updateAIMessage() {
-  const lastIndex = chatHistory.length - 1
-  if (chatHistory[lastIndex] && chatHistory[lastIndex].type === 'ai') {
-    chatHistory[lastIndex].content = currentAIMessage.value
+const updateAIMessage = () => {
+  const lastIndex = chatHistory.value.length - 1;
+  if (chatHistory.value[lastIndex] && chatHistory.value[lastIndex].type === 'ai') {
+    chatHistory.value[lastIndex].content = currentAIMessage.value;
   } else {
-    chatHistory.push({ type: 'ai', content: currentAIMessage.value })
+    chatHistory.value.push({ type: 'ai', content: currentAIMessage.value });
   }
-}
+};
 
-function adjustTextareaHeight() {
-  const textarea = document.querySelector('.messageInput')
-  textarea.style.height = "auto"
-  textarea.style.height = `${textarea.scrollHeight}px`
-}
+const adjustTextareaHeight = () => {
+  const textarea = document.getElementById("messageInput");
+  if (textarea) {
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+};
 
-function handleEnterKey(event) {
+const handleEnterKey = (event) => {
   if (!event.shiftKey) {
-    sendMessage()
+    sendMessage();
   }
-}
+};
 
-function handleShiftEnter(event) {
-  adjustTextareaHeight()
-}
+const handleShiftEnter = () => {
+  adjustTextareaHeight();
+};
 
-async function sendMessage() {
+const sendMessage = async () => {
   if (sendCount.value >= maxMessages) {
-    finished.value = true
-    return
+    finished.value = true;
+    return;
   }
   if (userInput.value.trim()) {
-    chatHistory.push({ type: 'user', content: userInput.value })
-    userInput.value = ''
-    adjustTextareaHeight()
-    isLoading.value = true
-    sendCount.value++
+    chatHistory.value.push({ type: 'user', content: userInput.value });
+    userInput.value = '';
+    adjustTextareaHeight();
+    isLoading.value = true;
+    sendCount.value++;
 
     setTimeout(async () => {
-      if (aiResponseList.length === 0) {
-        const sessionId = Math.floor(Math.random() * 200) + 1
-        aiResponseList.push(...(await aiInterviewStore.requestGetQuestionListToDjango({ sessionId })))
+      if (aiResponseList.value.length === 0) {
+        const sessionId = Math.floor(Math.random() * 200) + 1;
+        aiResponseList.value = await aiInterviewStore.requestGetQuestionListToDjango({ sessionId: sessionId });
       }
 
       if (intentIndex.value === 4) {
-        currentAIMessage.value = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다."
-        chatHistory.push({
-          type: "ai",
-          content: currentAIMessage.value,
-        })
-        finished.value = true
-      } else {
-        const nextIntent = intentList[intentIndex.value]
-        intentIndex.value++
+        currentAIMessage.value = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
+        chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+        finished.value = true;
+        if (finished.value) {
+          chatHistory.value.shift();
+          chatHistory.value.pop();
+          const contents = chatHistory.value.map(item => item.content);
+          const pairedContents = [];
+          const interviewIntents = ['자기 분석', '대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
 
-        let lastUserInput = null
-        for (let i = chatHistory.length - 1; i >= 0; i--) {
-          if (chatHistory[i].type === 'user') {
-            lastUserInput = chatHistory[i].content
-            break
+          for (let i = 0; i < contents.length; i += 2) {
+            pairedContents.push([contents[i], contents[i + 1], interviewIntents[Math.floor(i / 2)]]);
+          }
+
+          console.log('result: ', pairedContents);
+          const payload = { 'interviewResult': pairedContents };
+          await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
+          const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
+          console.log('response: ', response);
+          for (let i = 0; i < response.length; i++) {
+            pairedContents[i].push(response[i]);
+          }
+          console.log('pairedContents', pairedContents);
+          const result = { scoreResultList: pairedContents, accountId: accountId.value };
+          const saveDone = await aiInterviewStore.requestSaveInterviewResultToDjango(result);
+          if (saveDone) {
+            alert('면접 결과 확인하기');
+            router.push(`/ai-interview/result/${accountId.value}`);
+          }
+        }
+      } else {
+        const nextIntent = intentList[intentIndex.value];
+        intentIndex.value++;
+
+        let lastUserInput = null;
+        for (let i = chatHistory.value.length - 1; i >= 0; i--) {
+          if (chatHistory.value[i].type === 'user') {
+            lastUserInput = chatHistory.value[i].content;
+            break;
           }
         }
 
-        const payload = { answer: lastUserInput, nextIntent: nextIntent }
-        await aiInterviewStore.requestInferNextQuestionToFastAPI(payload)
+        const payload = { answer: lastUserInput, nextIntent: nextIntent };
+        await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
 
-        const response = await aiInterviewStore.requestInferedResultToFastAPI()
+        const response = await aiInterviewStore.requestInferedResultToFastAPI();
         if (response && response.nextQuestion) {
-          currentAIMessage.value = response.nextQuestion
+          currentAIMessage.value = response.nextQuestion;
         }
 
-        chatHistory.push({
-          type: "ai",
-          content: currentAIMessage.value,
-        })
+        chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
       }
 
-      const chunks = chunkText(currentAIMessage.value, 1)
-      streamText(chunks)
-      isLoading.value = false
-    }, 1000)
+      const chunks = chunkText(currentAIMessage.value, 1);
+      streamText(chunks);
+      isLoading.value = false;
+    }, 1000);
   }
-}
+};
 
-function showStartMessage() {
+const showStartMessage = () => {
   setTimeout(() => {
-    visible.value = false
-  }, 2500)
-}
+    visible.value = false;
+  }, 2500);
+};
 </script>
-
-
 
 <style scoped>
 .draw-line {
