@@ -3,10 +3,10 @@ import { defineNuxtConfig } from 'nuxt/config';
 
 
 export default defineNuxtConfig({
-  // 앱의 메타 태그 및 favicon 설정 추가
   app: {
     head: {
-      title: 'AIM', // 기본 페이지 제목
+      // title: 'AIM',
+      titleTemplate: '%s AIM',
       meta: [
         // 페이지 인코딩 설정
         { charset: 'utf-8' }, 
@@ -27,7 +27,7 @@ export default defineNuxtConfig({
         {
 					hid: 'keywords',
 					name: 'keywords',
-					content: '취업 준비, 면접 준비, 개발자 취업 준비, 개발자 이직 준비, 개발자 자소서, 개발자 취업 사이트, it취업, it 회사, 기업 분석 사이트, 기업 분석 보고서 사이트, 사업 요약, dart 분석, 다트 분석, 재무 분석, 사업 분석, 주사업, 사업 현황, 사업내용, 기업 분석 및 사업 요약, 다트 재무 분석, 사업 분석 및 요약, 기업 분석 사이트, 사업 요약 사이트, 기업 재무 제표 분석 사이트, 기업 타당성 분석, 모의면접, ai 모의면접, 인성면접, ai 인성면접, 인적성 검사 준비, ai 인적, ai 면접, 회사소개, 회사 사업 소개, DART 분석, 지원동기 작성, aim 기업 요약 사이트, 에임 기업 요약 사이트, aim 모의면접, aim ai 모의면접, 에임 모의면접'
+					content: '취업 준비, 면접 준비, 개발자 취업 준비, 개발자 이직 준비, 개발자 자소서, 개발자 취업 사이트, it취업, it 회사, 기업 분석 사이트, 기업 분석 보고서 사이트, 사업 요약, dart 분석, 다트 분석, 재무 분석, 사업 분석, 주사업, 사업 현황, 사업내용, 기업 분석 및 사업 요약, 다트 재무 분석, 사업 분석 및 요약, 기업 분석 사이트, 사업 요약 사이트, 기업 재무 제표 분석 사이트, 기업 타당성 분석, 모의면접, ai 모의면접, 인성면접, ai 인성면접, 인적성 검사 준비, ai 인적, ai 면접, 회사소개, 회사 사업 소개, DART 분석, 지원동기 작성, aim 기업 요약 사이트, 에임 기업 요약 사이트, aim 모의면접, aim ai 모의면접, 에임 모의면접, 에임, 애임, AIM, AIM Sniper, AIM 기업 분석, AIM 기업 요약'
 				},
 
         // Open Graph Title : 페이지가 SNS에서 공유될 때 표시될 제목 설정
