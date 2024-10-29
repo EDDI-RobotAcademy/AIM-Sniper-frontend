@@ -210,6 +210,7 @@ const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
+const selectedCompanyName = ref(null);
 const email = ref(null);
 const companyReportId = ref(route.params.id);
 const isCheckoutDialogVisible = ref(false);
@@ -571,6 +572,22 @@ onMounted(async () => {
   checkAuthenticated()
 
   email.value = sessionStorage.getItem("email")
+  selectedCompanyName.value = companyInfo.value.company_name
+  
+  useHead({
+    title: `${selectedCompanyName.value}의 핵심정보 분석 및 요약 | `,
+    meta: [
+      {
+        name: 'description',
+        content: `${selectedCompanyName.value}에 대한 기업의 사업 내용, 공략 포인트, 재무제표, 핵심만 요약했습니다. 전자공시시스템(DART) 기반 기업 핵심 정보 분석 🎯AIM에서 확인해보세요.`,
+      },
+      {
+        hid: 'keywords',
+        name: 'keywords',
+        content: `${selectedCompanyName.value}, 기업 분석, ${selectedCompanyName.value} 기업 분석, ${selectedCompanyName.value} 사업 내용, ${selectedCompanyName.value} 기업 요약, ${selectedCompanyName.value} 주사업, ${selectedCompanyName.value} 회사 소개, ${selectedCompanyName.value} 기업 소개, ${selectedCompanyName.value} 자소서, ${selectedCompanyName.value} 면접, ${selectedCompanyName.value} 사업 내용, 취업 준비, AIM, AIM Sniper, AIM 기업 분석, AIM 기업 요약`,
+      },
+    ],
+  });
 });
 
 onBeforeUnmount(() => {
