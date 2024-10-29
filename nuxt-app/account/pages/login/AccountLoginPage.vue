@@ -72,8 +72,14 @@
                   <b>회원가입</b>
               </v-btn> -->
 
+        <!-- AIm 한줄 소개 -->
+        <div class="introduction">
+          <p>기업 분석과 AI 모의면접 | 취업 준비는 AIM에서</p>
+        </div>
+
         <!-- 영역 구분선 -->
-        <!-- <v-divider :thickness="3" style="margin-top: 20px; margin-bottom: 20px;"></v-divider> -->
+        <v-divider class="mt-5 mb-7" :thickness="3"></v-divider>
+
 
         <!-- 각 소셜 로그인 버튼들 -->
         <v-btn class="kakao-login-btn" @click="goToKakaoLogin">
@@ -214,7 +220,7 @@ const checkPassword = async () => {
 <style scoped>
 .container {
   max-width: 100vw;
-  height: 100vh;
+  height: 110vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -226,24 +232,12 @@ const checkPassword = async () => {
 
 .login_logo {
   height: 20vh;
-  margin-bottom: 60px;
+  margin-bottom: 3vh;
   overflow: hidden;
   background-image: url("@/assets/images/fixed/AIM_BI_White.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-/* 로그인 박스 설정 */
-.login-wrapper {
-  position: relative;
-  z-index: 1;
-  width: 520px;
-  height: 576px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(128, 128, 128, 0.8);
-  border-radius: 40px;
-  padding: 70px 60px;
 }
 
 /* 에러 메시지 박스 설정 */
@@ -265,6 +259,9 @@ const checkPassword = async () => {
   justify-content: center;
 }
 
+.introduction {
+  color: #fff;
+}
 
 /* Kakao 로그인 버튼 설정 */
 .kakao-login-btn {
@@ -276,8 +273,8 @@ const checkPassword = async () => {
   align-items: center;
   justify-content: center;
   background-color: #FFEA00;
-  margin-bottom: 12px;
-  border-radius: 10px;
+  margin-bottom: 1vh;
+  border-radius: 1.4vh;
 }
 
 /* Google 로그인 버튼 설정 */
@@ -290,8 +287,8 @@ const checkPassword = async () => {
   align-items: center;
   justify-content: center;
   background-color: #fff;
-  margin-bottom: 12px;
-  border-radius: 10px;
+  margin-bottom: 1vh;
+  border-radius: 1.4vh;
 }
 
 .naver-login-btn {
@@ -303,7 +300,7 @@ const checkPassword = async () => {
   align-items: center;
   justify-content: center;
   background-color: #03C75A;
-  border-radius: 10px;
+  border-radius: 1.4vh;
 }
 
 .v-text-field input {
