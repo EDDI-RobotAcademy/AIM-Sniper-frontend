@@ -12,16 +12,13 @@
   </v-app>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-import NavigationBar from '~/navigationBar/pages/NavigationMenuBar.vue'
+<script setup>
+import { defineComponent } from 'vue';
+import NavigationBar from '~/navigationBar/pages/NavigationMenuBar.vue';
+import { useCompanyReportStore } from './companyReport/stores/companyReportStore';
 
-export default defineComponent({
-  name: 'IndexPage',
-  components: {
-    NavigationBar
-  }
-})
+const companyReportStore = useCompanyReportStore()
+companyReportStore.requestCompanyReportListToDjango()
 </script>
 
 <style>
