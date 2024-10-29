@@ -26,10 +26,10 @@
     <v-btn text @click="goToProductList" class="btn-text">
       COMPANY REPORT
     </v-btn>
-    <!-- <v-btn text @click="goToAiInterviewPage" class="btn-text">
+    <v-btn text @click="goToLlmTestPage" class="btn-text">
       AI INTERVIEW
-    </v-btn> -->
-    <v-menu>
+    </v-btn>
+    <!-- <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="btn-text" style="margin-right: 14px">
           <b>AI Interview</b>
@@ -40,7 +40,7 @@
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-menu>
+    </v-menu> -->
 
     <v-spacer></v-spacer>
 
@@ -137,10 +137,10 @@ const myPageItems = ref([
 ]);
 
 const aiInterviewPageList = ref([
-  {
-    title: "대화형",
-    action: () => goToAiInterviewPage(),
-  },
+  // {
+  //   title: "대화형",
+  //   action: () => goToAiInterviewPage(),
+  // },
   {
     title: "단일 질문 노출형",
     action: () => goToLlmTestPage(),
