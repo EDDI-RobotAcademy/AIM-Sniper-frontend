@@ -121,7 +121,7 @@
       </v-card-text>
     </v-card>
 
-    <v-row class="report-loader" justify="center" align="center">
+    <v-row v-else-if="companyInfo" class="report-loader" justify="center" align="center">
       <v-col cols="auto">
         <div class="typewriter ml-10">
           <div class="slide"><i></i></div>
