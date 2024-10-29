@@ -7,7 +7,6 @@
             <h2 class="section-title">전체 보고서</h2>
           </v-col>
         </v-row>
-
         <!-- 기업 필터 -->
         <v-row>
           <v-col cols="12">
@@ -57,36 +56,7 @@
           </v-col>
         </v-row>
       </div>
-
-      <!-- <v-row class="justify-center align-center mt-15 mb-15">
-        <v-col
-          v-for="(companyReport, index) in topNCompanyReportList"
-          :key="index"
-          cols="12"
-          sm="4"
-          md="3"
-          lg="2"
-        >
-          <div class="popular-company">
-            <div class="border-top"></div>
-            <span><h5>AI - Report 추천</h5></span>
-            <div class="img">
-              <img
-                :src="getImageUrl(companyReport.companyReportTitleImage)"
-                alt="Dynamic Image"
-              />
-            </div>
-            <span>{{ companyReport.companyReportName }}</span>
-            <p class="price">✨조회 Top {{ index + 1 }}✨</p>
-            <button
-              @click="goToCompanyReportReadPage(companyReport.companyReportId)"
-            >
-              click
-            </button>
-          </div>
-        </v-col>
-      </v-row> -->
-
+      <!-- 기업 리스트업 -->
       <v-row
         class="companyReport-container"
         v-if="
@@ -132,7 +102,7 @@
           </v-card>
         </v-col>
       </v-row>
-
+      <!-- 로딩 화면 -->
       <v-row v-else-if="allCompanyReportListVisible" class="report-loader" justify="center" align="center">
         <v-col cols="auto">
           <div class="typewriter ml-10">
@@ -143,6 +113,7 @@
           <p class="text-center mt-5">기업 요약을 만들고 있습니다</p>
         </v-col>
       </v-row>
+      <!-- 페이지네이션 -->
       <v-row v-if="filteredCompanyReportList.length > itemsPerPage">
         <v-col cols="12" class="text-center">
           <v-pagination
@@ -180,23 +151,16 @@ const itemsPerPage = ref(30);
 // 필터링 및 검색 관련 변수
 const selectedKeywords = ref([]);
 const keywords = ref([ "플랫폼", "정보보안", "빅데이터", "소프트웨어", "하드웨어", "클라우드", "컨설팅", "헬스케어", "메타버스", "인프라", "게임", "의료", "AI", "디스플레이", "마케팅/광고", "영상 분석", "네트워크", "금융지원",]);
-const categories = ref(["전체", "IT", "플랫폼", "은행"]);
-const selectedCategory = ref("전체");
 const searchQuery = ref("");
-const isSidebarOpen = ref(false);
 const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
-const purchase = ref(false);
 const topN = ref(3);
 const topList = ref([]);
 const topNCompanyReportList = ref([]);
 
 onMounted(async () => {
-  // 전체 보고서 가져오기
-  await companyReportStore.requestCompanyReportListToDjango();
-
   // topN ID 가져오기
   const response =
     await companyReportStore.requestTopNCompanyReportListToDjango(topN.value);
@@ -215,37 +179,12 @@ onMounted(async () => {
 const filteredCompanyReportList = computed(() => {
   let reports = companyReportStore.companyReportList;
 
-  // 키워드 필터링 - selectedKeywords가 비어있거나 첫 번째 값이 "전체"인 경우 전체 보고서를 반환
-  if (selectedKeywords.value.length > 0 && selectedKeywords.value.length == 0) {
-    reports = reports.filter((report) => {
-      if (report.keyword) {
-        const keywordsArray = report.keyword.split(",");
-        return selectedKeywords.value.some((keyword) =>
-          keywordsArray.includes(keyword)
-        );
-      }
-      return false;
-    });
-  }
-
-  // 카테고리 필터링
-  if (selectedCategory.value !== "전체") {
-    reports = reports.filter((report) => {
-      const categories = Array.isArray(report.categories)
-        ? report.categories
-        : report.categories
-        ? report.categories.split(",")
-        : [];
-      return categories.includes(selectedCategory.value);
-    });
-  }
-
   // 검색어 필터링
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     reports = reports.filter((report) =>
-      report.companyReportName.toLowerCase().includes(query)
-    );
+    report.companyReportName.toLowerCase().includes(query)
+  );  
   }
 
   // 키워드와의 일치 개수에 따라 정렬
@@ -268,16 +207,7 @@ const filteredCompanyReportList = computed(() => {
     // 일치 개수를 기준으로 내림차순 정렬
     reports.sort((a, b) => b.matchCount - a.matchCount);
   }
-
   return reports;
-});
-
-const paginatedCompanyReports = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
-  return filteredCompanyReportList.splice(
-    startIndex,
-    startIndex + itemsPerPage.value
-  );
 });
 
 // 페이지네이션 처리된 보고서 리스트 계산
@@ -288,11 +218,6 @@ const paginatedCompanyReportList = computed(() => {
     : [];
   return list.slice(startIndex, startIndex + itemsPerPage.value);
 });
-
-// 사이드바 토글
-function toggleSidebar() {
-  isSidebarOpen.value = true;
-}
 
 // 필터 토글
 function toggleFilter() {
@@ -316,13 +241,7 @@ function clearSelectedKeywords() {
 
 // 페이지 이동
 function goToCompanyReportReadPage(companyReportId) {
-  const email = sessionStorage.getItem("email");
   router.push(`/companyReport/read/${companyReportId}`);
-
-  if (!email) {
-    // [TODO] 로그인&구매 시 상품 보여주기
-    // return;
-  }
   
   // if (googleAuthenticationStore.isGoogleAdmin || authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin || accountStore.isNormalAdmin ) {
     //   return
@@ -481,75 +400,6 @@ useHead({
 
 .companyReport-image {
   border-bottom: 1px solid #f5f5f5;
-}
-
-.popular-company {
-  width: 10vw;
-  height: 200px;
-  background: #0a28b0;
-  margin-top: 0;
-  margin-bottom: 0;
-  border-radius: 15px;
-  box-shadow: 1px 3px 30px 3px #1f199d6b;
-  position: relative; /* 레이저를 감싸는 요소의 위치 지정 */
-}
-
-.popular-company .border-top {
-  width: 70%;
-  height: 3%;
-  background: #8094f4;
-  margin: auto;
-  border-radius: 0px 0px 15px 15px;
-}
-
-.popular-company span {
-  font-weight: 600;
-  color: white;
-  text-align: center;
-  display: block;
-  padding-top: 10px;
-  font-size: 16px;
-}
-
-.popular-company .price {
-  font-weight: 400;
-  color: white;
-  display: block;
-  text-align: center;
-  padding-top: 3px;
-  font-size: 12px;
-}
-
-.popular-company .img {
-  width: 120px;
-  height: 70px;
-  /* background: #8094F4; */
-  border-radius: 15px;
-  margin: auto;
-  margin-top: 25px;
-}
-
-.popular-company button {
-  padding: 8px 15px;
-  display: block;
-  margin: auto;
-  border-radius: 8px;
-  border: none;
-  margin-top: 20px;
-  background: #8094f4;
-  color: white;
-  font-weight: 600;
-}
-
-.popular-company button:hover {
-  background: #534bf3;
-}
-.keyword-btn {
-  border-radius: 8px;
-  color: #1e68d1;
-  padding: 4px 12px;
-  width: auto;
-  height: 3vh;
 }
 
 .section-title {
