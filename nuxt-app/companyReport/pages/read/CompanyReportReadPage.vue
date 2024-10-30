@@ -14,27 +14,24 @@
                 </template>
               </v-img>
             </v-col>
-
+            <!-- 보고서 상품 정보 -->
             <v-col cols="9" md="6" class="d-flex flex-column justify-center">
-
               <v-row>
                 <v-col cols="12" md="5">
-                  <!-- 이 상품의 태그 -->
+                  <!-- 산업 키워드 태그 -->
                   <v-row>
                     <v-btn v-for="(keyword, index) in companyReport.keyword.split(',')" :key="index" outlined rounded
                       class="keyword-btn" style="pointer-events: none;">
                       {{ keyword.trim() }}
                     </v-btn>
-
                   </v-row>
                 </v-col>
               </v-row>
-
+              <!-- 제목 및 일반 정보 -->
               <v-row>
                 <v-col>
-                  <h2> {{ companyInfo.company_name }} 기업 분석 리포트 </h2>
+                  <h2> {{ companyInfo.company_name }} 기업•사업 분석 리포트 </h2>
                 </v-col>
-
                 <v-col cols="3">
                   <p class="companyReport-price">
                     {{ companyReport.companyReportPrice }}
@@ -45,7 +42,7 @@
                   </p>
                 </v-col>
               </v-row>
-
+              <!-- 구매 및 장바구니 버튼 -->
               <v-row style="margin-bottom: 20px;">
                 <v-btn v-if="!(isAdmin)" @click="onPurchase" class="order-action-button"
                   style="margin-right: 10px;">
@@ -66,7 +63,8 @@
 
           <v-divider class="my-4"></v-divider>
 
-
+          <!-- 기업/사업 리포트 -->
+          <!-- 개요 -->
           <v-row ref="overviewRow" class="overview" justify="center">
             <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
@@ -96,11 +94,10 @@
               </v-row>
             </v-col>
           </v-row>
-
           <div :style="{ width: maxWidth + 'px', margin: '0 auto' }">
             <v-divider class="my-2"></v-divider>
           </div>
-
+          <!-- 재무정보 -->
           <v-row class="finance" justify="center">
             <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
               <div ref="chartRef"></div>
@@ -126,6 +123,7 @@
       </v-card-text>
     </v-card>
 
+    <!-- 로딩 -->
     <v-row v-else-if="companyInfo" class="report-loader" justify="center" align="center">
       <v-col cols="auto">
         <div class="typewriter ml-10">
@@ -140,14 +138,13 @@
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
       <v-col cols="auto">
-        <!-- <router-link :to="{ name: 'CompanyReportListPage' }" class="router-link no-underline"> -->
-        <v-btn class="return-action-button">
+        <v-btn class="return-action-button" @click="$router.push('/companyReport/list')">
           <v-icon left>mdi-arrow-left</v-icon>
           <span>목록으로 돌아가기</span>
         </v-btn>
-        <!-- </router-link> -->
       </v-col>
 
+      <!-- 관리자 기능 -->
       <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
         <div class="sign">
           <svg viewBox="0 0 16 16" class="bi bi-trash3-fill" fill="currentColor" height="18" width="18"
@@ -194,7 +191,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCompanyReportStore } from "../../stores/companyReportStore";
 import * as d3 from 'd3';
@@ -364,10 +361,6 @@ const deleteCompanyReport = async () => {
   alert("보고서가 삭제되었습니다.")
   router.push("/companyReport/list")
 }
-
-async function fetchCompanyReportData(companyReportId) {
-  await companyReportStore.requestCompanyReportToDjango(companyReportId);
-};
 
 async function getFinanceData() {
   let data = await companyReportStore.requestCompanyReportFinanceToDjango(companyReport.value.companyReportName);
@@ -620,7 +613,8 @@ useHead({
 
 <style scoped>
 .template {
-  margin-top: 10vh;
+  margin-top: 13vh;
+  margin-bottom: 5vh;
 }
 
 svg {
@@ -933,6 +927,7 @@ a:active {
   margin: 10px 0 10px 10px;
 }
 
+/* 로딩 */
 .report-loader {
   margin-top: 130px;
   color: #646464;
