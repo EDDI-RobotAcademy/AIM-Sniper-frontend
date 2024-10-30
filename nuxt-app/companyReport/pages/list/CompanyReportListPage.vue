@@ -73,7 +73,7 @@
         >
           <v-card
             class="companyReport-card"
-            @click="goToCompanyReportReadPage(companyReport.companyReportId)"
+            @click="goToCompanyReportReadPage(companyReport.companyReportId, companyReport.companyReportName)"
             hover
             outlined
           >
@@ -241,8 +241,11 @@ function clearSelectedKeywords() {
 }
 
 // 페이지 이동
-function goToCompanyReportReadPage(companyReportId) {
-  router.push(`/companyReport/read/${companyReportId}`);
+function goToCompanyReportReadPage(companyReportId, companyReportName) {
+  router.push({
+    path: `/companyReport/read/${companyReportId}`,
+    query: { companyReportName: companyReportName },
+  });
   
   // 로그인한 일반 사용자의 상품 클릭 수 기록
   const email = sessionStorage.getItem("email");
