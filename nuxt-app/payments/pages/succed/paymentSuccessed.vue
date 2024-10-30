@@ -22,9 +22,18 @@
                 <button class="button p-grid-col5"
                     onclick="location.href='https://docs.tosspayments.com/guides/payment/integration';">연동 문서</button>
                 <button class="button p-grid-col5" onclick="location.href='https://discord.gg/A4fRFXQhRu';"
-                    style="background-color: #e8f3ff; color: #1b64da">실시간 문의</button>
+                    style="background-color: #e8f3ff; color: #1b64da">실시간 문의</button>                
+            </div>
+
+            <div>
+                <!-- 주문 목록 페이지로 이동하는 버튼 -->
+                <button class="button p-grid-col5" @click="goToOrderList"
+                    style="background-color: #d1e7ff; color: #0a58ca; margin-left: 10px;">주문 목록 보기</button>
             </div>
         </div>
+            
+        
+
         <div class="box_section" style="width: 600px; text-align: left">
             <b>Response Data :</b>
             <div id="response" style="white-space: initial">
@@ -35,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useRuntimeConfig } from "nuxt/app";
 
@@ -83,6 +92,10 @@ export default defineComponent({
             }
         }
 
+        function goToOrderList() {
+            router.push('/order/list')
+        }
+
         onMounted(async () => {
             const requestData = {
                 orderId: route.query.orderId,
@@ -96,10 +109,18 @@ export default defineComponent({
             secretKey,
             confirmed,
             jsonData,
-
             confirmPayment,
             confirm,
+            goToOrderList
         }
     }
 })
 </script>
+
+
+<style scoped>
+.box_section {    
+    margin-top: 10%;
+    margin-left: 42%;    
+}
+</style>
