@@ -34,3 +34,12 @@ export default defineComponent({
     }
 })
 </script>
+
+
+
+<style scoped>
+.box_section {    
+    margin-top: 10%;
+    margin-left: 42%;    
+}
+</style>

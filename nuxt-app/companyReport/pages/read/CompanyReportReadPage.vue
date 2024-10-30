@@ -257,37 +257,36 @@ function checkAuthenticated() {
 }
 
 const onPurchase = async () => {
-
   try {
     const payload = {
       email: email.value,
       companyReportId: companyReportId.value,
-    }
-    const isDuplicatedOrderItem = await orderStore.requestOrderItemDuplicationCheckToDjango(payload)
+    };
+    const checkOrdersItemDuplication = await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
 
-    if (isDuplicatedOrderItem) {
-      alert("이미 구매하신 보고서입니다.")
+    if (checkOrdersItemDuplication) {
+      alert("이미 구매하신 보고서입니다.");
     } else {
+      // 이미 구매하지 않은 경우에만 다이얼로그 열기
+      isCheckoutDialogVisible.value = true;
       try {
-        isCheckoutDialogVisible.value = true
         const clickPayload = {
           email: email.value,
           companyReport_id: companyReportId.value,
           purchase: purchase.value,
-        }
-        await userLogStore.requestCountClickToDjango(clickPayload)
+        };
+        await userLogStore.requestCountClickToDjango(clickPayload);
+
         const orderPayload = {
           email: email.value,
           companyReportId: Number(companyReportId.value),
           companyReportPrice: Number(companyReport.value.companyReportPrice),
-        }
-        // console.log("orderPayload", orderPayload)
-        await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload)
+        };
 
+        await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload);
         await cartStore.requestDeleteCartItemToDjango({
           companyReportId: [companyReportId.value],
-        })
-
+        });
       } catch (error) {
         console.log("상품 구매 중 에러 발생:", error);
       }
@@ -295,7 +294,8 @@ const onPurchase = async () => {
   } catch (error) {
     console.log("이미 구매한 상품인지 확인 중 에러 발생:", error);
   }
-}
+};
+
 
 const onAddToCartAndAsk = async () => {
   try {
@@ -304,12 +304,12 @@ const onAddToCartAndAsk = async () => {
         companyReportId: companyReportId.value,
     };
     
-    const isDuplicatedOrderItem =
+    const checkOrdersItemDuplication =
       await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
     const isDuplicatedCartItem =
       await cartStore.requestCartItemDuplicationCheckToDjango(payload);
 
-    if (isDuplicatedOrderItem) {
+    if (checkOrdersItemDuplication) {
       alert("이미 구매하신 보고서입니다.");
     } else if (isDuplicatedCartItem) {
       alert("장바구니에 있는 보고서입니다.");
@@ -353,6 +353,7 @@ const checkOrdersItemDuplication = async () => {
   }
 }
 
+
 const deleteCompanyReport = async () => {
   await companyReportStore.requestDeleteCompanyReportToDjango(companyReportId.value)
   alert("보고서가 삭제되었습니다.")
@@ -384,8 +385,12 @@ const getImageUrl = (imageName) => {
 };
 
 function confirmCheckout() {
-  alert("구매가 완료되었습니다.");
+  //alert("구매가 완료되었습니다.");
   isCheckoutDialogVisible.value = false
+
+  // 해당 보고서의 금액을 amount 변수로 저장
+  const amount = companyReport.value.companyReportPrice;
+  router.push({ path: '/payments/test/page', query: { amount } });  // 결제 페이지 경로로 이동  
 }
 
 function goToCartList() {
