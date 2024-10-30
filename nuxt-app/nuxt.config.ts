@@ -82,6 +82,7 @@ export default defineNuxtConfig({
     './googleAuthentication/nuxt.config.ts',
     './cart/nuxt.config.ts',
     './order/nuxt.config.ts',
+    "./payments/nuxt.config.ts",
   ],
   css: [
     'vuetify/styles',
@@ -110,6 +111,7 @@ export default defineNuxtConfig({
     '~/googleAuthentication/index.ts',
     '~/cart/index.ts',
     '~/order/index.ts',
+    "~/payments/index.ts",
   ],
   components: {
     dirs: [
@@ -129,6 +131,8 @@ export default defineNuxtConfig({
       AWS_S3_IDENTITY_POOL: process.env.VUE_APP_AWS_S3_IDENTITY_POOL_ID,
       VUE_APP_AWS_S3_BUCKET_NAME:process.env.VUE_APP_AWS_S3_BUCKET_NAME,
       GA_MEASUREMENT_ID:process.env.VUE_APP_VUE_APP_GA_MEASUREMENT_ID,
+      TOSS_CLIENT_KEY : process.env.TOSS_CLIENT_KEY,
+			TOSS_SECRET_KEY : process.env.TOSS_SECRET_KEY,
     }
   },
 
