@@ -203,6 +203,8 @@ import { useOrderStore } from '../../../order/stores/orderStore';
 
 const route = useRoute();
 const router = useRouter();
+const companyReportName = route.query.companyReportName || '기업';
+
 const companyReportStore = useCompanyReportStore();
 const accountStore = useAccountStore();
 const authenticationStore = useAuthenticationStore();
@@ -232,7 +234,7 @@ const financeRef = ref(null);
 
 // 계정 변수
 const email = ref(null);
-const isAdmin = ref(false); // true면 관리자
+const isAdmin = ref(false);         // true면 관리자
 const isAuthenticated = ref(false); // true면 로그인한 사용자
 
 const companyReport = ref(null);
@@ -584,29 +586,26 @@ onMounted(async () => {
   checkAuthenticated()
 
   email.value = sessionStorage.getItem("email")
-
-  selectedCompanyName.value = companyInfo.value.company_name
-  
-  useHead({
-    title: `${selectedCompanyName.value}의 핵심정보 분석 및 요약 | `,
-    meta: [
-      {
-        name: 'description',
-        content: `${selectedCompanyName.value}에 대한 기업의 사업 내용, 공략 포인트, 재무제표, 핵심만 요약했습니다. 전자공시시스템(DART) 기반 기업 핵심 정보 분석 🎯AIM에서 확인해보세요.`,
-      },
-      {
-        hid: 'keywords',
-        name: 'keywords',
-        content: `${selectedCompanyName.value}, 기업 분석, ${selectedCompanyName.value} 기업 분석, ${selectedCompanyName.value} 사업 내용, ${selectedCompanyName.value} 기업 요약, ${selectedCompanyName.value} 주사업, ${selectedCompanyName.value} 회사 소개, ${selectedCompanyName.value} 기업 소개, ${selectedCompanyName.value} 자소서, ${selectedCompanyName.value} 면접, ${selectedCompanyName.value} 사업 내용, 취업 준비, AIM, AIM Sniper, AIM 기업 분석, AIM 기업 요약`,
-      },
-    ],
-  });
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', calculateMaxWidth);
 });
 
+useHead({
+  title: `${companyReportName}의 핵심정보 분석 및 요약 | `,
+  meta: [
+    {
+      name: 'description',
+      content: `${companyReportName}에 대한 기업의 사업 내용, 공략 포인트, 재무제표, 핵심만 요약했습니다. 전자공시시스템(DART) 기반 기업 핵심 정보 분석 🎯AIM에서 확인해보세요.`,
+    },
+    {
+      hid: 'keywords',
+      name: 'keywords',
+      content: `${companyReportName}, 기업 분석, ${companyReportName} 기업 분석, ${companyReportName} 사업 내용, ${companyReportName} 기업 요약, ${companyReportName} 주사업, ${companyReportName} 회사 소개, ${companyReportName} 기업 소개, ${companyReportName} 자소서, ${companyReportName} 면접, ${companyReportName} 사업 내용, 취업 준비, AIM, AIM Sniper, AIM 기업 분석, AIM 기업 요약`,
+    },
+  ],
+});
 </script>
 
 <style scoped>
