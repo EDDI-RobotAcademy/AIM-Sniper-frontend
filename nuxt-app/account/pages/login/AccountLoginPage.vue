@@ -23,8 +23,8 @@
           다른 간편로그인을 시도해 보세요.
         </div>
 
-        <v-responsive class="mx-auto" min-width="300">
-          <v-form v-model="form" @submit.prevent="onSubmit">
+        <!-- <v-responsive class="mx-auto" min-width="300">
+          <v-form v-model="form" @submit.prevent="onSubmit"> -->
             <!-- <v-text-field
                           label="이메일 주소"
                           variant="solo"
@@ -59,8 +59,8 @@
                       >
                           <b>로그인</b>
                       </v-btn> -->
-          </v-form>
-        </v-responsive>
+          <!-- </v-form>
+        </v-responsive> -->
 
         <!-- 회원가입 버튼 -->
         <!-- <v-btn
@@ -74,7 +74,7 @@
 
         <!-- AIm 한줄 소개 -->
         <div class="introduction">
-          <p>기업 분석과 AI 모의면접 | 취업 준비는 AIM에서</p>
+          <p>기업 분석과&nbsp;AI 모의면접&nbsp;|&nbsp;취업 준비는 <b>AIM</b>에서</p>
         </div>
 
         <!-- 영역 구분선 -->
@@ -240,6 +240,22 @@ const checkPassword = async () => {
   background-position: center;
 }
 
+/* 로그인 박스 설정 */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 80vh;
+  height: 70vh;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 9vh;
+  padding: 0vh 8vh;
+  display: flex; /* Flexbox 활성화 */
+  justify-content: center; /* 수평 방향 중앙 정렬 */
+  align-items: center; /* 수직 방향 중앙 정렬 */
+  text-align: center;
+}
+
 /* 에러 메시지 박스 설정 */
 .login-error-box {
   background-color: rgb(255, 0, 0);
@@ -252,15 +268,36 @@ const checkPassword = async () => {
 /* 로그인 및 회원가입 버튼 설정 */
 .v-btn {
   width: 100%;
-  height: 48px;
-  margin: 10px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 50px;
+  margin: 1.3vh auto;
 }
 
 .introduction {
-  color: #fff;
+  color: rgb(255, 255, 255);
+  word-break: break-word;
+}
+
+
+@media (max-width: 768px) {
+  .v-btn {
+    height: 45px; /* 모바일 환경에서는 높이를 줄임 */
+  }
+  .login_logo {
+    height: 19vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .v-btn {
+    height: 33px; /* 작은 모바일 환경에서는 더 작게 설정 */
+  }
+  .login_logo {
+    height: 13vh;
+  }
+  .introduction {
+  white-space: pre-wrap;
+}
+
 }
 
 /* Kakao 로그인 버튼 설정 */
