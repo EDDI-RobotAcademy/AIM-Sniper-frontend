@@ -110,13 +110,18 @@
           <div class="width-divider my-2" :style="{ width: maxWidth + 'px', margin: '0 auto' }">
             <v-divider></v-divider>
           </div>
-
+          <!-- 요약 -->
           <v-row :style="{ width: financeWidth + 'px' }" class="summary my-5 d-flex justify-center align-center">
             <v-col cols="auto">
               <span v-html="companyInfo.business_summary"></span>
             </v-col>
           </v-row>
-
+          <!-- 매출액 표 -->
+          <v-row class="revenue-table my-5 d-flex justify-center align-center">
+            <v-col cols="auto">
+              <span v-html="companyInfo.revenue_table" class="table-content"></span>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card-text>
     </v-card>
@@ -890,6 +895,23 @@ a:active {
 
 .overview-content span b {
   font-size: 1.rem;
+}
+/* 사업별 매출액 테이블 */
+.table-content :deep(table) {
+  width: 90%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.table-content :deep(th),
+.table-content :deep(td) {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table-content :deep(th) {
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 .summary {
