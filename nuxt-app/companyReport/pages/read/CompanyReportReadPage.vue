@@ -45,10 +45,10 @@
             <v-col cols="3" class="d-flex align-end justify-end">
               <p class="companyReport-price">
                 <span class="original-price">
-                  {{ companyReport.companyReportPrice }}
+                  200
                 </span>
                 <span> → </span>
-                0
+                {{ companyReport.companyReportPrice }}
                 <span class="currency">원</span>
               </p>
             </v-col>
@@ -187,8 +187,26 @@
               <v-card class="login-card">
                 <v-card-text class="text-center">
                   <h3>로그인 후 전체 리포트를 확인하실 수 있습니다</h3>
+                  <p class="mt-3">✨오픈 베타 서비스 이벤트✨</p>
+                  <p>모든 리포트를 무료로 확인하실 수 있습니다!</p>
                   <v-btn color="primary" class="mt-4" @click="navigateToLogin">
                     로그인하러 가기
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </div>
+
+            <!-- 구매 유도 오버레이 -->
+            <div v-if="!isPurchased && isAuthenticated" class="login-overlay">
+              <v-card class="login-card">
+                <v-card-text class="text-center">
+                  <h3>구매 후 전체 리포트를 확인하실 수 있습니다</h3>
+                  <p class="mt-3">✨오픈 베타 서비스 이벤트✨</p>
+                  <p class="mt-3"><u>한 step만 더</u> 따라오주세요!</p>
+                  <p>구매 버튼만 누르셔도 확인 가능합니다!</p>
+                  <p>결제창이 나오지만 <u>실제로 결제는 되지 않습니다</u></p>
+                  <v-btn color="primary" class="mt-4" @click="navigateToPurchase">
+                    구매하러 가기
                   </v-btn>
                 </v-card-text>
               </v-card>
@@ -376,6 +394,10 @@ async function checkPurchased() {
 
 function navigateToLogin() {
   router.push('/account/login')
+}
+
+function navigateToPurchase() {
+  router.push('/payments/test/page')
 }
 
 const onPurchase = async () => {
