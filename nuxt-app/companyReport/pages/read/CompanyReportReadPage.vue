@@ -401,7 +401,8 @@ function navigateToLogin() {
 }
 
 function navigateToPurchase() {
-  router.push('/payments/test/page')
+  const amount = companyReport.value.companyReportPrice;
+  router.push({ path: "/payments/test/page", query: { amount } }); // 결제 페이지 경로로 이동
 }
 
 const onPurchase = async () => {
