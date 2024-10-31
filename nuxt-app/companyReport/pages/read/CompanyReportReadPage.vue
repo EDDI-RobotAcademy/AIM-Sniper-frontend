@@ -445,28 +445,6 @@ const onAddToCartAndAsk = async () => {
   }
 };
 
-// [TODO] 기능 확인
-const checkOrdersItemDuplication = async () => {
-  try {
-    const isDuplicate =
-      await orderStore.requestOrdersItemDuplicationCheckToDjango({
-        companyReportId: companyReport.companyReportId,
-      });
-
-    if (isDuplicate) {
-      ordersItemErrorMessages.value = ["이 nickname은 이미 사용중입니다!"];
-      isNicknameValid.value = false;
-    } else {
-      nicknameErrorMessages.value = [];
-      isNicknameValid.value = true;
-    }
-  } catch (error) {
-    alert("닉네임 중복 확인에 실패했습니다!");
-    isNicknameValid.value = false;
-  }
-}
-
-
 const deleteCompanyReport = async () => {
   await companyReportStore.requestDeleteCompanyReportToDjango(
     companyReportId.value
