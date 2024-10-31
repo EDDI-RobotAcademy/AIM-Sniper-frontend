@@ -1,92 +1,113 @@
 <template>
   <v-container class="template">
-    <v-card v-if="companyReport">
-      <v-card-text>
-        <v-container>
+    <v-container
+      v-if="companyReport"
+      class="d-flex flex-column justify-center ml-10" style="margin: 0 auto;">
+      <v-row>
+        <v-col cols="3" class="d-flex justify-end" style="margin-right: 20px">
+          <v-img
+            :src="getImageUrl(companyReport.companyReportTitleImage)"
+            class="custom-img grey lighten-2"
+            aspect-ratio="1"
+            style="max-width: 150px; height: 150px"
+          >
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular indeterminate color="grey lighten-5" />
+              </v-row>
+            </template>
+          </v-img>
+        </v-col>
+        <!-- 보고서 상품 정보 -->
+        <v-col cols="9" md="6" class="d-flex flex-column justify-center">
           <v-row>
-            <v-col cols="3" class="d-flex justify-end">
-              <v-img :src="getImageUrl(companyReport.companyReportTitleImage)" class="custom-img grey lighten-2"
-                aspect-ratio="1" style="max-width: 150px; height: 150px;">
-                <template v-slot:placeholder>
-                  <v-row class="fill-height ma-0" align="center" justify="center">
-                    <v-progress-circular indeterminate color="grey lighten-5" />
-                  </v-row>
-                </template>
-              </v-img>
-            </v-col>
-            <!-- 보고서 상품 정보 -->
-            <v-col cols="9" md="6" class="d-flex flex-column justify-center">
+            <v-col cols="12">
+              <!-- 산업 키워드 태그 -->
               <v-row>
-                <v-col cols="12" md="5">
-                  <!-- 산업 키워드 태그 -->
-                  <v-row>
-                    <v-btn v-for="(keyword, index) in companyReport.keyword.split(',')" :key="index" outlined rounded
-                      class="keyword-btn" style="pointer-events: none;">
-                      {{ keyword.trim() }}
-                    </v-btn>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <!-- 제목 및 일반 정보 -->
-              <v-row>
-                <v-col>
-                  <h2> {{ companyInfo.company_name }} 기업•사업 분석 리포트 </h2>
-                </v-col>
-                <v-col cols="3">
-                  <p class="companyReport-price">
-                    {{ companyReport.companyReportPrice }}
-                    <span class="original-price">{{
-                      companyReport.originalPrice
-                    }}</span>
-                    <span class="currency">원</span>
-                  </p>
-                </v-col>
-              </v-row>
-              <!-- 구매 및 장바구니 버튼 -->
-              <v-row style="margin-bottom: 20px;">
-                <v-btn v-if="!(isAdmin)" @click="onPurchase" class="order-action-button"
-                  style="margin-right: 10px;">
-                  <v-icon v-if="!(isAdmin)" left>mdi-cart</v-icon>
-                  구매하기
-                </v-btn>
-
-                <v-btn v-if="!(isAdmin)"                 
-                @click="onAddToCartAndAsk"
-                class="cart-action-button"
-                  >
-                  <v-icon left>mdi-cart-plus</v-icon>
-                  장바구니 담기
+                <v-btn
+                  v-for="(keyword, index) in companyReport.keyword.split(',')"
+                  :key="index"
+                  outlined
+                  rounded
+                  class="keyword-btn"
+                  style="pointer-events: none; margin-right: 1.5vh"
+                >
+                  {{ keyword.trim() }}
                 </v-btn>
               </v-row>
             </v-col>
           </v-row>
+          <!-- 제목 및 일반 정보 -->
+          <v-row>
+            <v-col cols="9">
+              <h2>{{ companyInfo.company_name }} 기업•사업 분석 리포트</h2>
+            </v-col>
+            <v-col cols="3" class="d-flex align-end justify-end">
+              <p class="companyReport-price">
+                <span class="original-price">
+                  {{ companyReport.companyReportPrice }}
+                </span>
+                <span> → </span>
+                0
+                <span class="currency">원</span>
+              </p>
+            </v-col>
+          </v-row>
+          <!-- 구매 및 장바구니 버튼 -->
+          <v-row style="margin-bottom: 20px">
+            <v-btn
+              v-if="!isAdmin"
+              @click="onPurchase"
+              class="order-action-button"
+              style="margin-right: 10px"
+            >
+              <v-icon v-if="!isAdmin" left>mdi-cart</v-icon>
+              구매하기
+            </v-btn>
 
-          <v-divider class="my-4"></v-divider>
+            <v-btn
+              v-if="!isAdmin"
+              @click="onAddToCartAndAsk"
+              class="cart-action-button"
+            >
+              <v-icon left>mdi-cart-plus</v-icon>
+              장바구니 담기
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-divider class="my-4"></v-divider>
 
+    <v-card v-if="companyReport" class="report-container">
+      <v-card-text>
+        <v-container>
           <!-- 기업/사업 리포트 -->
           <!-- 개요 -->
           <v-row ref="overviewRow" class="overview" justify="center">
-            <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
+            <v-col
+              ref="overviewRef"
+              cols="auto"
+              class="overview-content mb-2 mt-2"
+            >
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
-                  <span>
-                    <b>주소</b> {{ companyInfo.address }}
-                  </span>
+                  <span> <b>주소</b> {{ companyInfo.address }} </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
-                  <span>
-                    <b>대표이사</b> {{ companyInfo.ceo_name }}
-                  </span>
+                  <span> <b>대표이사</b> {{ companyInfo.ceo_name }} </span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
-                  <span>
-                    <b>설립연도</b> {{ companyInfo.est_date }}
-                  </span>
+                  <span> <b>설립연도</b> {{ companyInfo.est_date }} </span>
                 </v-col>
                 <v-col cols="auto">
                   <span>
                     <b>웹사이트 </b>
-                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
+                    <a
+                      :href="'https://' + companyInfo.website"
+                      target="_blank"
+                      rel="noopener"
+                    >
                       {{ companyInfo.website }}
                     </a>
                   </span>
@@ -99,16 +120,26 @@
           </div>
           <!-- 재무정보 -->
           <v-row class="finance" justify="center">
-            <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
+            <v-col
+              ref="financeRef"
+              cols="auto"
+              class="my-5 d-flex justify-center align-center"
+            >
               <div ref="chartRef"></div>
             </v-col>
           </v-row>
 
-          <div class="width-divider my-2" :style="{ width: maxWidth + 'px', margin: '0 auto' }">
+          <div
+            class="width-divider my-2"
+            :style="{ width: maxWidth + 'px', margin: '0 auto' }"
+          >
             <v-divider></v-divider>
           </div>
           <!-- 요약 -->
-          <v-row :style="{ width: financeWidth + 'px' }" class="summary my-5 d-flex justify-center align-center">
+          <v-row
+            :style="{ width: financeWidth + 'px' }"
+            class="summary my-5 d-flex justify-center align-center"
+          >
             <v-col cols="auto">
               <span v-html="companyInfo.business_summary"></span>
             </v-col>
@@ -116,7 +147,10 @@
           <!-- 매출액 표 -->
           <v-row class="revenue-table my-5 d-flex justify-center align-center">
             <v-col cols="auto">
-              <span v-html="companyInfo.revenue_table" class="table-content"></span>
+              <span
+                v-html="companyInfo.revenue_table"
+                class="table-content"
+              ></span>
             </v-col>
           </v-row>
         </v-container>
@@ -124,7 +158,12 @@
     </v-card>
 
     <!-- 로딩 -->
-    <v-row v-else-if="companyInfo" class="report-loader" justify="center" align="center">
+    <v-row
+      v-else-if="companyInfo"
+      class="report-loader"
+      justify="center"
+      align="center"
+    >
       <v-col cols="auto">
         <div class="typewriter ml-10">
           <div class="slide"><i></i></div>
@@ -138,7 +177,10 @@
     <v-spacer></v-spacer>
     <v-row justify="center" class="mt-4">
       <v-col cols="auto">
-        <v-btn class="return-action-button" @click="$router.push('/companyReport/list')">
+        <v-btn
+          class="return-action-button"
+          @click="$router.push('/companyReport/list')"
+        >
           <v-icon left>mdi-arrow-left</v-icon>
           <span>목록으로 돌아가기</span>
         </v-btn>
@@ -147,11 +189,17 @@
       <!-- 관리자 기능 -->
       <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
         <div class="sign">
-          <svg viewBox="0 0 16 16" class="bi bi-trash3-fill" fill="currentColor" height="18" width="18"
-            xmlns="http://www.w3.org/2000/svg">
+          <svg
+            viewBox="0 0 16 16"
+            class="bi bi-trash3-fill"
+            fill="currentColor"
+            height="18"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
-              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5">
-            </path>
+              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
+            ></path>
           </svg>
         </div>
         <div class="text">Delete</div>
@@ -169,8 +217,15 @@
         <v-card-text> 정말 구매하시겠습니까? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="isCheckoutDialogVisible = false">취소</v-btn>
-          <v-btn color="blue darken-1" text @click="confirmCheckout">확인</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="isCheckoutDialogVisible = false"
+            >취소</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="confirmCheckout"
+            >확인</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -182,7 +237,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="isGoToCartListDialogVisible = false">취소</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="isGoToCartListDialogVisible = false"
+            >취소</v-btn
+          >
           <v-btn color="blue darken-1" text @click="goToCartList">확인</v-btn>
         </v-card-actions>
       </v-card>
@@ -191,21 +251,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted, watch, onBeforeUnmount } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useCompanyReportStore } from "../../stores/companyReportStore";
-import * as d3 from 'd3';
-import { useAccountStore } from '../../../account/stores/accountStore';
-import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
-import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
-import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
-import { useUserLogStore } from '../../../userLog/store/userLogStore';
-import { useCartStore } from '../../../cart/stores/cartStore';
-import { useOrderStore } from '../../../order/stores/orderStore';
+import * as d3 from "d3";
+import { useAccountStore } from "../../../account/stores/accountStore";
+import { useAuthenticationStore } from "../../../authentication/stores/authenticationStore";
+import { useNaverAuthenticationStore } from "../../../naverAuthentication/stores/naverAuthenticationStore";
+import { useGoogleAuthenticationStore } from "../../../googleAuthentication/stores/googleAuthenticationStore";
+import { useUserLogStore } from "../../../userLog/store/userLogStore";
+import { useCartStore } from "../../../cart/stores/cartStore";
+import { useOrderStore } from "../../../order/stores/orderStore";
 
 const route = useRoute();
 const router = useRouter();
-const companyReportName = route.query.companyReportName || '기업';
+const companyReportName = route.query.companyReportName || "기업";
 
 const companyReportStore = useCompanyReportStore();
 const accountStore = useAccountStore();
@@ -242,19 +302,23 @@ const isAuthenticated = ref(false); // true면 로그인한 사용자
 const companyReport = ref(null);
 
 function checkAdmin() {
-  if (authenticationStore.isKakaoAdmin ||
+  if (
+    authenticationStore.isKakaoAdmin ||
     naverAuthenticationStore.isNaverAdmin ||
     googleAuthenticationStore.isGoogleAdmin ||
-    accountStore.isNormalAdmin) {
-    isAdmin.value = true
+    accountStore.isNormalAdmin
+  ) {
+    isAdmin.value = true;
   }
 }
 
 function checkAuthenticated() {
-  if (authenticationStore.isAuthenticatedKakao ||
+  if (
+    authenticationStore.isAuthenticatedKakao ||
     naverAuthenticationStore.isAuthenticatedNaver ||
-    googleAuthenticationStore.isAuthenticatedGoogle) {
-    isAuthenticated.value = true
+    googleAuthenticationStore.isAuthenticatedGoogle
+  ) {
+    isAuthenticated.value = true;
   }
 }
 
@@ -264,7 +328,8 @@ const onPurchase = async () => {
       email: email.value,
       companyReportId: companyReportId.value,
     };
-    const checkOrdersItemDuplication = await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
+    const checkOrdersItemDuplication =
+      await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
 
     if (checkOrdersItemDuplication) {
       alert("이미 구매하신 보고서입니다.");
@@ -285,7 +350,9 @@ const onPurchase = async () => {
           companyReportPrice: Number(companyReport.value.companyReportPrice),
         };
 
-        await orderStore.requestCompanyReportReadToAddOrderToDjango(orderPayload);
+        await orderStore.requestCompanyReportReadToAddOrderToDjango(
+          orderPayload
+        );
         await cartStore.requestDeleteCartItemToDjango({
           companyReportId: [companyReportId.value],
         });
@@ -298,14 +365,13 @@ const onPurchase = async () => {
   }
 };
 
-
 const onAddToCartAndAsk = async () => {
   try {
     const payload = {
-        email: email.value,
-        companyReportId: companyReportId.value,
+      email: email.value,
+      companyReportId: companyReportId.value,
     };
-    
+
     const checkOrdersItemDuplication =
       await orderStore.requestOrderItemDuplicationCheckToDjango(payload);
     const isDuplicatedCartItem =
@@ -332,7 +398,7 @@ const onAddToCartAndAsk = async () => {
   } catch (error) {
     console.log("이미 구매한 상품인지 확인 중 에러 발생:", error);
   }
-}
+};
 
 // [TODO] 기능 확인
 const checkOrdersItemDuplication = async () => {
@@ -357,21 +423,27 @@ const checkOrdersItemDuplication = async () => {
 
 
 const deleteCompanyReport = async () => {
-  await companyReportStore.requestDeleteCompanyReportToDjango(companyReportId.value)
-  alert("보고서가 삭제되었습니다.")
-  router.push("/companyReport/list")
-}
+  await companyReportStore.requestDeleteCompanyReportToDjango(
+    companyReportId.value
+  );
+  alert("보고서가 삭제되었습니다.");
+  router.push("/companyReport/list");
+};
 
 async function getFinanceData() {
-  let data = await companyReportStore.requestCompanyReportFinanceToDjango(companyReport.value.companyReportName);
+  let data = await companyReportStore.requestCompanyReportFinanceToDjango(
+    companyReport.value.companyReportName
+  );
   financeData.value = data.data;
   financeYears.value = Object.keys(data.data);
-};
+}
 
 async function getCompanyInfo() {
-  let data = await companyReportStore.requestCompanyReportInfoToDjango(companyReport.value.companyReportName);
+  let data = await companyReportStore.requestCompanyReportInfoToDjango(
+    companyReport.value.companyReportName
+  );
   companyInfo.value = data.data[0];
-};
+}
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
@@ -384,11 +456,11 @@ const getImageUrl = (imageName) => {
 
 function confirmCheckout() {
   //alert("구매가 완료되었습니다.");
-  isCheckoutDialogVisible.value = false
+  isCheckoutDialogVisible.value = false;
 
   // 해당 보고서의 금액을 amount 변수로 저장
   const amount = companyReport.value.companyReportPrice;
-  router.push({ path: '/payments/test/page', query: { amount } });  // 결제 페이지 경로로 이동  
+  router.push({ path: "/payments/test/page", query: { amount } }); // 결제 페이지 경로로 이동
 }
 
 function goToCartList() {
@@ -411,12 +483,12 @@ function createChart() {
       const isNegative = number < 0; // 음수 여부 확인
       number = Math.abs(number); // 절대값으로 변환하여 처리
 
-      let result = '';
+      let result = "";
 
       if (number >= 1e12) {
         const trillion = Math.floor(number / 1e12);
         const billion = Math.round((number % 1e12) / 1e8);
-        result = `${trillion}조 ${billion > 0 ? billion + '억' : ''}`;
+        result = `${trillion}조 ${billion > 0 ? billion + "억" : ""}`;
       } else if (number >= 1e8) {
         result = `${Math.round(number / 1e8)}억`;
       } else if (number >= 1e6) {
@@ -432,55 +504,63 @@ function createChart() {
 
     // 각 지표에 대한 막대 생성
     const metrics = [
-      { key: 'revenue', label: '수익성 (매출액)' },
-      { key: 'profit_trend', label: '수익성 (영업이익)' },
-      { key: 'owners_capital', label: '안정성 (자기자본)' }
+      { key: "revenue", label: "수익성 (매출액)" },
+      { key: "profit_trend", label: "수익성 (영업이익)" },
+      { key: "owners_capital", label: "안정성 (자기자본)" },
     ];
 
     metrics.forEach((metric) => {
-      const svg = d3.select(chartRef.value)
-        .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
+      const svg = d3
+        .select(chartRef.value)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
       // x축
-      const x0 = d3.scaleBand()
-        .domain(years)
-        .range([0, width])
-        .padding(0.2);
+      const x0 = d3.scaleBand().domain(years).range([0, width]).padding(0.2);
 
       // x축 추가
-      svg.append('g')
-        .attr('transform', `translate(0,${height})`)
+      svg
+        .append("g")
+        .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x0))
-        .style('color', '#808080');
+        .style("color", "#808080");
 
       // y축
-      const yMax = d3.max(years.map(year => financeData.value[year][0][metric.key]));
-      const yMin = d3.min(years.map(year => financeData.value[year][0][metric.key]));
+      const yMax = d3.max(
+        years.map((year) => financeData.value[year][0][metric.key])
+      );
+      const yMin = d3.min(
+        years.map((year) => financeData.value[year][0][metric.key])
+      );
       const yMaxAbs = Math.max(Math.abs(yMin), Math.abs(yMax));
-      const y = d3.scaleLinear()
+      const y = d3
+        .scaleLinear()
         .domain([yMin < 0 ? -yMaxAbs : 0, yMax])
         .range([height, 0]);
 
-      svg.append('g')
-        .call(d3.axisLeft(y)
-          .ticks(3)
-          .tickFormat(d => d.toString().slice(0, 2))
+      svg
+        .append("g")
+        .call(
+          d3
+            .axisLeft(y)
+            .ticks(3)
+            .tickFormat((d) => d.toString().slice(0, 2))
         )
-        .style('color', '#808080');
+        .style("color", "#808080");
 
       // 기준선(0) 그리기
       if (yMin < 0) {
-        svg.append('line')
-          .attr('x1', 0)
-          .attr('x2', width)
-          .attr('y1', y(0))
-          .attr('y2', y(0))
-          .attr('stroke', '#808080')
-          .attr('stroke-width', 1);
+        svg
+          .append("line")
+          .attr("x1", 0)
+          .attr("x2", width)
+          .attr("y1", y(0))
+          .attr("y2", y(0))
+          .attr("stroke", "#808080")
+          .attr("stroke-width", 1);
       }
 
       // 막대 색상 설정
@@ -493,11 +573,15 @@ function createChart() {
               if (value > 0) {
                 return ((value - preValue) / Math.abs(preValue)) * 100;
               } else {
-                return ((Math.abs(preValue) - Math.abs(value)) / Math.abs(preValue)) * 100;
+                return (
+                  ((Math.abs(preValue) - Math.abs(value)) /
+                    Math.abs(preValue)) *
+                  100
+                );
               }
             } else {
               // preValue가 0일 때 처리
-              return value > 0 ? 100 : (value < 0 ? -100 : 0);
+              return value > 0 ? 100 : value < 0 ? -100 : 0;
             }
           })();
           if (change >= 5) return "#77DD77"; // 초록색 (증가)
@@ -508,59 +592,79 @@ function createChart() {
       };
 
       // 막대 추가
-      svg.selectAll(`.${metric.key}`)
-        .data(years.map((year, index) => {
-          const value = financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0;
-          const preValue = index > 0 ? financeData.value[years[index - 1]].length > 0 ? financeData.value[years[index - 1]][0][metric.key] : 0 : undefined;
-          return {
-            year,
-            value,
-            color: index === years.length - 1 ? getBarColor(value, preValue) : "#D3D3D3" // 회색 (이전), 조건부 색상 (최신)
-          };
-        }))
+      svg
+        .selectAll(`.${metric.key}`)
+        .data(
+          years.map((year, index) => {
+            const value =
+              financeData.value[year].length > 0
+                ? financeData.value[year][0][metric.key]
+                : 0;
+            const preValue =
+              index > 0
+                ? financeData.value[years[index - 1]].length > 0
+                  ? financeData.value[years[index - 1]][0][metric.key]
+                  : 0
+                : undefined;
+            return {
+              year,
+              value,
+              color:
+                index === years.length - 1
+                  ? getBarColor(value, preValue)
+                  : "#D3D3D3", // 회색 (이전), 조건부 색상 (최신)
+            };
+          })
+        )
         .enter()
-        .append('rect')
-        .attr('class', metric.key)
-        .attr('x', d => x0(d.year))
-        .attr('y', d => d.value >= 0 ? y(d.value) : y(0))
-        .attr('width', x0.bandwidth())
-        .attr('height', d => Math.abs(y(d.value) - y(0)))  // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
-        .attr('fill', d => d.color);
-
+        .append("rect")
+        .attr("class", metric.key)
+        .attr("x", (d) => x0(d.year))
+        .attr("y", (d) => (d.value >= 0 ? y(d.value) : y(0)))
+        .attr("width", x0.bandwidth())
+        .attr("height", (d) => Math.abs(y(d.value) - y(0))) // 양수는 y(0) - y(d.value), 음수는 y(d.value) - y(0)
+        .attr("fill", (d) => d.color);
 
       // 막대 상단에 값 표시
-      svg.selectAll(`.${metric.key}-label`)
-        .data(years.map(year => ({
-          year: year,
-          value: financeData.value[year].length > 0 ? financeData.value[year][0][metric.key] : 0,
-        })))
+      svg
+        .selectAll(`.${metric.key}-label`)
+        .data(
+          years.map((year) => ({
+            year: year,
+            value:
+              financeData.value[year].length > 0
+                ? financeData.value[year][0][metric.key]
+                : 0,
+          }))
+        )
         .enter()
-        .append('text')
-        .attr('class', `${metric.key}-label`)
-        .attr('x', d => x0(d.year) + x0.bandwidth() / 2)
-        .attr('y', d => y(d.value) - 7)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#6b6b6b')
-        .attr('font-size', 10)
-        .text(d => formatKoreanNumber(d.value));
+        .append("text")
+        .attr("class", `${metric.key}-label`)
+        .attr("x", (d) => x0(d.year) + x0.bandwidth() / 2)
+        .attr("y", (d) => y(d.value) - 7)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#6b6b6b")
+        .attr("font-size", 10)
+        .text((d) => formatKoreanNumber(d.value));
 
       // 제목 추가
-      svg.append('text')
-        .attr('class', 'chart-title')
-        .attr('x', width / 2) // 가운데 정렬
-        .attr('y', -40) // Y축 위쪽으로 위치 조정
-        .attr('text-anchor', 'middle')
-        .attr('font-weight', 'bold')
+      svg
+        .append("text")
+        .attr("class", "chart-title")
+        .attr("x", width / 2) // 가운데 정렬
+        .attr("y", -40) // Y축 위쪽으로 위치 조정
+        .attr("text-anchor", "middle")
+        .attr("font-weight", "bold")
         .text(metric.label);
     });
   } else {
-    console.error('chartRef is not available');
+    console.error("chartRef is not available");
   }
-};
+}
 
 const calculateMaxWidth = () => {
-  const overviewWidth = overviewRef.value.$el.getBoundingClientRect().width
-  const financeWidthLocal = financeRef.value.$el.getBoundingClientRect().width
+  const overviewWidth = overviewRef.value.$el.getBoundingClientRect().width;
+  const financeWidthLocal = financeRef.value.$el.getBoundingClientRect().width;
 
   financeWidth.value = financeWidthLocal;
   maxWidth.value = Math.max(overviewWidth, financeWidthLocal);
@@ -582,29 +686,29 @@ onMounted(async () => {
     },
     { immediate: true } // 데이터가 이미 있을 경우 바로 실행
   );
-  
-  window.addEventListener('resize', calculateMaxWidth);
 
-  checkAdmin()
-  checkAuthenticated()
+  window.addEventListener("resize", calculateMaxWidth);
 
-  email.value = sessionStorage.getItem("email")
+  checkAdmin();
+  checkAuthenticated();
+
+  email.value = sessionStorage.getItem("email");
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', calculateMaxWidth);
+  window.removeEventListener("resize", calculateMaxWidth);
 });
 
 useHead({
   title: `${companyReportName}의 핵심정보 분석 및 요약 | `,
   meta: [
     {
-      name: 'description',
+      name: "description",
       content: `${companyReportName}에 대한 기업의 사업 내용, 공략 포인트, 재무제표, 핵심만 요약했습니다. 전자공시시스템(DART) 기반 기업 핵심 정보 분석 🎯AIM에서 확인해보세요.`,
     },
     {
-      hid: 'keywords',
-      name: 'keywords',
+      hid: "keywords",
+      name: "keywords",
       content: `${companyReportName}, 기업 분석, ${companyReportName} 기업 분석, ${companyReportName} 사업 내용, ${companyReportName} 기업 요약, ${companyReportName} 주사업, ${companyReportName} 회사 소개, ${companyReportName} 기업 소개, ${companyReportName} 자소서, ${companyReportName} 면접, ${companyReportName} 사업 내용, 취업 준비, AIM, AIM Sniper, AIM 기업 분석, AIM 기업 요약`,
     },
   ],
@@ -631,12 +735,13 @@ svg {
 }
 
 .keyword-btn {
-  border-radius: 8px;
+  border-radius: 10px;
   color: #1e68d1;
   width: auto;
-  height: 3vh;
+  height: 4.5vh;
   margin-top: 10px;
   padding: 2px 12px;
+  box-shadow: 0 1px 3px rgb(206, 205, 205);
 }
 
 .companyReport-name {
@@ -667,27 +772,28 @@ svg {
   width: 130px;
   height: 45px;
   border-radius: 13px;
-  background: #0A28B0;
-  color: #FFFFFF;
+  background: #0a28b0;
+  color: #ffffff;
 }
 
 .cart-action-button {
   width: 130px;
   height: 45px;
   border-radius: 13px;
-  border: 1px solid #E6E8EC !important;
+  border: 1px solid #e6e8ec !important;
   background: white;
-  color: #7B8094;
+  color: #7b8094;
 }
 
 .return-action-button {
   width: 158px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid #7B8094 !important;
-  background: white;
   color: black;
   margin-bottom: 40px;
+  padding: 0;
+  min-width: auto;
+  box-shadow: none; /* 그림자 제거 */
 }
 
 .no-underline {
@@ -721,9 +827,11 @@ svg {
   transition-duration: 0.3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
   background: rgb(255, 135, 65);
-  background: linear-gradient(250deg,
-      rgba(255, 135, 65, 1) 15%,
-      rgba(255, 65, 65, 1) 65%);
+  background: linear-gradient(
+    250deg,
+    rgba(255, 135, 65, 1) 15%,
+    rgba(255, 65, 65, 1) 65%
+  );
 }
 
 /* plus sign */
@@ -815,11 +923,13 @@ svg {
   height: 100%;
   width: 100%;
   border-radius: 8px;
-  background: linear-gradient(to right,
-      hsl(248, 39%, 39%) 0%,
-      hsl(248, 39%, 49%) 8%,
-      hsl(248, 39%, 39%) 92%,
-      hsl(248, 39%, 29%) 100%);
+  background: linear-gradient(
+    to right,
+    hsl(248, 39%, 39%) 0%,
+    hsl(248, 39%, 49%) 8%,
+    hsl(248, 39%, 39%) 92%,
+    hsl(248, 39%, 29%) 100%
+  );
 }
 
 .front {
@@ -882,13 +992,31 @@ a:active {
   color: rgb(27, 59, 173);
 }
 
+.report-container {
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 5vh;
+}
+
 .overview-content span {
   padding: 2rem;
   color: rgb(107, 107, 107);
 }
 
 .overview-content span b {
-  font-size: 1.rem;
+  font-size: 1rem;
+}
+
+.finance-desc {
+  background-color: #f2f1f1;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.finance-desc-title {
+  font-size: 1rem;
+  font-weight: bold;
 }
 /* 사업별 매출액 테이블 */
 .table-content :deep(table) {
@@ -917,7 +1045,7 @@ a:active {
   line-height: 1.8;
 }
 
-::v-deep .summary span>ul>li {
+::v-deep .summary span > ul > li {
   list-style-type: none;
   margin-bottom: 30px;
 }
@@ -934,12 +1062,12 @@ a:active {
 }
 
 .typewriter {
-  --blue: #5C86FF;
-  --blue-dark: #275EFE;
+  --blue: #5c86ff;
+  --blue-dark: #275efe;
   --key: #fff;
-  --paper: #EEF0FD;
-  --text: #D3D4EC;
-  --tool: #FBC56C;
+  --paper: #eef0fd;
+  --text: #d3d4ec;
+  --tool: #fbc56c;
   --duration: 3s;
   position: relative;
   -webkit-animation: bounce05 var(--duration) linear infinite;
@@ -957,7 +1085,8 @@ a:active {
   animation: slide05 var(--duration) ease infinite;
 }
 
-.typewriter .slide:before, .typewriter .slide:after,
+.typewriter .slide:before,
+.typewriter .slide:after,
 .typewriter .slide i:before {
   content: "";
   position: absolute;
@@ -1031,7 +1160,8 @@ a:active {
   position: relative;
 }
 
-.typewriter .keyboard:before, .typewriter .keyboard:after {
+.typewriter .keyboard:before,
+.typewriter .keyboard:after {
   content: "";
   position: absolute;
 }
@@ -1053,13 +1183,18 @@ a:active {
   width: 11px;
   height: 4px;
   border-radius: 2px;
-  box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+  box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+    60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+    22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+    60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   -webkit-animation: keyboard05 var(--duration) linear infinite;
   animation: keyboard05 var(--duration) linear infinite;
 }
 
 @keyframes bounce05 {
-  85%, 92%, 100% {
+  85%,
+  92%,
+  100% {
     transform: translateY(0);
   }
 
@@ -1077,19 +1212,23 @@ a:active {
     transform: translateX(14px);
   }
 
-  15%, 30% {
+  15%,
+  30% {
     transform: translateX(6px);
   }
 
-  40%, 55% {
+  40%,
+  55% {
     transform: translateX(0);
   }
 
-  65%, 70% {
+  65%,
+  70% {
     transform: translateX(-4px);
   }
 
-  80%, 89% {
+  80%,
+  89% {
     transform: translateX(-12px);
   }
 
@@ -1103,66 +1242,110 @@ a:active {
     transform: translateY(46px);
   }
 
-  20%, 30% {
+  20%,
+  30% {
     transform: translateY(34px);
   }
 
-  40%, 55% {
+  40%,
+  55% {
     transform: translateY(22px);
   }
 
-  65%, 70% {
+  65%,
+  70% {
     transform: translateY(10px);
   }
 
-  80%, 85% {
+  80%,
+  85% {
     transform: translateY(0);
   }
 
-  92%, 100% {
+  92%,
+  100% {
     transform: translateY(46px);
   }
 }
 
 @keyframes keyboard05 {
-  5%, 12%, 21%, 30%, 39%, 48%, 57%, 66%, 75%, 84% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+  5%,
+  12%,
+  21%,
+  30%,
+  39%,
+  48%,
+  57%,
+  66%,
+  75%,
+  84% {
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   9% {
-    box-shadow: 15px 2px 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 2px 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   18% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 2px 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 2px 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   27% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 12px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 12px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   36% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 12px 0 var(--key), 60px 12px 0 var(--key), 68px 12px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 12px 0 var(--key),
+      60px 12px 0 var(--key), 68px 12px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   45% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 2px 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 2px 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   54% {
-    box-shadow: 15px 0 0 var(--key), 30px 2px 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 2px 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   63% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 12px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 12px 0 var(--key);
   }
 
   72% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 2px 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 2px 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 
   81% {
-    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 12px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
+    box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key),
+      60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key),
+      22px 10px 0 var(--key), 37px 12px 0 var(--key), 52px 10px 0 var(--key),
+      60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
 }
 </style>
