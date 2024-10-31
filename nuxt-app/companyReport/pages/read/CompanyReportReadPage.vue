@@ -194,6 +194,17 @@
               </v-col>
             </v-row>
 
+            <!-- 로그인 유도 오버레이 -->
+            <div v-if="!isAuthenticated" class="login-overlay">
+              <v-card class="login-card">
+                <v-card-text class="text-center">
+                  <h3>로그인 후 전체 리포트를 확인하실 수 있습니다</h3>
+                  <v-btn color="primary" class="mt-4" @click="navigateToLogin">
+                    로그인하러 가기
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </div>
           </div>
           <!-- 요약 -->
           <v-row
@@ -380,6 +391,10 @@ function checkAuthenticated() {
   ) {
     isAuthenticated.value = true;
   }
+}
+
+function navigateToLogin() {
+  router.push('/account/login')
 }
 
 const onPurchase = async () => {
