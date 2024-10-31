@@ -33,7 +33,7 @@ export const accountAction = {
     async requestNicknameDuplicationCheckToDjango(nickname: string): Promise<boolean> {
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
         try {
-            const res = await djangoAxiosInst.post('/account/nickname-duplication-check', { newNickname: nickname });
+            const res = await djangoAxiosInst.post('/account/nickname-duplication-check',  nickname);
     
             if (res.data.isDuplicate) {
                 return true;

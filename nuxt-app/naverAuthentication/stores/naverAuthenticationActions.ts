@@ -41,14 +41,11 @@ export const naverAuthenticationAction = {
             throw error
         }
     },
-    async requestAddNaverRedisAccessTokenToDjango(email:string,accessToken:string):Promise<any>{
+    async requestAddNaverRedisAccessTokenToDjango(payload:{email:string,accessToken:string}):Promise<any>{
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
             const response: AxiosResponse<any> = await djangoAxiosInst.post(
-                '/naver_oauth/redis-access-token', {
-                'email': email,
-                'accessToken': accessToken
-            })
+                '/naver_oauth/redis-access-token', {'email':payload.email,'accessToken':payload.accessToken})
 
             // console.log('userToken:', response.data.userToken)
 
