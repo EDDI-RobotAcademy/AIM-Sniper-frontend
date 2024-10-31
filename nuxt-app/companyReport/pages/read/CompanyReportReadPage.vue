@@ -110,7 +110,7 @@
           </v-row>
 
           <!-- 프리뷰 영역 (그라데이션 효과) -->
-          <div :class="{ 'preview-section': !isAuthenticated }">
+          <div :class="{ 'preview-section': !isPurchased }">
             <!-- 재무정보 차트 -->
             <v-row class="finance" justify="center">
               <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
@@ -119,11 +119,11 @@
             </v-row>
 
             <!-- 그라데이션 오버레이 -->
-            <div :class="{'gradient-overlay': !isAuthenticated}"></div>
+            <div :class="{'gradient-overlay': !isPurchased}"></div>
           </div>
 
           <!-- 블러 처리된 섹션 -->
-          <div :class="{'blur-section': !isAuthenticated}">
+          <div :class="{'blur-section': !isPurchased}">
             <!-- 재무제표 설명 -->
             <v-row class="finance-desc mb-11" align="center" justify="start"
               :style="{ width: financeWidth + 'px', margin: '0 auto' }">
@@ -162,7 +162,7 @@
             </div>
             <!-- 요약 -->
             <v-row
-              v-if="isAuthenticated"
+              v-if="isPurchased"
               :style="{ width: financeWidth + 'px' }"
               class="summary my-5 d-flex justify-center align-center"
             >
@@ -172,7 +172,7 @@
             </v-row>
             <!-- 매출액 표 -->
             <v-row 
-              v-if="isAuthenticated"
+              v-if="isPurchased"
               class="revenue-table my-5 d-flex justify-center align-center">
               <v-col cols="auto">
                 <span
@@ -183,7 +183,7 @@
             </v-row>
 
             <!-- 로그인 유도 오버레이 -->
-            <div v-if="!isAuthenticated" class="login-overlay">
+            <div v-if="!isPurchased && !isAuthenticated" class="login-overlay">
               <v-card class="login-card">
                 <v-card-text class="text-center">
                   <h3>로그인 후 전체 리포트를 확인하실 수 있습니다</h3>
@@ -339,6 +339,7 @@ const financeRef = ref(null);
 const email = ref(null);
 const isAdmin = ref(false); // true면 관리자
 const isAuthenticated = ref(false); // true면 로그인한 사용자
+const isPurchased = ref(false);
 
 const companyReport = ref(null);
 
@@ -360,6 +361,16 @@ function checkAuthenticated() {
     googleAuthenticationStore.isAuthenticatedGoogle
   ) {
     isAuthenticated.value = true;
+  }
+}
+
+async function checkPurchased() {
+  if(isAuthenticated.value) {
+    const res = await orderStore.requestOrderItemDuplicationCheckToDjango({email: email.value, companyReportId: Number(companyReportId.value)})
+
+    if(res) {
+      isPurchased.value = true;
+    }
   }
 }
 
@@ -712,10 +723,11 @@ onMounted(async () => {
 
   window.addEventListener("resize", calculateMaxWidth);
 
+  email.value = sessionStorage.getItem("email");
   checkAdmin();
   checkAuthenticated();
+  checkPurchased();
 
-  email.value = sessionStorage.getItem("email");
 });
 
 onBeforeUnmount(() => {
