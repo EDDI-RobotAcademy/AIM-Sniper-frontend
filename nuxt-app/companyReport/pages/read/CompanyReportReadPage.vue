@@ -1042,6 +1042,83 @@ a:visited {
 a:active {
   color: rgb(27, 59, 173);
 }
+/* 프리뷰 섹션 스타일 */
+.preview-section {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 50px;
+}
+
+/* 그라데이션 오버레이 */
+.gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20rem; /* 그라데이션 높이 조절 */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  pointer-events: none;
+}
+
+/* 블러 섹션 스타일 */
+.blur-section {
+  position: relative;
+  margin-top: -30px; /* 그라데이션과 겹치게 */
+}
+
+.blur-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+/* 로그인 오버레이 */
+.login-overlay {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card {
+  width: 90%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 애니메이션 효과 */
+.login-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 콘텐츠 스타일 */
+.finance-desc-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 1rem;
+}
 
 .report-container {
   width: 90%;
