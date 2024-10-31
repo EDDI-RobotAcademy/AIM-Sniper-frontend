@@ -242,8 +242,8 @@ onMounted(() => {
     const adminToken = sessionStorage.getItem("adminToken");
     if (adminToken) {
       authenticationStore.isKakaoAdmin = true;
-      // googleAuthenticationStore.isGoogleAdmin = true;
-      // naverAuthenticationStore.isNaverAdmin = true;
+      googleAuthenticationStore.isGoogleAdmin = true;
+      naverAuthenticationStore.isNaverAdmin = true;
       accountStore.isNormalAdmin = true;
     }
   }
