@@ -77,7 +77,7 @@ const maxMessages = 5;
 const aiResponseList = ref([]);
 const questionIndex = ref(0);
 const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
-const intentIndex = ref(-1);
+const intentIndex = ref(0);
 
 // Computed Properties
 const isCheckoutDisabled = computed(() => sendCount.value >= maxMessages);
@@ -113,10 +113,10 @@ const startInterview = () => {
 
 const getAIQuestions = async () => {
   if (aiResponseList.value.length === 0) {
-    const sessionId = Math.floor(Math.random() * 200) + 1;
-    aiResponseList.value = await aiInterviewStore.requestGetQuestionListToDjango({ sessionId: sessionId });
+    const questionId = Math.floor(Math.random() * 3061) + 1;
+    aiResponseList.value = await aiInterviewStore.requestFirstQuestionToDjango({ questionId: questionId });
   }
-  currentAIMessage.value = aiResponseList.value.questionList[questionIndex.value] || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
+  currentAIMessage.value = aiResponseList.value.firstQuestion || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
   intentIndex.value++;
   chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
 
@@ -193,8 +193,8 @@ const sendMessage = async () => {
 
     setTimeout(async () => {
       if (aiResponseList.value.length === 0) {
-        const sessionId = Math.floor(Math.random() * 200) + 1;
-        aiResponseList.value = await aiInterviewStore.requestGetQuestionListToDjango({ sessionId: sessionId });
+        const questionId = Math.floor(Math.random() * 3061) + 1;
+        aiResponseList.value = await aiInterviewStore.requestFirstQuestionToDjango({ questionId: questionId});
       }
 
       if (intentIndex.value === 4) {

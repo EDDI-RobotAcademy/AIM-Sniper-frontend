@@ -4,17 +4,29 @@ import { useAiInterviewStore } from "./aiInterviewStore"
 
 export const aiInterviewActions = {
     
-    async requestGetQuestionListToDjango(sessionId: number): Promise<AxiosResponse> {
+    // async requestGetQuestionListToDjango(sessionId: number): Promise<AxiosResponse> {
+    //     const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+
+    //     try {
+    //         const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-session', sessionId)
+    //         return res.data
+    //     } catch (err) {
+    //         console.error('requestGetQuestionListToDjango() -> error:', err)
+    //         throw err
+    //     }        
+    // },
+    async requestFirstQuestionToDjango(questionId: number): Promise<AxiosResponse> {
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
 
         try {
-            const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-session', sessionId)
+            const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-first-question', questionId)
             return res.data
         } catch (err) {
-            console.error('requestGetQuestionListToDjango() -> error:', err)
+            console.error('requestFirstQuestionToDjango() -> error:', err)
             throw err
         }        
     },
+
     async requestInferNextQuestionToFastAPI(payload: { answer: string, nextIntent: string }): Promise<string> {
         const { fastapiAxiosInst } = axiosUtility.createAxiosInstances();
         console.log("payload:", payload)
