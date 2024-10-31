@@ -128,6 +128,33 @@
               <div ref="chartRef"></div>
             </v-col>
           </v-row>
+          <v-row class="finance-desc mb-11" align="center" justify="start"
+            :style="{ width: financeWidth + 'px', margin: '0 auto' }">
+            <v-col>
+              <p class="finance-desc-title" left>💡 재무제표 보는 팁 TIP</p>
+              <p class="finance-desc-content">
+                • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내 <span class="graph-stay">유지</span>, 10%이상 <span class="graph-up">증가</span> 10%이하 <span class="graph-down">하락</span>
+              </p>
+              <p class="finance-desc-content"> 
+                1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로, <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
+              </p>
+              <p class="finance-desc-detail">
+                - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를, 하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
+              </p>
+              <p class="finance-desc-content"> 
+                2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로, <u>기업의 수익성</u>을 판단할 수 있습니다.
+              </p>
+              <p class="finance-desc-detail">
+                - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리 개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나 시장 경쟁 심화를 의미할 수 있습니다.
+              </p>
+              <p class="finance-desc-content"> 
+                3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로, <u>재무 안정성</u>을 평가할 수 있습니다.
+              </p>
+              <p class="finance-desc-detail">
+                - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
+              </p>
+            </v-col>
+          </v-row>
 
           <div
             class="width-divider my-2"
@@ -296,7 +323,7 @@ const financeRef = ref(null);
 
 // 계정 변수
 const email = ref(null);
-const isAdmin = ref(false);         // true면 관리자
+const isAdmin = ref(false); // true면 관리자
 const isAuthenticated = ref(false); // true면 로그인한 사용자
 
 const companyReport = ref(null);
@@ -584,8 +611,8 @@ function createChart() {
               return value > 0 ? 100 : value < 0 ? -100 : 0;
             }
           })();
-          if (change >= 5) return "#77DD77"; // 초록색 (증가)
-          if (change <= -5) return "#FF6961"; // 빨간색 (감소)
+          if (change >= 10) return "#77DD77"; // 초록색 (증가)
+          if (change <= -10) return "#FF6961"; // 빨간색 (감소)
           return "#AEC6CF"; // 파란색 (변화 거의 없음)
         }
         return "#D3D3D3"; // 회색 (기본값)
@@ -723,6 +750,12 @@ useHead({
 
 svg {
   font-family: sans-serif;
+}
+
+u {
+  text-underline-offset: 0.15rem;
+  text-decoration-color: #c8c8c8;
+  text-decoration-style: wavy;
 }
 
 .custom-img {
@@ -1018,6 +1051,56 @@ a:active {
   font-size: 1rem;
   font-weight: bold;
 }
+
+.finance-desc-content {
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  margin: 0;
+  color: #333;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.finance-desc-detail {
+  padding-left: 2.5rem;
+  padding-top: 0.2rem;
+  margin: 0;
+  color: #5c5c5c;
+  line-height: 1.6;
+  font-size: 0.8rem;
+}
+
+.graph-stay {
+  background-color: #AEC6CF;
+  color: #ffffff;
+  padding: 0.15rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.graph-up {
+  background-color: #77DD77;
+  color: #ffffff;
+  padding: 0.15rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.graph-down {
+  background-color: #FF6961;
+  color: #ffffff;
+  padding: 0.15rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* if (change >= 5) return "#77DD77"; // 초록색 (증가)
+          if (change <= -5) return "#FF6961"; // 빨간색 (감소)
+          return "#AEC6CF" */
+
 /* 사업별 매출액 테이블 */
 .table-content :deep(table) {
   width: 90%;
