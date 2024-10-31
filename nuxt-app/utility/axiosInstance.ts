@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { type AxiosInstance } from "axios";
 import { useRuntimeConfig } from "nuxt/app";
 export let djangoAxiosInst: AxiosInstance | null = null;
 export let fastapiAxiosInst: AxiosInstance | null = null;

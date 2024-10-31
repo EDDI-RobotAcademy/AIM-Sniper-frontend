@@ -40,7 +40,7 @@
         const accessToken = sessionStorage.getItem("naverAccessToken");
   
         if (accessToken) {
-          await naverAuthenticationStore.requestAddNaverRedisAccessTokenToDjango(email, accessToken);
+          await naverAuthenticationStore.requestAddNaverRedisAccessTokenToDjango({email, accessToken});
         } else {
           console.error('AccessToken is missing');
         }
