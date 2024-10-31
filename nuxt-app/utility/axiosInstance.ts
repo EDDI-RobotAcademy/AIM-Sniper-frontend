@@ -13,6 +13,9 @@ export function createAxiosInstances() {
 		djangoAxiosInst = axios.create({
 			baseURL: mainApiUrl,
 			timeout: 5000,
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		});
 	}
 
