@@ -5,7 +5,7 @@
             <div id="payment-method"></div>
             <!-- 이용약관 UI -->
             <div id="agreement"></div>
-            <!-- 쿠폰 체크박스 -->
+            <!-- 쿠폰 체크박스
             <div style="padding-left: 33px">
                 <div class="checkable typography--p">
                     <label for="coupon-box" class="checkable__label typography--regular">
@@ -14,7 +14,7 @@
                             적용</span>
                     </label>
                 </div>
-            </div>
+            </div> -->
             <!-- 결제하기 버튼 -->
             <v-btn :disabled="!inputEnabled" @click="requestPayment" class="button" id="payment-button"
                 style="margin: 30px">결제하기</v-btn>
