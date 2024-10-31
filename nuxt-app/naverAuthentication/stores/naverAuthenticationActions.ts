@@ -45,8 +45,12 @@ export const naverAuthenticationAction = {
         const {djangoAxiosInst} = axiosUtility.createAxiosInstances()
         try {
             const response: AxiosResponse<any> = await djangoAxiosInst.post(
-                '/naver_oauth/redis-access-token', {'email':payload.email,'accessToken':payload.accessToken})
-
+                '/naver_oauth/redis-access-token',
+                {
+                    'email': payload.email,
+                    'accessToken': payload.accessToken
+                },
+            );
             // console.log('userToken:', response.data.userToken)
 
             sessionStorage.removeItem("naverAccessToken")

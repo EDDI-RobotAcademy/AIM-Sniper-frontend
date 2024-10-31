@@ -43,13 +43,13 @@ export const googleAuthenticationActions = {
                 throw error
             }
     },
-    async requestAddGoogleRedisAccessTokenToDjango(email: string, accessToken: string): Promise<any> {
+    async requestAddGoogleRedisAccessTokenToDjango(payload:{email: string, accessToken: string}): Promise<any> {
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
         try {
             const response: AxiosResponse<any> = await djangoAxiosInst.post(
                 '/google_oauth/redis-access-token', {
-                email: email,
-                accessToken: accessToken
+                email: payload.email,
+                accessToken: payload.accessToken
             })
 
             // console.log('userToken:', response.data.userToken)
