@@ -83,103 +83,117 @@
       <v-card-text>
         <v-container>
           <!-- 기업/사업 리포트 -->
-          <!-- 개요 -->
+          <!-- 미리보기 섹션 -->
           <v-row ref="overviewRow" class="overview" justify="center">
-            <v-col
-              ref="overviewRef"
-              cols="auto"
-              class="overview-content mb-2 mt-2"
-            >
+            <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
-                  <span> <b>주소</b> {{ companyInfo.address }} </span>
+                  <span><b>주소</b> {{ companyInfo.address }}</span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
-                  <span> <b>대표이사</b> {{ companyInfo.ceo_name }} </span>
+                  <span><b>대표이사</b> {{ companyInfo.ceo_name }}</span>
                 </v-col>
                 <v-col cols="auto" class="mb-2">
-                  <span> <b>설립연도</b> {{ companyInfo.est_date }} </span>
+                  <span><b>설립연도</b> {{ companyInfo.est_date }}</span>
                 </v-col>
                 <v-col cols="auto">
                   <span>
-                    <b>웹사이트 </b>
-                    <a
-                      :href="'https://' + companyInfo.website"
-                      target="_blank"
-                      rel="noopener"
-                    >
+                    <b>웹사이트</b>
+                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
                       {{ companyInfo.website }}
                     </a>
                   </span>
                 </v-col>
+                <v-divider class="mt-5"></v-divider>
               </v-row>
             </v-col>
           </v-row>
-          <div :style="{ width: maxWidth + 'px', margin: '0 auto' }">
-            <v-divider class="my-2"></v-divider>
-          </div>
-          <!-- 재무정보 -->
-          <v-row class="finance" justify="center">
-            <v-col
-              ref="financeRef"
-              cols="auto"
-              class="my-5 d-flex justify-center align-center"
-            >
-              <div ref="chartRef"></div>
-            </v-col>
-          </v-row>
-          <v-row class="finance-desc mb-11" align="center" justify="start"
-            :style="{ width: financeWidth + 'px', margin: '0 auto' }">
-            <v-col>
-              <p class="finance-desc-title" left>💡 재무제표 보는 팁 TIP</p>
-              <p class="finance-desc-content">
-                • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내 <span class="graph-stay">유지</span>, 10%이상 <span class="graph-up">증가</span> 10%이하 <span class="graph-down">하락</span>
-              </p>
-              <p class="finance-desc-content"> 
-                1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로, <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
-              </p>
-              <p class="finance-desc-detail">
-                - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를, 하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
-              </p>
-              <p class="finance-desc-content"> 
-                2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로, <u>기업의 수익성</u>을 판단할 수 있습니다.
-              </p>
-              <p class="finance-desc-detail">
-                - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리 개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나 시장 경쟁 심화를 의미할 수 있습니다.
-              </p>
-              <p class="finance-desc-content"> 
-                3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로, <u>재무 안정성</u>을 평가할 수 있습니다.
-              </p>
-              <p class="finance-desc-detail">
-                - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
-              </p>
-            </v-col>
-          </v-row>
 
-          <div
-            class="width-divider my-2"
-            :style="{ width: maxWidth + 'px', margin: '0 auto' }"
-          >
-            <v-divider></v-divider>
+          <!-- 프리뷰 영역 (그라데이션 효과) -->
+          <div :class="{ 'preview-section': !isAuthenticated }">
+            <!-- 재무정보 차트 -->
+            <v-row class="finance" justify="center">
+              <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
+                <div ref="chartRef"></div>
+              </v-col>
+            </v-row>
+
+            <!-- 그라데이션 오버레이 -->
+            <div :class="{'gradient-overlay': !isAuthenticated}"></div>
           </div>
-          <!-- 요약 -->
-          <v-row
-            :style="{ width: financeWidth + 'px' }"
-            class="summary my-5 d-flex justify-center align-center"
-          >
-            <v-col cols="auto">
-              <span v-html="companyInfo.business_summary"></span>
-            </v-col>
-          </v-row>
-          <!-- 매출액 표 -->
-          <v-row class="revenue-table my-5 d-flex justify-center align-center">
-            <v-col cols="auto">
-              <span
-                v-html="companyInfo.revenue_table"
-                class="table-content"
-              ></span>
-            </v-col>
-          </v-row>
+
+          <!-- 블러 처리된 섹션 -->
+          <div :class="{'blur-section': !isAuthenticated}">
+            <!-- 재무제표 설명 -->
+            <v-row class="finance-desc mb-11" align="center" justify="start"
+              :style="{ width: financeWidth + 'px', margin: '0 auto' }">
+              <v-col>
+                <p class="finance-desc-title">💡 재무제표 보는 팁 TIP</p>
+                <!-- 재무제표 설명 내용 -->
+                <p class="finance-desc-content">
+                  • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내 <span class="graph-stay">유지</span>, 10%이상 <span class="graph-up">증가</span> 10%이하 <span class="graph-down">하락</span>
+                </p>
+                <p class="finance-desc-content"> 
+                  1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로, <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
+                </p>
+                <p class="finance-desc-detail">
+                  - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를, 하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
+                </p>
+                <p class="finance-desc-content"> 
+                  2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로, <u>기업의 수익성</u>을 판단할 수 있습니다.
+                </p>
+                <p class="finance-desc-detail">
+                  - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리 개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나 시장 경쟁 심화를 의미할 수 있습니다.
+                </p>
+                <p class="finance-desc-content"> 
+                  3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로, <u>재무 안정성</u>을 평가할 수 있습니다.
+                </p>
+                <p class="finance-desc-detail">
+                  - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
+                </p>
+              </v-col>
+            </v-row>
+
+            <div
+              class="width-divider my-2"
+              :style="{ width: maxWidth + 'px', margin: '0 auto' }"
+            >
+              <v-divider></v-divider>
+            </div>
+            <!-- 요약 -->
+            <v-row
+              v-if="isAuthenticated"
+              :style="{ width: financeWidth + 'px' }"
+              class="summary my-5 d-flex justify-center align-center"
+            >
+              <v-col cols="auto">
+                <span v-html="companyInfo.business_summary"></span>
+              </v-col>
+            </v-row>
+            <!-- 매출액 표 -->
+            <v-row 
+              v-if="isAuthenticated"
+              class="revenue-table my-5 d-flex justify-center align-center">
+              <v-col cols="auto">
+                <span
+                  v-html="companyInfo.revenue_table"
+                  class="table-content"
+                ></span>
+              </v-col>
+            </v-row>
+
+            <!-- 로그인 유도 오버레이 -->
+            <div v-if="!isAuthenticated" class="login-overlay">
+              <v-card class="login-card">
+                <v-card-text class="text-center">
+                  <h3>로그인 후 전체 리포트를 확인하실 수 있습니다</h3>
+                  <v-btn color="primary" class="mt-4" @click="navigateToLogin">
+                    로그인하러 가기
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </div>
+          </div>
         </v-container>
       </v-card-text>
     </v-card>
@@ -347,6 +361,10 @@ function checkAuthenticated() {
   ) {
     isAuthenticated.value = true;
   }
+}
+
+function navigateToLogin() {
+  router.push('/account/login')
 }
 
 const onPurchase = async () => {
@@ -1023,6 +1041,83 @@ a:visited {
 
 a:active {
   color: rgb(27, 59, 173);
+}
+/* 프리뷰 섹션 스타일 */
+.preview-section {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 50px;
+}
+
+/* 그라데이션 오버레이 */
+.gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20rem; /* 그라데이션 높이 조절 */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  pointer-events: none;
+}
+
+/* 블러 섹션 스타일 */
+.blur-section {
+  position: relative;
+  margin-top: -30px; /* 그라데이션과 겹치게 */
+}
+
+.blur-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+/* 로그인 오버레이 */
+.login-overlay {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card {
+  width: 90%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 애니메이션 효과 */
+.login-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 콘텐츠 스타일 */
+.finance-desc-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 1rem;
 }
 
 .report-container {
