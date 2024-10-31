@@ -17,27 +17,61 @@
           </v-col>
         </v-row>
         <!-- 필터가 열리고 닫히는 부분 -->
-        <v-slide-y-transition >
+        <v-slide-y-transition>
           <v-row v-show="showFilterTags" class="filter-tags-container">
             <v-col cols="12">
-              <v-chip-group v-if="!resetChips" v-model="selectedKeywords" multiple column>
-                <v-chip
-                  v-for="(keyword, index) in keywords"
-                  :key="index"
-                  :value="keyword"
-                  outlined
-                  :class="{
-                    'chip-selected': selectedKeywords.includes(keyword),
-                  }"
-                  class="filter-chip"
-                >
-                  {{ keyword }}
-                </v-chip>
-                <v-btn @click="clearSelectedKeywords" class="reset-chip" outlined elevation="1">
-                  <v-icon left>mdi-refresh</v-icon>
-                  초기화
-                </v-btn>
-              </v-chip-group>
+              <v-row class="align-center mb-4">
+                <v-col cols="1" class="filter-group-title">
+                  <strong>카테고리</strong>
+                </v-col>
+                <v-col cols="6">
+                  <v-chip-group v-if="!resetCategory" v-model="selectedCategories" class="category-select-group" multiple column>
+                    <v-btn @click="clearSelectedCategory" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray;">
+                      <v-icon left>mdi-refresh</v-icon>
+                      초기화
+                    </v-btn>
+                    <v-chip
+                      v-for="(category, index) in categories"
+                      :key="index"
+                      :value="category"
+                      outlined
+                      :class="{
+                        'chip-selected': selectedCategories.includes(category),
+                      }"
+                      class="category-chip"
+                    >
+                      {{ category }}
+                    </v-chip>
+                  </v-chip-group>
+                </v-col>
+              </v-row>
+              <!-- 키워드 선택 제목과 키워드 필터를 같은 열에 배치 -->
+              <v-row class="align-center mb-4">
+                <v-col cols="1" class="filter-group-title">
+                  <strong>키워드</strong>
+                </v-col>
+                <v-col cols="6">
+                  <v-chip-group v-if="!resetChips" v-model="selectedKeywords" multiple column>
+                    <v-btn @click="clearSelectedKeywords" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray">
+                      <v-icon left>mdi-refresh</v-icon>
+                      초기화
+                    </v-btn>
+                    <v-chip
+                      v-for="(keyword, index) in keywords"
+                      :key="index"
+                      :value="keyword"
+                      outlined
+                      :class="{
+                        'chip-selected': selectedKeywords.includes(keyword),
+                      }"
+                      class="filter-chip"
+                    >
+                      {{ keyword }}
+                    </v-chip>
+                  </v-chip-group>
+                </v-col>
+              </v-row>
+              <!-- 카테고리 선택 제목과 카테고리 필터를 같은 열에 배치 -->
             </v-col>
           </v-row>
         </v-slide-y-transition>
@@ -59,9 +93,7 @@
       <!-- 기업 리스트업 -->
       <v-row
         class="companyReport-container"
-        v-if="
-          allCompanyReportListVisible && paginatedCompanyReportList.length > 0
-        "
+        v-if="allCompanyReportListVisible && paginatedCompanyReportList.length > 0"
       >
         <v-col
           v-for="(companyReport, index) in paginatedCompanyReportList"
@@ -128,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCompanyReportStore } from "../../stores/companyReportStore";
 import { useAccountStore } from "../../../account/stores/accountStore";
@@ -151,7 +183,9 @@ const itemsPerPage = ref(30);
 
 // 필터링 및 검색 관련 변수
 const selectedKeywords = ref([]);
-const keywords = ref([ "플랫폼", "정보보안", "빅데이터", "소프트웨어", "하드웨어", "클라우드", "컨설팅", "헬스케어", "메타버스", "인프라", "게임", "의료", "AI", "디스플레이", "마케팅/광고", "영상 분석", "네트워크", "금융지원",]);
+const keywords = ref(["플랫폼", "정보보안", "빅데이터", "소프트웨어", "하드웨어", "클라우드", "컨설팅", "헬스케어", "메타버스", "인프라", "게임", "의료", "AI", "디스플레이", "마케팅/광고", "영상 분석", "네트워크", "금융지원"]);
+const categories = ref(["매출액 1조 이상", "매출액 1000억 이상 1조 미만", "매출액 1000억 미만"]);
+const selectedCategories = ref([]);
 const searchQuery = ref("");
 const showFilterTags = ref(false);
 
@@ -162,17 +196,12 @@ const topList = ref([]);
 const topNCompanyReportList = ref([]);
 
 onMounted(async () => {
-  // topN ID 가져오기
-  const response =
-    await companyReportStore.requestTopNCompanyReportListToDjango(topN.value);
+  const response = await companyReportStore.requestTopNCompanyReportListToDjango(topN.value);
   topList.value = response.data;
 
-  // topN 보고서 필터링
   topNCompanyReportList.value = companyReportStore.companyReportList.filter(
     (companyReport) => {
-      return topList.value.some(
-        (topId) => topId === companyReport.companyReportId
-      );
+      return topList.value.some((topId) => topId === companyReport.companyReportId);
     }
   );
 });
@@ -183,61 +212,107 @@ const filteredCompanyReportList = computed(() => {
   // 검색어 필터링
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    reports = reports.filter((report) =>
-    report.companyReportName.toLowerCase().includes(query)
-  );  
+    reports = reports.filter((report) => report.companyReportName.toLowerCase().includes(query));
   }
 
-  // 키워드와의 일치 개수에 따라 정렬
-  if (selectedKeywords.value.length > 0 && selectedKeywords.value[0] !== "") {
-    reports = reports.map((report) => {
-      if (report.keyword) {
-        const keywordsArray = report.keyword.split(",");
-        // 일치하는 키워드의 수 계산
-        report.matchCount = selectedKeywords.value.reduce(
-          (count, keyword) =>
-            keywordsArray.includes(keyword) ? count + 1 : count,
-          0
-        );
-      } else {
-        report.matchCount = 0;
-      }
-      return report;
+  // 선택된 필터가 없거나 전체 상태일 때는 모든 보고서 반환
+  if (selectedCategories.value.length === 0 && selectedKeywords.value.length === 0) {
+    return reports;
+  }
+
+  reports.forEach((report) => {
+    let categoryMatchCount = 0;
+    let keywordMatchCount = 0;
+
+    // 카테고리 매칭 계산
+    if (selectedCategories.value.length > 0 && report.companyReportCategory) {
+      const categoryArray = report.companyReportCategory.split(",");
+      categoryMatchCount = selectedCategories.value.reduce(
+        (count, category) => (categoryArray.includes(category) ? count + 1 : count),
+        0
+      );
+    }
+
+    // 키워드 매칭 계산
+    if (selectedKeywords.value.length > 0 && report.keyword) {
+      const keywordsArray = report.keyword.split(",");
+      keywordMatchCount = selectedKeywords.value.reduce(
+        (count, keyword) => (keywordsArray.includes(keyword) ? count + 1 : count),
+        0
+      );
+    }
+
+    report.matchCount = categoryMatchCount + keywordMatchCount;
+  });
+
+  // 필터링 로직 적용
+  if (selectedCategories.value.length > 0 && selectedKeywords.value.length > 0) {
+    // 카테고리와 키워드 모두 선택된 경우
+    reports = reports.filter((report) => {
+      const categoryArray = report.companyReportCategory ? report.companyReportCategory.split(",") : [];
+      const keywordArray = report.keyword ? report.keyword.split(",") : [];
+      
+      return selectedCategories.value.some(category => categoryArray.includes(category)) &&
+             selectedKeywords.value.some(keyword => keywordArray.includes(keyword));
     });
-
-    // 일치 개수를 기준으로 내림차순 정렬
-    reports.sort((a, b) => b.matchCount - a.matchCount);
+  } else {
+    // 카테고리만 선택된 경우
+    if (selectedCategories.value.length > 0) {
+      reports = reports.filter((report) => {
+        const categoryArray = report.companyReportCategory ? report.companyReportCategory.split(",") : [];
+        return selectedCategories.value.some(category => categoryArray.includes(category));
+      });
+    }
+    
+    // 키워드만 선택된 경우
+    if (selectedKeywords.value.length > 0) {
+      reports = reports.filter((report) => {
+        const keywordArray = report.keyword ? report.keyword.split(",") : [];
+        return selectedKeywords.value.some(keyword => keywordArray.includes(keyword));
+      });
+    }
   }
-  return reports;
+
+  return reports.sort((a, b) => b.matchCount - a.matchCount);
 });
 
 // 페이지네이션 처리된 보고서 리스트 계산
 const paginatedCompanyReportList = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
-  const list = Array.isArray(filteredCompanyReportList.value)
-    ? filteredCompanyReportList.value
-    : [];
-  return list.slice(startIndex, startIndex + itemsPerPage.value);
+  return filteredCompanyReportList.value.slice(startIndex, startIndex + itemsPerPage.value);
 });
 
 // 필터 토글
 function toggleFilter() {
   showFilterTags.value = !showFilterTags.value;
 }
+
 const resetChips = ref(false);
+const resetCategory = ref(false);
+
+function clearSelectedCategory() {
+  if (selectedCategories.value.length == 0) ;
+
+  selectedCategories.value.splice(0, selectedCategories.value.length);
+  resetCategory.value = true;
+  selectedCategories.value = []
+  nextTick(() => {
+    selectedCategories.value.splice(0, selectedCategories.value.length);
+    resetCategory.value = false;
+  });
+}
 
 function clearSelectedKeywords() {
-  // selectedKeywords가 이미 빈 배열인 경우 아무 것도 하지 않음
-  if (selectedKeywords.value.length === 0) return;
+  if (selectedKeywords.value.length == 0) ;
 
-  // 키워드를 완전히 초기화하기 위해 splice 사용
   selectedKeywords.value.splice(0, selectedKeywords.value.length);
-
-  // 강제로 reset 플래그를 변경해 갱신 유도
   resetChips.value = true;
+  selectedKeywords.value = []
   nextTick(() => {
+    selectedKeywords.value.splice(0, selectedKeywords.value.length);
     resetChips.value = false;
-  });
+    })
+  ;
 }
 
 // 페이지 이동
@@ -249,20 +324,14 @@ function goToCompanyReportReadPage(companyReportId, companyReportName) {
   
   // 로그인한 일반 사용자의 상품 클릭 수 기록
   const email = sessionStorage.getItem("email");
-  const isAdmin = (
-    authenticationStore.isKakaoAdmin ||
-    naverAuthenticationStore.isNaverAdmin ||
-    googleAuthenticationStore.isGoogleAdmin ||
-    accountStore.isNormalAdmin
-  )
+  const isAdmin = (authenticationStore.isKakaoAdmin || naverAuthenticationStore.isNaverAdmin || googleAuthenticationStore.isGoogleAdmin || accountStore.isNormalAdmin);
 
   if (email && !isAdmin) {
-    console.log("log 카운트", isAdmin)
     userLogStore.requestCountClickToDjango({
       email: email,
       companyReport_id: companyReportId,
       purchase: false,
-    })
+    });
   }
 };
 
@@ -272,37 +341,11 @@ function changePage(page) {
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url)
-      .href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url)
-    .href;
+  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
 };
 
-function toggleKeyword(keyword) {
-  // TODO 전체가 아니라 빈값일 때 전체를 던지도록 수정
-  if (keyword)
-    if (keyword === "전체") {
-      selectedKeywords.value = ["전체"];
-    } else {
-      const index = selectedKeywords.value.indexOf("전체");
-      if (index !== -1) {
-        selectedKeywords.value.splice(index, 1);
-      }
-
-      if (selectedKeywords.value.includes(keyword)) {
-        selectedKeywords.value = selectedKeywords.value.filter(
-          (k) => k !== keyword
-        );
-      } else {
-        selectedKeywords.value.push(keyword);
-      }
-
-      if (selectedKeywords.value.length === 0) {
-        selectedKeywords.value.push("전체");
-      }
-    }
-}
 
 useHead({
   title: `전자공시시스템(DART) 기반 기업 핵심 정보 분석 | `,
@@ -626,6 +669,25 @@ useHead({
   box-shadow: 15px 0 0 var(--key), 30px 0 0 var(--key), 45px 0 0 var(--key), 60px 0 0 var(--key), 75px 0 0 var(--key), 90px 0 0 var(--key), 22px 10px 0 var(--key), 37px 10px 0 var(--key), 52px 10px 0 var(--key), 60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   -webkit-animation: keyboard05 var(--duration) linear infinite;
   animation: keyboard05 var(--duration) linear infinite;
+}
+/* 카테고리 및 키워드 chip 스타일 */
+.category-select-group {
+  margin-bottom: 16px;
+}
+
+.category-chip {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.chip-selected {
+  background-color: #1976d2;
+  color: white;
+}
+
+.filter-chip {
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 
 @keyframes bounce05 {
