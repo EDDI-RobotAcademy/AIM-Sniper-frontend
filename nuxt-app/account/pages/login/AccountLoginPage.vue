@@ -1,30 +1,31 @@
 <template>
   <v-container class="container">
-      <div class="login-wrapper">
-          <div>
-               
-              <div class="login_logo">
-                  <!-- LOGIN 텍스트 대신 이미지 삽입 -->    
-              </div>
+    <div class="login-wrapper">
+      <div>
 
-              <div v-if="login_flag == false && this.isEmailCollect == false" class="login-error-box">
-                  이메일이 올바르지 않습니다.
-                  <br />
-                  올바른 이메일을 입력하거나,
-                  <br />
-                  다른 간편로그인을 시도해 보세요.
-              </div>
-              <div v-if="login_flag == false && this.isEmailCollect == true && this.isPasswordCollect == false" class="login-error-box">
-                  비밀번호가 올바르지 않습니다.
-                  <br />
-                  올바른 비밀번호를 입력하거나,
-                  <br />
-                  다른 간편로그인을 시도해 보세요.
-              </div>
+        <div class="login_logo">
+          <!-- LOGIN 텍스트 대신 이미지 삽입 -->
+        </div>
 
-              <v-responsive class="mx-auto" min-width="300">
-                  <v-form v-model="form" @submit.prevent="onSubmit">
-                      <!-- <v-text-field
+        <div v-if="login_flag == false && this.isEmailCollect == false" class="login-error-box">
+          이메일이 올바르지 않습니다.
+          <br />
+          올바른 이메일을 입력하거나,
+          <br />
+          다른 간편로그인을 시도해 보세요.
+        </div>
+        <div v-if="login_flag == false && this.isEmailCollect == true && this.isPasswordCollect == false"
+          class="login-error-box">
+          비밀번호가 올바르지 않습니다.
+          <br />
+          올바른 비밀번호를 입력하거나,
+          <br />
+          다른 간편로그인을 시도해 보세요.
+        </div>
+
+        <!-- <v-responsive class="mx-auto" min-width="300">
+          <v-form v-model="form" @submit.prevent="onSubmit"> -->
+            <!-- <v-text-field
                           label="이메일 주소"
                           variant="solo"
                           v-model="email"
@@ -48,8 +49,8 @@
                           style="width: 75%; margin: 10px auto; display: block;"
                       /> -->
 
-                      <!-- 로그인 버튼 -->
-                      <!-- <v-btn
+            <!-- 로그인 버튼 -->
+            <!-- <v-btn
                           color="white"
                           :loading="loading"
                           type="submit"
@@ -58,11 +59,11 @@
                       >
                           <b>로그인</b>
                       </v-btn> -->
-                  </v-form>
-              </v-responsive>
+          <!-- </v-form>
+        </v-responsive> -->
 
-              <!-- 회원가입 버튼 -->
-              <!-- <v-btn
+        <!-- 회원가입 버튼 -->
+        <!-- <v-btn
                   color="purple darken-2"
                   class="black--text mt-2"
                   style="width: 75%; margin: 5px auto; display: flex; align-items: center; justify-content: center; font-size: 12px;"
@@ -71,23 +72,29 @@
                   <b>회원가입</b>
               </v-btn> -->
 
-              <!-- 영역 구분선 -->
-              <!-- <v-divider :thickness="3" style="margin-top: 20px; margin-bottom: 20px;"></v-divider> -->
+        <!-- AIm 한줄 소개 -->
+        <div class="introduction">
+          <p>기업 분석과&nbsp;AI 모의면접&nbsp;|&nbsp;취업 준비는 <b>AIM</b>에서</p>
+        </div>
 
-              <!-- 각 소셜 로그인 버튼들 -->
-              <v-btn class="kakao-login-btn" @click="goToKakaoLogin">
-                  <!-- 카카오 로그인 -->
-              </v-btn>
+        <!-- 영역 구분선 -->
+        <v-divider class="mt-5 mb-7" :thickness="3"></v-divider>
 
-              <v-btn class="google-login-btn" @click="goToGoogleLogin">
-                  <!-- Google 로그인 -->
-              </v-btn>
 
-              <v-btn class="naver-login-btn" @click="goToNaverLogin">
-                  <!-- 네이버 로그인 -->
-              </v-btn>
-          </div>
+        <!-- 각 소셜 로그인 버튼들 -->
+        <v-btn class="kakao-login-btn" @click="goToKakaoLogin">
+          <!-- 카카오 로그인 -->
+        </v-btn>
+
+        <v-btn class="google-login-btn" @click="goToGoogleLogin">
+          <!-- Google 로그인 -->
+        </v-btn>
+
+        <v-btn class="naver-login-btn" @click="goToNaverLogin">
+          <!-- 네이버 로그인 -->
+        </v-btn>
       </div>
+    </div>
   </v-container>
 </template>
 
@@ -96,9 +103,9 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/accountStore';
-import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore'; 
+import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
-// import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationstore';
+// import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
 
 // import { useSessionStorage } from '@vueuse/core'; // 세션 스토리지 관리를 위해 VueUse 사용
 
@@ -126,9 +133,9 @@ const goToKakaoLogin = async () => {
 };
 
 const goToGoogleLogin = async () => {
-  // alert("현재 로그인 검수 중입니다.");
-  sessionStorage.setItem("loginType", "GOOGLE");
-  await googleAuthentication.requestGoogleOauthRedirectionToDjango();
+  alert("현재 로그인 검수 중입니다.");
+  // sessionStorage.setItem("loginType", "GOOGLE");
+  // await googleAuthentication.requestGoogleOauthRedirectionToDjango();
 };
 
 const goToNaverLogin = async () => {
@@ -161,7 +168,7 @@ const onSubmit = async () => {
   try {
     const response = await checkPassword();
     const roleType = await account.requestRoleTypeToDjango(email.value);
-    
+
     if (response) {
       login_flag.value = true; // 로그인 성공
       sessionStorage.setItem('email', email.value);
@@ -211,133 +218,167 @@ const checkPassword = async () => {
 </script>
 
 <style scoped>
-.container {   
-    max-width: 100vw;
-    height: 100vh;    
-    display: flex;                  
-    justify-content: center;        
-    align-items: center;            
-    box-sizing: border-box;        
-    background-color: white;      
-    background: url("@/assets/images/fixed/login_bg.png") no-repeat center center;
-    background-size: cover;                                                    
+.container {
+  max-width: 100vw;
+  height: 110vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: white;
+  background: url("@/assets/images/fixed/login_bg.png") no-repeat center center;
+  background-size: cover;
 }
 
 .login_logo {
-    height: 20vh;
-    margin-bottom: 60px;
-    overflow: hidden;
-    background-image: url("@/assets/images/fixed/AIM_BI_White.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;    
+  height: 20vh;
+  margin-bottom: 3vh;
+  overflow: hidden;
+  background-image: url("@/assets/images/fixed/AIM_BI_White.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 로그인 박스 설정 */
 .login-wrapper {
-    position: relative;
-    z-index: 1;   
-    width: 520px;
-    height: 576px;   
-    background-color: rgba(255, 255, 255, 0.08);     
-    border: 1px solid rgba(128, 128, 128, 0.8);
-    border-radius: 40px;    
-    padding: 70px 60px;    
+  position: relative;
+  z-index: 1;
+  width: 80vh;
+  height: 70vh;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 9vh;
+  padding: 0vh 8vh;
+  display: flex; /* Flexbox 활성화 */
+  justify-content: center; /* 수평 방향 중앙 정렬 */
+  align-items: center; /* 수직 방향 중앙 정렬 */
+  text-align: center;
 }
 
 /* 에러 메시지 박스 설정 */
 .login-error-box {
-    background-color: rgb(255, 0, 0);
-    padding: 10px;
-    margin-bottom: 1px;
-    border-radius: 20px;
-    color: #fff;
+  background-color: rgb(255, 0, 0);
+  padding: 10px;
+  margin-bottom: 1px;
+  border-radius: 20px;
+  color: #fff;
 }
 
 /* 로그인 및 회원가입 버튼 설정 */
 .v-btn {
-    width: 100%;
-    height: 48px; 
-    margin: 10px auto;
-    display: flex;
-    align-items: center;  
-    justify-content: center;  
+  width: 100%;
+  height: 50px;
+  margin: 1.3vh auto;
+}
+
+.introduction {
+  color: rgb(255, 255, 255);
+  word-break: break-word;
 }
 
 
+@media (max-width: 768px) {
+  .v-btn {
+    height: 45px; /* 모바일 환경에서는 높이를 줄임 */
+  }
+  .login_logo {
+    height: 19vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .v-btn {
+    height: 33px; /* 작은 모바일 환경에서는 더 작게 설정 */
+  }
+  .login_logo {
+    height: 13vh;
+  }
+  .introduction {
+  white-space: pre-wrap;
+}
+
+}
+
 /* Kakao 로그인 버튼 설정 */
 .kakao-login-btn {
-    background-image: url("@/assets/images/fixed/btn_login_kakao.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;   
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color:#FFEA00;
-    margin-bottom: 12px;
-    border-radius: 10px;
+  background-image: url("@/assets/images/fixed/btn_login_kakao.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFEA00;
+  margin-bottom: 1vh;
+  border-radius: 1.4vh;
 }
 
 /* Google 로그인 버튼 설정 */
 .google-login-btn {
-    background-image: url("@/assets/images/fixed/btn_login_google.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;       
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
-    margin-bottom: 12px;
-    border-radius: 10px;
+  background-image: url("@/assets/images/fixed/btn_login_google.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  margin-bottom: 1vh;
+  border-radius: 1.4vh;
 }
+
 .naver-login-btn {
-    background-image: url("@/assets/images/fixed/btn_login_naver.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;      
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #03C75A;
-    border-radius: 10px;
+  background-image: url("@/assets/images/fixed/btn_login_naver.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #03C75A;
+  border-radius: 1.4vh;
 }
 
 .v-text-field input {
-    background-color: transparent !important;
-    color: black !important; /* 입력값을 검정색으로 설정 */
+  background-color: transparent !important;
+  color: black !important;
+  /* 입력값을 검정색으로 설정 */
 }
 
 .v-label {
-    color: black !important; /* 레이블을 검정색으로 설정 */
+  color: black !important;
+  /* 레이블을 검정색으로 설정 */
 }
 
 
 /* 로그인 폼의 텍스트 필드 라벨 색상 설정 */
 :deep(.v-label.v-field-label) {
-    color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* 로그인 폼의 텍스트 필드 입력값 색상 설정 */
 :deep(.v-text-field input) {
-    color: #fff;
+  color: #fff;
 }
 
 /* 눈 아이콘 색상 설정 */
-:deep(.mdi-eye::before), :deep(.mdi-eye-off::before) {
-    color: rgba(255, 255, 255, 0.8) !important;
+:deep(.mdi-eye::before),
+:deep(.mdi-eye-off::before) {
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* 오류 메시지 스타일링 */
 :deep(.v-messages__message) {
-    color: rgb(0, 0, 255)!important; /* 메시지 색상 */
-    font-size: 12px; /* 메시지 폰트 크기 */
+  color: rgb(0, 0, 255) !important;
+  /* 메시지 색상 */
+  font-size: 12px;
+  /* 메시지 폰트 크기 */
 }
 
 /* 텍스트 필드 에러 상태의 레이블 색상을 초록색으로 변경 */
 :deep(.v-field--error:not(.v-field--disabled) .v-label.v-field-label) {
-    color: rgba(0, 0, 255) !important; /* 에러 상태의 레이블 색상을 초록색으로 변경 */
+  color: rgba(0, 0, 255) !important;
+  /* 에러 상태의 레이블 색상을 초록색으로 변경 */
 }
-
 </style>

@@ -22,6 +22,11 @@ export default defineNuxtModule({
 					name: "AIInterviewLLMTestPage",
 					path: "/ai-interview/llmTest",
 					file: resolve(themeDir, "aiInterview/pages/llmTest/AIInterviewLLMTestPage.vue"),
+				},
+				{
+					name: "AIInterviewAnswerResult",
+					path: "/ai-interview/result/:accountId",
+					file: resolve(themeDir, "aiInterview/pages/result/AIInterviewAnswerResultPage.vue"),
 				}
 			);
 		});

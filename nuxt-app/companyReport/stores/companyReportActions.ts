@@ -22,8 +22,8 @@ export const companyReportActions = {
 		try {
 			const res = await djangoAxiosInst.get('/company_report/list/');
 			const data = res.data;
-			console.log('Report Total data Complete');
-			companyReportStore.companyReportList = data;
+			const sortedData = data.sort((a, b) => a.companyReportId - b.companyReportId)
+			companyReportStore.companyReportList = sortedData;
 		} catch (error) {
 			console.error('Error fetching companyReport list:', error);
 			throw error;
@@ -32,15 +32,14 @@ export const companyReportActions = {
 
 	async requestCreateCompanyReportToDjango(imageFormData: FormData): Promise<void> {
 		const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
-
+	
 		try {
-			const res = await djangoAxiosInst.post('/company_report/register', imageFormData, {
+			await djangoAxiosInst.post('/company_report/register', imageFormData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
 			});
 			alert('보고서를 성공적으로 등록하셨습니다.');
-			return res;
 		} catch (error) {
 			console.log('requestCreateCompanyReportToDjango() -> error:', error);
 			throw error;

@@ -148,5 +148,19 @@ export const accountAction = {
             console.error('roleType 취득 실패:', error);
             throw error;
         }
-    } 
+    },
+    async requestProfileToDjango(email:string): Promise<any>{
+        const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+        const accountStore = useAccountStore()
+        try{
+            const res: AxiosResponse = await djangoAxiosInst.post('/account/profile',email);
+            this.nickname = res.data.nickname
+            this.gender = res.data.gender
+            this.birthyear = res.data.birthyear
+            
+        } catch(error){
+            console.error('requestBirthyearToDjango() 문제 발생:', error);
+            throw error
+        }
+    },
 };

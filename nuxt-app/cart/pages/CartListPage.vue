@@ -5,7 +5,7 @@
         <v-col cols="12">
           <v-card>
             <v-card-title>
-              내 장바구니<v-icon left>mdi-basket</v-icon><br />
+              🛒 내 장바구니
             </v-card-title>
             <v-card-text>
               <v-table>
@@ -181,6 +181,7 @@ async function proceedToOrder() {
     console.log("dddd", cartItems.value)
     const orderItems = selectedCartItems.map((item) => ({
       cartItemId: item.cartItemId,
+      quantity: item.quantity,
       orderPrice: item.companyReportPrice,
     }));
     const orderedCartItemIdList = selectedCartItems.map(
@@ -191,18 +192,24 @@ async function proceedToOrder() {
       items: orderItems,
     });
 
-    const cartList = await cartStore.requestCartListToDjango();
-    await userLogStore.requestCountClickToDjango({
-      companyReport_id: cartList[0].companyReportId,
-      purchase: purchase.value,
-    });
+    // const cartList = await cartStore.requestCartListToDjango();
+    // await userLogStore.requestCountClickToDjango({
+    //   companyReport_id: cartList[0].companyReportId,
+    //   purchase: purchase.value,
+    // });
 
     const orderId = response.orderId;
     await cartStore.requestDeleteCartItemToDjango({
       CartItemId: orderedCartItemIdList,
     });
 
-    window.location.reload(true);
+    //window.location.reload(true);
+
+    // 선택한 항목의 total 값을 amount로 쿼리 파라미터로 전달
+    const amount = selectedItemsTotal.value;
+    router.push({ path: '/payments/test/page', query: { amount } });  // 결제 페이지 경로로 이동
+
+    
   } catch (error) {
     console.error("Order creation failed:", error);
   }
