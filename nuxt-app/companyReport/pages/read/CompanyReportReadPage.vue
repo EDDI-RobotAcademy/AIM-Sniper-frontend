@@ -383,11 +383,15 @@ function checkAuthenticated() {
 }
 
 async function checkPurchased() {
-  if(isAuthenticated.value) {
-    const res = await orderStore.requestOrderItemDuplicationCheckToDjango({email: email.value, companyReportId: Number(companyReportId.value)})
-
-    if(res) {
-      isPurchased.value = true;
+  if(isAdmin.value) {
+    isPurchased.value = true;
+  } else {
+    if(isAuthenticated.value) {
+      const res = await orderStore.requestOrderItemDuplicationCheckToDjango({email: email.value, companyReportId: Number(companyReportId.value)})
+      
+      if(res) {
+        isPurchased.value = true;
+      }
     }
   }
 }
