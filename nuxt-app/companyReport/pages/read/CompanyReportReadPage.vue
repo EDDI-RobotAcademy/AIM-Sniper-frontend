@@ -85,10 +85,7 @@
           <!-- 기업/사업 리포트 -->
           <!-- 미리보기 섹션 -->
           <v-row ref="overviewRow" class="overview" justify="center">
-              ref="overviewRef"
-              cols="auto"
-              class="overview-content mb-2 mt-2"
-            >
+            <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span><b>주소</b> {{ companyInfo.address }}</span>
@@ -124,16 +121,7 @@
             <!-- 그라데이션 오버레이 -->
             <div :class="{'gradient-overlay': !isAuthenticated}"></div>
           </div>
-                - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
-              </p>
-            </v-col>
-          </v-row>
 
-          <div
-            class="width-divider my-2"
-            :style="{ width: maxWidth + 'px', margin: '0 auto' }"
-          >
-            <v-divider></v-divider>
           <!-- 블러 처리된 섹션 -->
           <div :class="{'blur-section': !isAuthenticated}">
             <!-- 재무제표 설명 -->
@@ -206,24 +194,6 @@
               </v-card>
             </div>
           </div>
-          <!-- 요약 -->
-          <v-row
-            :style="{ width: financeWidth + 'px' }"
-            class="summary my-5 d-flex justify-center align-center"
-          >
-            <v-col cols="auto">
-              <span v-html="companyInfo.business_summary"></span>
-            </v-col>
-          </v-row>
-          <!-- 매출액 표 -->
-          <v-row class="revenue-table my-5 d-flex justify-center align-center">
-            <v-col cols="auto">
-              <span
-                v-html="companyInfo.revenue_table"
-                class="table-content"
-              ></span>
-            </v-col>
-          </v-row>
         </v-container>
       </v-card-text>
     </v-card>
