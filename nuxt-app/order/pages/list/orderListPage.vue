@@ -5,11 +5,10 @@
         <v-row justify="center" v-if="orderStore.orderList.length > 0">
           <v-col cols="12" md="10" lg="8">
             <h2 class="title">
-              <span>구매한 보고서 목록</span>
-              <v-icon class="ml-auto" color="primary"
-                >mdi-clipboard-list-outline</v-icon
-              >
-            </h2><br>
+              <!-- <v-icon class="ml-auto" color="primary">mdi-clipboard-list-outline</v-icon> -->
+              <span>🗒️ 구매한 보고서 목록</span>              
+            </h2>
+            <br>
             <v-data-table
               v-model:items-per-page="perPage"
               :headers="headerTitle"
@@ -124,7 +123,15 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
+.background-image {
+  margin-top: 7%;
+}
+
+.ml-auto {
+  font-size: 100px !important;
+}
+
 .table-header th {
   font-size: 1.3em;
   font-weight: 900;
