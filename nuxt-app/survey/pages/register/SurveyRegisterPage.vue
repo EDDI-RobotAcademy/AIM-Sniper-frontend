@@ -1,5 +1,5 @@
 <template>
-  <v-container :style="{ maxWidth: '50%' }">
+  <v-container style="maxWidth: 50%; margin-top: 10vh">
     <v-container v-if="start" align="center">
       <v-btn @click="createForm">설문 조사 제작하기</v-btn>
     </v-container>
@@ -175,134 +175,135 @@
 
 
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-import { useSurveyStore } from '@/stores/surveyStore';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
+import { useSurveyStore } from '../../stores/surveyStore';
 
-const router = useRouter();
 const surveyStore = useSurveyStore();
+const router = useRouter();
 
-const state = reactive({
-  start: true,
-  showTitleDescription: true,
-  titleAndDescriptionCreated: false,
-  readyToCreateQuestionTitle: true,
-  formCreated: false,
-  surveyId: null,
-  questionId: null,
-  selectionId: null,
-  surveyTitle: null,
-  surveyDescription: null,
-  surveyQuestions: [],
-  option: '',
-  questionTitle: '',
-  questionType: null,
-  selection: [],
-  isAdded: false,
-  isEssential: false,
-  generateOptions: ['text', 'radio', 'checkbox'],
-  isFormDirty: false,
-  randomString: '',
-  uploadedImages: [],
-  uploadedImage: null
-});
+// Reactive state variables
+const start = ref(true);
+const showTitleDescription = ref(true);
+const titleAndDescriptionCreated = ref(false);
+const readyToCreateQuestionTitle = ref(true);
+const formCreated = ref(false);
+const surveyId = ref(null);
+const questionId = ref(null);
+const selectionId = ref(null);
+const surveyTitle = ref(null);
+const surveyDescription = ref(null);
+const surveyQuestions = ref([]);
+const option = ref('');
+const questionTitle = ref('');
+const questionType = ref(null);
+const selection = ref([]);
+const isAdded = ref(false);
+const isEssential = ref(false);
+const generateOptions = ['text', 'radio', 'checkbox'];
+const isFormDirty = ref(false);
+const randomString = ref('');
+const uploadedImages = ref([]);
+const uploadedImage = ref(null);
 
+// Methods
 const createForm = async () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
   for (let i = 0; i < 32; i++) {
-    state.randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
+    randomString.value += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
 
-  state.surveyId = await surveyStore.requestCreateSurveyFormToDjango({ randomString: state.randomString });
+  surveyId.value = await surveyStore.requestCreateSurveyFormToDjango({ randomString: randomString.value });
 
-  if (state.surveyId !== '') {
-    state.formCreated = true;
-    state.start = false;
+  if (surveyId.value !== '') {
+    formCreated.value = true;
+    start.value = false;
   }
 };
 
 const sendTitleAndDescription = async () => {
-  const payload = { surveyId: state.surveyId, surveyTitle: state.surveyTitle, surveyDescription: state.surveyDescription };
+  const payload = { surveyId: surveyId.value, surveyTitle: surveyTitle.value, surveyDescription: surveyDescription.value };
   const titleDescriptionSaved = await surveyStore.requestRegisterTitleAndDescriptionToDjango(payload);
 
   if (titleDescriptionSaved) {
-    state.titleAndDescriptionCreated = true;
-    state.showTitleDescription = false;
+    titleAndDescriptionCreated.value = true;
+    showTitleDescription.value = false;
   }
 };
 
-const createQuestion = async (questionType) => {
-  if (!state.questionTitle) {
+const createQuestion = async (type) => {
+  if (!questionTitle.value) {
     alert('내용을 입력하세요');
     return;
   }
 
   const imageFormData = new FormData();
-  imageFormData.append('surveyId', state.surveyId);
-  imageFormData.append('questionTitle', state.questionTitle);
-  imageFormData.append('questionType', state.questionType);
-  imageFormData.append('isEssential', state.isEssential ? 'true' : 'false');
+  imageFormData.append('surveyId', surveyId.value);
+  imageFormData.append('questionTitle', questionTitle.value);
+  imageFormData.append('questionType', questionType.value);
+  imageFormData.append('isEssential', isEssential.value ? 'true' : 'false');
 
-  state.uploadedImages.forEach((image) => {
+  uploadedImages.value.forEach((image) => {
     imageFormData.append('images', image);
   });
 
-  state.questionId = await surveyStore.requestCreateQuestionToDjango(imageFormData);
-  state.readyToCreateQuestionTitle = false;
+  questionId.value = await surveyStore.requestCreateQuestionToDjango(imageFormData);
+  readyToCreateQuestionTitle.value = false;
 
-  if (state.questionId !== null && questionType === 'text') {
-    const preForm = { questionTitle: state.questionTitle, questionType: questionType, isEssential: state.isEssential, images: state.uploadedImages };
-    state.surveyQuestions.push(preForm);
+  if (questionId.value !== null && type === 'text') {
+    const preForm = { questionTitle: questionTitle.value, questionType: type, isEssential: isEssential.value, images: uploadedImages.value };
+    surveyQuestions.value.push(preForm);
     resetQuestionFields();
   }
 };
 
 const createSelection = async () => {
-  if (state.option.trim() !== '') {
-    state.selection.push(state.option);
-    const payload = { questionId: state.questionId, selection: state.option };
-    state.selectionId = await surveyStore.requestRegisterSelectionToDjango(payload);
-    state.option = '';
-    state.isFormDirty = true;
+  if (option.value.trim() !== '') {
+    selection.value.push(option.value);
+    const payload = { questionId: questionId.value, selection: option.value };
+    selectionId.value = await surveyStore.requestRegisterSelectionToDjango(payload);
+    option.value = '';
+    isFormDirty.value = true;
   } else {
     alert('항목에 내용을 입력하세요');
   }
 };
 
 const finishCreateSelection = () => {
-  if (state.selection.length === 0) {
+  if (selection.value.length === 0) {
     alert('항목을 입력해주세요.');
     return;
   }
-  if (state.questionId !== null && state.selectionId !== null) {
-    const preForm = { questionTitle: state.questionTitle, questionType: state.questionType, isEssential: state.isEssential, selection: state.selection, images: state.uploadedImages };
-    state.surveyQuestions.push(preForm);
+  if (questionId.value !== null && selectionId.value !== null) {
+    const preForm = { questionTitle: questionTitle.value, questionType: questionType.value, isEssential: isEssential.value, selection: selection.value, images: uploadedImages.value };
+    surveyQuestions.value.push(preForm);
     resetQuestionFields();
   }
 };
 
 const addQuestion = () => {
-  state.isAdded = true;
-  state.questionType = null;
-  state.isFormDirty = true;
+  isAdded.value = true;
+  questionType.value = null;
+  isFormDirty.value = true;
 };
 
 const onFileChange = (files) => {
   const newImages = Array.from(files);
-  state.uploadedImages = [...state.uploadedImages, ...newImages];
-  state.uploadedImage = null;
+  uploadedImages.value = [...uploadedImages.value, ...newImages];
+  console.log('값 추가됨? ', uploadedImages.value);
+  uploadedImage.value = null;
 };
 
 const resetQuestionFields = () => {
-  state.questionTitle = '';
-  state.selection = [];
-  state.isAdded = false;
-  state.questionType = null;
-  state.isEssential = false;
-  state.uploadedImages = [];
-  state.isFormDirty = true;
-  state.readyToCreateQuestionTitle = true;
+  questionTitle.value = '';
+  selection.value = [];
+  isAdded.value = false;
+  questionType.value = null;
+  isEssential.value = false;
+  uploadedImages.value = [];
+  isFormDirty.value = true;
+  readyToCreateQuestionTitle.value = true;
 };
 
 const submitForm = () => {
@@ -312,9 +313,23 @@ const submitForm = () => {
 
 const formatQuestionTitle = (index, question) => {
   if (question.questionType === 'checkbox') {
-    return `${index + 1}. ${question.questionTitle} (중복 선택 가능) <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+    return `${index + 1}. ${question.questionTitle} (중복 선택 가능) <span class="essential"> ${question.isEssential ? '* 필수' : '* 선택'}</span>`;
   } else {
     return `${index + 1}. ${question.questionTitle} <span class="essential">${question.isEssential ? '* 필수' : '* 선택'}</span>`;
+  }
+};
+
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const getImageUrl = async (imageName) => {
+  try {
+    await sleep(2500);
+    return new URL(`@/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  } catch (e) {
+    console.error('Image not found:', imageName);
+    return '';
   }
 };
 
@@ -324,13 +339,14 @@ const disableEnter = (event) => {
 };
 
 const handleBeforeUnload = (event) => {
-  if (state.isFormDirty) {
+  if (isFormDirty.value) {
     const confirmationMessage = '작성 중인 정보가 저장되지 않을 수 있습니다.';
     event.returnValue = confirmationMessage;
     return confirmationMessage;
   }
 };
 
+// Lifecycle hooks
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload);
 });
@@ -339,7 +355,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload);
 });
 </script>
-
 
 
 <style>
