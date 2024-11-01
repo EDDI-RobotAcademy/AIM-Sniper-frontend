@@ -65,7 +65,7 @@ export const aiInterviewActions = {
             // console.log('requestInferedResultToFastAPI()')
 
             let response: AxiosResponse<any>;
-            const maxAttempts = 30; // 최대 시도 횟수
+            const maxAttempts = 120; // 최대 시도 횟수
             const delay = 1000; // 각 시도 사이의 지연시간 (ms)
             
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {

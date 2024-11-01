@@ -117,7 +117,7 @@ const getAIQuestions = async () => {
     aiResponseList.value = await aiInterviewStore.requestFirstQuestionToDjango({ questionId: questionId });
   }
   currentAIMessage.value = aiResponseList.value.firstQuestion || '질문을 불러오는 데 실패하였습니다. 다시 시도해주세요.';
-  intentIndex.value++;
+  // intentIndex.value++;
   chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
 
   const chunks = chunkText(currentAIMessage.value, 1);
