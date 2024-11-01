@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto my-12" max-width="600" v-if="resultForm">
+  <v-card class="result" max-width="600" v-if="resultForm" style="margin-top: 10%; margin-left: 30%">
     <v-card-title>
       <span class="headline">{{ resultForm.surveyTitle }}</span>
     </v-card-title>

@@ -24,7 +24,7 @@
                 <v-col cols="1" class="filter-group-title">
                   <strong>카테고리</strong>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="11">
                   <v-chip-group v-if="!resetCategory" v-model="selectedCategories" class="category-select-group" multiple column>
                     <v-btn @click="clearSelectedCategory" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray;">
                       <v-icon left>mdi-refresh</v-icon>
@@ -50,7 +50,7 @@
                 <v-col cols="1" class="filter-group-title">
                   <strong>키워드</strong>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="11">
                   <v-chip-group v-if="!resetChips" v-model="selectedKeywords" multiple column>
                     <v-btn @click="clearSelectedKeywords" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray">
                       <v-icon left>mdi-refresh</v-icon>

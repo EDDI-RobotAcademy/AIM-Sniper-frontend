@@ -86,12 +86,16 @@ const route = useRoute();
 const router = useRouter();
 
 const randomString = ref(route.params.randomString);
-const email = ref(sessionStorage.getItem("email"));
+//const email = ref(sessionStorage.getItem("email"));
+const email = ref(null);
+if (process.client) {
+  email.value = sessionStorage.getItem("email");
+}
 const accountId = ref(null);
 const isFirstAccept = ref(false);
 const submitForm = ref([]);
 const payload = ref(null);
-
+const valid = ref(false); // v-form에 사용할 valid 변수
 const surveyStore = useSurveyStore();
 const accountStore = useAccountStore();
 
