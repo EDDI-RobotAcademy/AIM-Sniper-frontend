@@ -65,14 +65,17 @@ export const aiInterviewActions = {
             // console.log('requestInferedResultToFastAPI()')
 
             let response: AxiosResponse<any>;
-            const maxAttempts = 120; // 최대 시도 횟수
-            const delay = 1000; // 각 시도 사이의 지연시간 (ms)
+            const maxAttempts = 500; // 최대 시도 횟수
+            const delay = 10000; // 각 시도 사이의 지연시간 (ms)
             
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
                 response = await fastapiAxiosInst.get('/polyglot-result');
 
                 if (response.data && response.data.nextQuestion) {
                     // console.log('response.data', response.data);
+                    return response.data;
+                }
+                if (response.data && response.data.resultList){
                     return response.data;
                 }
 
