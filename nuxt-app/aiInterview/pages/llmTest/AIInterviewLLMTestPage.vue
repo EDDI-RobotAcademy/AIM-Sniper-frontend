@@ -217,8 +217,9 @@ const sendMessage = async () => {
           await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
           const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
           console.log('response: ', response);
-          for (let i = 0; i < response.length; i++) {
-            pairedContents[i].push(response[i]);
+          for (let i = 0; i < response.resultList.length; i++) {
+            pairedContents[i].push(response.resultList[i]);
+            console.log('pairedContents에 값 ', pairedContents)
           }
           console.log('pairedContents', pairedContents);
           const result = { scoreResultList: pairedContents, accountId: accountId.value };
