@@ -7,7 +7,7 @@
         <v-card-title align=center><strong>※ 사전 공지 ※</strong></v-card-title><br>
         <li class="li">본 면접은 특정 기업 및 직무에 맞추어진 면접이 아닌 <strong>인성 면접</strong>임을 알려드립니다.</li><br>
         <li class="li">총 <strong>5개</strong>의 질문이 제공됩니다.</li><br>
-        <li class="li">현재 서비스에는 <strong>답변 시간 제한</strong>이 없으나 추후 추가될 예정입니다.</li><br>
+        <li class="li">면접 질문 당 답변 제한 시간은 <strong>1분 30초</strong>입니다. 시간 내에 작성 부탁드립니다.</li><br>
       </v-container><br>
       <v-card-text><strong>면접 서비스를 시작하시려면 아래 버튼을 눌러주세요.</strong></v-card-text>
       <v-btn @click="startInterview" color="primary">START</v-btn>
@@ -15,12 +15,15 @@
     </v-container>
     <v-container v-if="start" align="center">
       <div v-if="visible" class="interview-container">
-        <v-icon>mdi-account-tie</v-icon>
-        <h2>{{ startMessage }}</h2>
+        <v-icon>mdi-account-tie</v-icon><br>
+        <v-text v-html="startMessage"></v-text>
       </div>
       <div v-if="!visible" class="interview-container">
         <v-icon>mdi-account-tie</v-icon>
-        <h2>{{ currentAIMessage }}</h2>
+        <h2 v-html="formattedAIMessage"></h2><br>
+        <div :class="{'timer': true, 'red-text': remainingTime <= 10}">
+          남은 시간: {{ Math.floor(remainingTime / 60) }}:{{ (remainingTime % 60).toString().padStart(2, '0') }}
+        </div>
       </div>
 
       <div v-if="isLoading && !finished" class="message ai">
@@ -80,7 +83,7 @@ const finished = ref(false);
 const visible = ref(true);
 const userInput = ref('');
 const aiOutput = ref('');
-const startMessage = '안녕하세요. AI 모의 면접 서비스입니다. 제한 시간 내에 답변 작성 부탁드립니다. 지금부터 면접을 시작하겠습니다.';
+const startMessage = '<h2>안녕하세요. AI 모의 면접 서비스입니다.</h2><br><strong><span>제한 시간 내에 답변 작성 부탁드립니다.</span><br><span>지금부터 면접을 시작하겠습니다.</span></strong>';
 const currentAIMessage = ref('');
 const chatHistory = ref([{ type: 'ai', content: '' }]);
 const isLoading = ref(false);
@@ -91,8 +94,16 @@ const questionIndex = ref(0);
 const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
 const intentIndex = ref(0);
 
+const formattedAIMessage = computed(() => {
+      return currentAIMessage.value.replace(/([.?])/g, '$1<br>');
+    });
+
 // Computed Properties
 const isCheckoutDisabled = computed(() => sendCount.value >= maxMessages);
+
+const timeLimit = 90;
+const remainingTime = ref(timeLimit);
+const timer = ref(null);
 
 // Watchers
 watch(start, (newVal) => {
@@ -116,6 +127,29 @@ onMounted(async () => {
     alert('로그인이 필요합니다.');
     router.push('/account/login');
   }
+});
+
+const startTimer = () => {
+  clearInterval(timer.value);
+  remainingTime.value = timeLimit;
+
+  // 타이머 설정
+  timer.value = setInterval(() => {
+    if (remainingTime.value > 0) {
+      remainingTime.value--;
+    } else {
+      clearInterval(timer.value);
+      sendMessage();
+    }
+  }, 1000);
+};
+
+watch(currentAIMessage, () => {
+  startTimer();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(timer.value);
 });
 
 // Methods
@@ -198,6 +232,10 @@ const sendMessage = async () => {
   }
   if (userInput.value.trim()) {
     chatHistory.value.push({ type: 'user', content: userInput.value });
+  } else {
+    chatHistory.value.push({ type: 'user', content: '질문에 답변하지 못했습니다.' });
+  }
+    console.log('userInput chatHistory ', chatHistory )
     userInput.value = '';
     adjustTextareaHeight();
     isLoading.value = true;
@@ -224,17 +262,14 @@ const sendMessage = async () => {
             pairedContents.push([contents[i], contents[i + 1], interviewIntents[Math.floor(i / 2)]]);
           }
 
-          // console.log('result: ', pairedContents);
           const payload = { 'interviewResult': pairedContents };
           try {
             await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
             const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
-            // console.log('response: ', response);
             for (let i = 0; i < response.resultList.length; i++) {
               pairedContents[i].push(response.resultList[i]);
-              // console.log('pairedContents에 값 ', pairedContents)
             }
-            // console.log('pairedContents', pairedContents);
+
             const result = { scoreResultList: pairedContents, accountId: accountId.value };
             const saveDone = await aiInterviewStore.requestSaveInterviewResultToDjango(result);
             if (saveDone) {
@@ -313,7 +348,6 @@ const sendMessage = async () => {
       streamText(chunks);
       isLoading.value = false;
     }, 1000);
-  }
 };
 
 const showStartMessage = () => {
@@ -348,6 +382,14 @@ useHead({
 
 .li {
   margin-left: 3%;
+}
+.timer {
+  font-size: 15px;
+  color: black;
+}
+
+.red-text {
+  color: red;
 }
 
 .control-margin {
