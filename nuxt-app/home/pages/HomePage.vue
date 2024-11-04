@@ -31,7 +31,7 @@
           <b>기업 분석 보고서</b> 구경하기
         </button>
         <button class="goToSurvey-button" @click="goToSurveyList">
-          <b>설문조사</b> 해주세요
+          <b>리뷰</b> 작성하기
         </button>
       </div>
     </div>

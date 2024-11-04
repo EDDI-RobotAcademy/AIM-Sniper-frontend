@@ -7,6 +7,27 @@
             <h2 class="section-title">전체 보고서</h2>
           </v-col>
         </v-row>
+        <v-row class="justify-space-between align-center flex-wrap">
+          <v-col
+            v-for="(companyReport, index) in topNCompanyReportList"
+            :key="index"
+            cols="12"
+            sm="4"
+            md="3"
+            lg="2"
+            class="mb-5"
+          >
+            <div class="popular-company" @click = "goToCompanyReportReadPage(companyReport.companyReportId)">
+              <div class="border-top"></div>
+              <span><h5>AI - Report 추천</h5></span>
+              <div class="img">
+                <img :src="getImageUrl(companyReport.companyReportTitleImage)" :class="{'default-img': !companyReport.companyReportTitleImage}">
+              </div>
+              <span>{{ companyReport.companyReportName }}</span>
+              <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+            </div>
+          </v-col>
+        </v-row>  
         <!-- 기업 필터 -->
         <v-row>
           <v-col cols="12">
@@ -191,7 +212,7 @@ const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
-const topN = ref(3);
+const topN = ref(5);
 const topList = ref([]);
 const topNCompanyReportList = ref([]);
 
@@ -688,6 +709,120 @@ useHead({
 .filter-chip {
   margin-right: 8px;
   margin-bottom: 8px;
+}
+.popular-company {
+  width: 150px; /* 고정된 너비 값 */
+  height: 180px;
+  background: #0a28b0;
+  border-radius: 15px;
+  box-shadow: 1px 5px 20px 5px #1f199d6b; /* 조정된 그림자 */
+  position: relative;
+}
+
+.popular-company::before {
+  content: "";
+  position: absolute;
+  width: 3px; /* 점의 크기 */
+  height: 3px;
+  background-color: white; /* 점의 색상 */
+  border-radius: 50%; /* 점을 둥글게 만듦 */
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8), /* 빛 효과 */
+              0 0 50px 25px rgba(255, 255, 255, 0.5), /* 첫 번째 꼬리 */
+              0 0 75px 25px rgba(255, 255, 255, 0.3); /* 더 긴 꼬리 */
+  animation: shooting-star 4s linear infinite; /* 애니메이션 설정 */
+}
+
+@keyframes shooting-star {
+  0% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 처음 크기 */
+  }
+  25% {
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%) scale(1.2); /* 크기 약간 확대 */
+  }
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%) scale(1.4); /* 크기 더 확대 */
+  }
+  75% {
+    top: 100%;
+    left: 0;
+    transform: translateY(-100%) scale(1.2); /* 다시 크기 축소 */
+  }
+  100% {
+    top: 0;
+    left: 0;
+    transform: scale(1); /* 원래 크기로 돌아옴 */
+  }
+}
+
+.popular-company .border-top {
+  width: 75%;
+  height: 3%;
+  background: #8094F4;
+  margin: auto;
+  border-radius: 0px 0px 15px 15px;
+}
+
+.popular-company span {
+  font-weight: 00;
+  color: white;
+  text-align: center;
+  display: block;
+  padding-top: 10px;
+  font-size: 12px;
+}
+
+.popular-company .price {
+  font-weight: 400;
+  color: white;
+  display: block;
+  text-align: center;
+  padding-top: 3px;
+  font-size: 10px;
+}
+.popular-company .img img {
+  width: 85%;
+  height: 80%;
+  object-fit: contain;
+  margin-left: 7.5%;
+  margin-top: 5%;
+}
+.popular-company .img img.default-img {
+  width: 55%; /* 기본 이미지는 좀 더 작은 크기로 */
+  height: 20%;
+  margin-top: 5%;
+  margin-left: 22.5%;
+  display: block;
+}
+
+.popular-company button {
+  padding: 8px 25px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: none;
+  margin-top: 20px;
+  background: #8094F4;
+  color: white;
+  font-weight: 600;
+}
+
+.popular-company button:hover {
+  background: #534bf3;
+}
+.keyword-btn{
+  border-radius: 8px;
+  color: #1e68d1;
+  padding: 4px 12px;
+  width: auto;
+  height: 4vh;
 }
 
 @keyframes bounce05 {
