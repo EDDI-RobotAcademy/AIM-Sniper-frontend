@@ -1,6 +1,6 @@
 <template>
-  <main style="margin-top: 20vh;">
-    <v-container v-if="!start"  align=center height="100%">
+  <main>
+    <v-container v-if="!start"  align=center height="100%" class="control-margin">
       <br><br><br>
       <h2>안녕하십니까? AI 모의 면접 서비스입니다.</h2><br>
       <v-container class="draw-line" align=start>
@@ -23,7 +23,19 @@
         <h2>{{ currentAIMessage }}</h2>
       </div>
 
-      <div v-if="isLoading" class="message ai">
+      <div v-if="isLoading && !finished" class="message ai">
+        <br>
+        <p><strong>다음 질문을 준비 중입니다.</strong></p>
+        <v-icon>mdi:account-tie</v-icon>
+        <div class="loading-message">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      <div v-if="isLoading && finished" class="message ai">
+        <br>
+        <p><strong>답변을 채점 중입니다. 잠시만 기다려 주세요.</strong></p>
         <v-icon>mdi:account-tie</v-icon>
         <div class="loading-message">
           <div class="dot"></div>
@@ -212,16 +224,16 @@ const sendMessage = async () => {
             pairedContents.push([contents[i], contents[i + 1], interviewIntents[Math.floor(i / 2)]]);
           }
 
-          console.log('result: ', pairedContents);
+          // console.log('result: ', pairedContents);
           const payload = { 'interviewResult': pairedContents };
           await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
           const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
-          console.log('response: ', response);
+          // console.log('response: ', response);
           for (let i = 0; i < response.resultList.length; i++) {
             pairedContents[i].push(response.resultList[i]);
-            console.log('pairedContents에 값 ', pairedContents)
+            // console.log('pairedContents에 값 ', pairedContents)
           }
-          console.log('pairedContents', pairedContents);
+          // console.log('pairedContents', pairedContents);
           const result = { scoreResultList: pairedContents, accountId: accountId.value };
           const saveDone = await aiInterviewStore.requestSaveInterviewResultToDjango(result);
           if (saveDone) {
@@ -248,7 +260,6 @@ const sendMessage = async () => {
         if (response && response.nextQuestion) {
           currentAIMessage.value = response.nextQuestion;
         }
-
         chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
       }
 
@@ -291,6 +302,10 @@ useHead({
 
 .li {
   margin-left: 3%;
+}
+
+.control-margin {
+  margin-top: 5%;
 }
 
 .interview-container {

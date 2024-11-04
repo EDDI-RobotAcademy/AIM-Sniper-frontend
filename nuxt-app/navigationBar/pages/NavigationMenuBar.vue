@@ -165,8 +165,8 @@ const goToMyPage = () => router.push('/account/mypage');
 const goToSurveyListPage = () => router.push('/survey/list');
 const goToManagementUserPage = () => router.push('/management/user');
 const goToManagementUserLogList = () => router.push('/management/log');
-const goToAiInterviewPage = () => router.push('/ai-interview');
-const goToLlmTestPage = () => router.push('/ai-interview/llmTest');
+// const goToAiInterviewPage = () => router.push('/ai-interview');
+const goToLlmTestPage = () => router.push('/ai-interview');
 
 // 로그아웃 처리
 const signOut = async () => {
