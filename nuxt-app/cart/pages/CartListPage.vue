@@ -226,7 +226,7 @@ async function fetchCartList() {
 }
 
 function goToLastPage() {
-  router.go('/');
+  router.go(-1);
 }
 
 onMounted(async () => {

@@ -105,7 +105,7 @@ import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/accountStore';
 import { useAuthenticationStore } from '../../../authentication/stores/authenticationStore';
 import { useNaverAuthenticationStore } from '../../../naverAuthentication/stores/naverAuthenticationStore';
-// import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
+import { useGoogleAuthenticationStore } from '../../../googleAuthentication/stores/googleAuthenticationStore';
 
 // import { useSessionStorage } from '@vueuse/core'; // 세션 스토리지 관리를 위해 VueUse 사용
 
@@ -123,7 +123,7 @@ const isPasswordCollect = ref(false);
 // Pinia store 상태
 const account = useAccountStore();
 const authentication = useAuthenticationStore();
-// const googleAuthentication = useGoogleAuthenticationStore();
+const googleAuthentication = useGoogleAuthenticationStore();
 const naverAuthentication = useNaverAuthenticationStore();
 
 // Google, Kakao, Naver 로그인 함수들
@@ -133,15 +133,15 @@ const goToKakaoLogin = async () => {
 };
 
 const goToGoogleLogin = async () => {
-  alert("현재 로그인 검수 중입니다.");
-  // sessionStorage.setItem("loginType", "GOOGLE");
-  // await googleAuthentication.requestGoogleOauthRedirectionToDjango();
+  // alert("현재 로그인 검수 중입니다.");
+  sessionStorage.setItem("loginType", "GOOGLE");
+  await googleAuthentication.requestGoogleOauthRedirectionToDjango();
 };
 
 const goToNaverLogin = async () => {
-  // alert("현재 로그인 검수 중입니다.");
-  sessionStorage.setItem('loginType', "NAVER");
-  await naverAuthentication.requestNaverOauthRedirectionToDjango();
+  alert("현재 로그인 검수 중입니다.");
+  // sessionStorage.setItem('loginType', "NAVER");
+  // await naverAuthentication.requestNaverOauthRedirectionToDjango();
 };
 
 // Computed properties (Pinia 상태에 기반한 계산된 속성)
