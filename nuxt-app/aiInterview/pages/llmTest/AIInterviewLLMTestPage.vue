@@ -235,7 +235,6 @@ const sendMessage = async () => {
   } else {
     chatHistory.value.push({ type: 'user', content: '질문에 답변하지 못했습니다.' });
   }
-    console.log('userInput chatHistory ', chatHistory )
     userInput.value = '';
     adjustTextareaHeight();
     isLoading.value = true;
