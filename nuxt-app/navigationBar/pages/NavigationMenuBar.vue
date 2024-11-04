@@ -20,7 +20,7 @@
     <v-btn
       v-if="!googleAuthenticationStore.isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin"
       text @click="goToSurvey" class="btn-text">
-      SURVEY
+      REVIEW
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
