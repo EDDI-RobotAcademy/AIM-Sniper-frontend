@@ -29,7 +29,7 @@ export const aiInterviewActions = {
 
     async requestInferNextQuestionToFastAPI(payload: { answer: string, nextIntent: string }): Promise<string> {
         const { fastapiAxiosInst } = axiosUtility.createAxiosInstances();
-        console.log("payload:", payload)
+        // console.log("payload:", payload)
         const { answer, nextIntent } = payload
         
         try {

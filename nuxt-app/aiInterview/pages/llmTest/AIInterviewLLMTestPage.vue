@@ -226,19 +226,23 @@ const sendMessage = async () => {
 
           // console.log('result: ', pairedContents);
           const payload = { 'interviewResult': pairedContents };
-          await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
-          const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
-          // console.log('response: ', response);
-          for (let i = 0; i < response.resultList.length; i++) {
-            pairedContents[i].push(response.resultList[i]);
-            // console.log('pairedContents에 값 ', pairedContents)
-          }
-          // console.log('pairedContents', pairedContents);
-          const result = { scoreResultList: pairedContents, accountId: accountId.value };
-          const saveDone = await aiInterviewStore.requestSaveInterviewResultToDjango(result);
-          if (saveDone) {
-            alert('면접 결과 확인하기');
-            router.push(`/ai-interview/result/${accountId.value}`);
+          try {
+            await aiInterviewStore.requestInferScoreResultToFastAPI(payload);
+            const response = await aiInterviewStore.requestInferedResultToFastAPI(); //[1,2,3,4,5]
+            // console.log('response: ', response);
+            for (let i = 0; i < response.resultList.length; i++) {
+              pairedContents[i].push(response.resultList[i]);
+              // console.log('pairedContents에 값 ', pairedContents)
+            }
+            // console.log('pairedContents', pairedContents);
+            const result = { scoreResultList: pairedContents, accountId: accountId.value };
+            const saveDone = await aiInterviewStore.requestSaveInterviewResultToDjango(result);
+            if (saveDone) {
+              alert('면접 결과 확인하기');
+              router.push(`/ai-interview/result/${accountId.value}`);
+            }
+          } catch {
+            alert('죄송합니다. 지금은 채점 기능을 지원할 수 없습니다.')
           }
         }
       } else {
@@ -254,15 +258,57 @@ const sendMessage = async () => {
         }
 
         const payload = { answer: lastUserInput, nextIntent: nextIntent };
-        await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
-
-        const response = await aiInterviewStore.requestInferedResultToFastAPI();
-        if (response && response.nextQuestion) {
-          currentAIMessage.value = response.nextQuestion;
+        try {
+          await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
+          const response = await aiInterviewStore.requestInferedResultToFastAPI();
+          if (response && response.nextQuestion) {
+            currentAIMessage.value = response.nextQuestion;
+            chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+          }
+        } catch {
+          if ( nextIntent == '대처 능력' ) {
+            const tempQuestionList = [
+              "어려운 상황이나 갈등이 발생했을 때, 어떻게 대처하시는 편인가요? 그 사례를 들어 설명해 주세요.",
+              "어려운 상황에서 예상치 못한 문제가 발생했을 때, 어떻게 대처하시는 편인가요? 구체적인 예시가 있다면 말씀해 주세요.",
+              "스트레스를 받는 상황이나 예상치 못한 문제에 직면했을 때, 보통 어떤 방식으로 대처하시나요? 구체적인 예시를 들어주시면 좋겠습니다.",
+              "스트레스를 받는 상황이 생겼을 때, 어떻게 대처하는 편인가요? 구체적인 사례와 함께 설명해 주세요."
+            ]
+            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
+            currentAIMessage.value = tempQuestionList[randomIndex];
+          }
+          if ( nextIntent == '소통 능력' ) {
+            const tempQuestionList = [
+              "팀원 간에 소통이 원활하지 않을 때, 이를 어떻게 개선할 수 있다고 생각하나요?",
+              "팀원 간의 의사소통이 원활하지 않을 때, 이를 개선하기 위해 어떤 노력을 기울였는지 구체적인 사례를 들어 설명해 주세요.",
+              "팀원 간의 갈등이 발생했을 때, 그 상황을 어떻게 해결하실 건가요?",
+              "팀원들과의 소통에서 가장 중요하게 생각하는 점은 무엇이며, 이를 실천하기 위해 어떤 노력을 하고 있나요?"
+            ]
+            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
+            currentAIMessage.value = tempQuestionList[randomIndex];
+          }
+          if ( nextIntent == '프로젝트 경험' ) {
+            const tempQuestionList = [
+              "최근에 참여한 프로젝트에 대해 소개해주실 수 있나요? 프로젝트의 목표와 주요 내용을 말씀해 주세요.",
+              "이전에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행되었고, 어떤 결과를 이끌어냈는지 궁금합니다.",
+              "이전에 참여했던 프로젝트 중 가장 기억에 남는 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표가 있었고, 어떤 방식으로 진행되었는지 궁금합니다.",
+              "최근에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행했으며, 어떤 결과가 있었는지 궁금합니다."
+            ]
+            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
+            currentAIMessage.value = tempQuestionList[randomIndex];
+          }
+          if ( nextIntent == '자기 개발' ) {
+            const tempQuestionList = [
+              "자기 개발을 위해 최근에 어떤 새로운 기술이나 지식을 배우셨나요? 그 과정에서 느낀 점은 무엇인가요?",
+              "최근에 본인에게 가장 큰 발전이 있다고 느꼈던 경험은 무엇이었나요? 그 경험이 왜 중요했는지 설명해 주시겠습니까?",
+              "최근에 어떤 자기 개발 활동을 진행했는지 설명해 주시고, 그 경험이 어떻게 도움이 되었는지도 이야기해 주시기 바랍니다.",
+              "최근에 자신이 개발한 기술이나 역량이 있나요? 그 기술을 어떻게 익히게 되었는지 구체적으로 말씀해 주세요."
+            ]
+            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
+            currentAIMessage.value = tempQuestionList[randomIndex];
+          }
         }
-        chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
       }
-
+        
       const chunks = chunkText(currentAIMessage.value, 1);
       streamText(chunks);
       isLoading.value = false;
