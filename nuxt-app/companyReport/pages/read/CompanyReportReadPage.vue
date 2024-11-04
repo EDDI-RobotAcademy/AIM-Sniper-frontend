@@ -2,7 +2,9 @@
   <v-container class="template">
     <v-container
       v-if="companyReport"
-      class="d-flex flex-column justify-center ml-10" style="margin: 0 auto;">
+      class="d-flex flex-column justify-center ml-10"
+      style="margin: 0 auto"
+    >
       <v-row>
         <v-col cols="3" class="d-flex justify-end" style="margin-right: 20px">
           <v-img
@@ -44,9 +46,7 @@
             </v-col>
             <v-col cols="3" class="d-flex align-end justify-end">
               <p class="companyReport-price">
-                <span class="original-price">
-                  200
-                </span>
+                <span class="original-price"> 200 </span>
                 <span> → </span>
                 {{ companyReport.companyReportPrice }}
                 <span class="currency">원</span>
@@ -85,7 +85,11 @@
           <!-- 기업/사업 리포트 -->
           <!-- 미리보기 섹션 -->
           <v-row ref="overviewRow" class="overview" justify="center">
-            <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
+            <v-col
+              ref="overviewRef"
+              cols="auto"
+              class="overview-content mb-2 mt-2"
+            >
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span><b>주소</b> {{ companyInfo.address }}</span>
@@ -99,7 +103,11 @@
                 <v-col cols="auto">
                   <span>
                     <b>웹사이트</b>
-                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
+                    <a
+                      :href="'https://' + companyInfo.website"
+                      target="_blank"
+                      rel="noopener"
+                    >
                       {{ companyInfo.website }}
                     </a>
                   </span>
@@ -113,43 +121,62 @@
           <div :class="{ 'preview-section': !isPurchased }">
             <!-- 재무정보 차트 -->
             <v-row class="finance" justify="center">
-              <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
+              <v-col
+                ref="financeRef"
+                cols="auto"
+                class="my-5 d-flex justify-center align-center"
+              >
                 <div ref="chartRef"></div>
               </v-col>
             </v-row>
 
             <!-- 그라데이션 오버레이 -->
-            <div :class="{'gradient-overlay': !isPurchased}"></div>
+            <div :class="{ 'gradient-overlay': !isPurchased }"></div>
           </div>
 
           <!-- 블러 처리된 섹션 -->
-          <div :class="{'blur-section': !isPurchased}">
+          <div :class="{ 'blur-section': !isPurchased }">
             <!-- 재무제표 설명 -->
-            <v-row class="finance-desc mb-11" align="center" justify="start"
-              :style="{ width: financeWidth + 'px', margin: '0 auto' }">
+            <v-row
+              class="finance-desc mb-11"
+              align="center"
+              justify="start"
+              :style="{ width: financeWidth + 'px', margin: '0 auto' }"
+            >
               <v-col>
                 <p class="finance-desc-title">💡 재무제표 보는 팁 TIP</p>
                 <!-- 재무제표 설명 내용 -->
                 <p class="finance-desc-content">
-                  • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내 <span class="graph-stay">유지</span>, 10%이상 <span class="graph-up">증가</span> 10%이하 <span class="graph-down">하락</span>
+                  • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내
+                  <span class="graph-stay">유지</span>, 10%이상
+                  <span class="graph-up">증가</span> 10%이하
+                  <span class="graph-down">하락</span>
                 </p>
-                <p class="finance-desc-content"> 
-                  1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로, <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
-                </p>
-                <p class="finance-desc-detail">
-                  - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를, 하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
-                </p>
-                <p class="finance-desc-content"> 
-                  2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로, <u>기업의 수익성</u>을 판단할 수 있습니다.
+                <p class="finance-desc-content">
+                  1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로,
+                  <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
                 </p>
                 <p class="finance-desc-detail">
-                  - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리 개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나 시장 경쟁 심화를 의미할 수 있습니다.
+                  - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를,
+                  하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
                 </p>
-                <p class="finance-desc-content"> 
-                  3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로, <u>재무 안정성</u>을 평가할 수 있습니다.
+                <p class="finance-desc-content">
+                  2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로,
+                  <u>기업의 수익성</u>을 판단할 수 있습니다.
                 </p>
                 <p class="finance-desc-detail">
-                  - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
+                  - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리
+                  개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나
+                  시장 경쟁 심화를 의미할 수 있습니다.
+                </p>
+                <p class="finance-desc-content">
+                  3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로,
+                  <u>재무 안정성</u>을 평가할 수 있습니다.
+                </p>
+                <p class="finance-desc-detail">
+                  - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부
+                  축적을, 하락(-10%)은 적자 누적이나 투자 집행을 의미할 수
+                  있습니다.
                 </p>
               </v-col>
             </v-row>
@@ -171,9 +198,10 @@
               </v-col>
             </v-row>
             <!-- 매출액 표 -->
-            <v-row 
+            <v-row
               v-if="isPurchased"
-              class="revenue-table my-5 d-flex justify-center align-center">
+              class="revenue-table my-5 d-flex justify-center align-center"
+            >
               <v-col cols="auto">
                 <span
                   v-html="companyInfo.revenue_table"
@@ -202,12 +230,19 @@
                 <v-card-text class="text-center">
                   <h3>구매 후 전체 리포트를 확인하실 수 있습니다</h3>
                   <p class="mt-3">✨오픈 베타 서비스 이벤트✨</p>
-                  <p class="mt-3"><u>한 step만 더</u> 따라오주세요!</p>
-                  <p>구매 버튼만 누르셔도 확인 가능합니다!</p>
-                  <p>결제창이 나오지만 <u>실제로 결제는 되지 않습니다</u></p>
-                  <v-btn color="primary" class="mt-4" @click="navigateToPurchase">
+                  <!-- <p class="mt-3"><u>한 Step만 더</u> 따라와주세요!</p> -->
+                  <br />
+                  <p>
+                    위에서 <b style="color: blue">[구매하기]</b> 버튼을 눌러서
+                    결제를 진행해주세요
+                  </p>
+                  <br />
+                  <p>
+                    결제창이 나오지만 <u><b>실제로 결제는 되지 않습니다</b></u>
+                  </p>
+                  <!-- <v-btn color="primary" class="mt-4" @click="onPurchase">
                     구매하러 가기
-                  </v-btn>
+                  </v-btn> -->
                 </v-card-text>
               </v-card>
             </div>
@@ -383,13 +418,16 @@ function checkAuthenticated() {
 }
 
 async function checkPurchased() {
-  if(isAdmin.value) {
+  if (isAdmin.value) {
     isPurchased.value = true;
   } else {
-    if(isAuthenticated.value) {
-      const res = await orderStore.requestOrderItemDuplicationCheckToDjango({email: email.value, companyReportId: Number(companyReportId.value)})
-      
-      if(res) {
+    if (isAuthenticated.value) {
+      const res = await orderStore.requestOrderItemDuplicationCheckToDjango({
+        email: email.value,
+        companyReportId: Number(companyReportId.value),
+      });
+
+      if (res) {
         isPurchased.value = true;
       }
     }
@@ -397,7 +435,7 @@ async function checkPurchased() {
 }
 
 function navigateToLogin() {
-  router.push('/account/login')
+  router.push("/account/login");
 }
 
 function navigateToPurchase() {
@@ -754,7 +792,6 @@ onMounted(async () => {
   checkAdmin();
   checkAuthenticated();
   checkPurchased();
-
 });
 
 onBeforeUnmount(() => {
@@ -1089,7 +1126,7 @@ a:active {
 }
 
 .blur-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1183,7 +1220,7 @@ a:active {
 }
 
 .graph-stay {
-  background-color: #AEC6CF;
+  background-color: #aec6cf;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;
@@ -1192,7 +1229,7 @@ a:active {
 }
 
 .graph-up {
-  background-color: #77DD77;
+  background-color: #77dd77;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;
@@ -1201,7 +1238,7 @@ a:active {
 }
 
 .graph-down {
-  background-color: #FF6961;
+  background-color: #ff6961;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;

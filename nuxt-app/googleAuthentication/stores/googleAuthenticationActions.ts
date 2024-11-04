@@ -19,7 +19,7 @@ export const googleAuthenticationActions = {
             
             const response = await djangoAxiosInst.post(
                 'google_oauth/google/access-token', {code:code})
-            console.log(response.data.accessToken.access_token)
+            // console.log(response.data.accessToken.access_token)
             sessionStorage.setItem("googleAccessToken", response.data.accessToken.access_token)
             sessionStorage.setItem("loginType","GOOGLE")
         } catch (error) {
