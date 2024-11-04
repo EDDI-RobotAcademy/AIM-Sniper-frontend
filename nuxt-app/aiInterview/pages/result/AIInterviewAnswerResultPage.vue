@@ -67,7 +67,7 @@ const splitScoreFeedback = (feedback) => {
   if (feedbackParts.length !== 1) {
     return [feedbackParts[0].replace('score:', ''), feedbackParts[1].replace('feedback:', '')];
   } else {
-    return ['문제 발생', feedbackParts[0].replace('<s', '').replace('s>', '')];
+    return ['문제 발생', feedbackParts[0].replace('<s', '').replace('s>', '').replace('<', '').replace('>', '')];
   }
 };
 </script>
