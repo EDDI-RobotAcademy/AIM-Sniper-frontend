@@ -279,26 +279,57 @@
           <span>목록으로 돌아가기</span>
         </v-btn>
       </v-col>
-
-      <!-- 관리자 기능 -->
-      <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
-        <div class="sign">
-          <svg
-            viewBox="0 0 16 16"
-            class="bi bi-trash3-fill"
-            fill="currentColor"
-            height="18"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
-            ></path>
-          </svg>
-        </div>
-        <div class="text">Delete</div>
-      </button>
-
+      <v-col cols="auto">              
+        <button  v-if="isAdmin" class="delete_button" @click="deleteCompanyReport">
+          <span class="delete_button_text">삭제</span>
+          <span class="delete_button_icon"
+            ><svg
+              class="svg"
+              height="512"
+              viewBox="0 0 512 512"
+              width="512"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title></title>
+              <path
+                d="M112,112l20,320c.95,18.49,14.4,32,32,32H348c17.67,0,30.87-13.51,32-32l20-320"
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+              ></path>
+              <line
+                style="stroke:#fff;stroke-linecap:round;stroke-miterlimit:10;stroke-width:32px"
+                x1="80"
+                x2="432"
+                y1="112"
+                y2="112"
+              ></line>
+              <path
+                d="M192,112V72h0a23.93,23.93,0,0,1,24-24h80a23.93,23.93,0,0,1,24,24h0v40"
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+              ></path>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="256"
+                x2="256"
+                y1="176"
+                y2="400"
+              ></line>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="184"
+                x2="192"
+                y1="176"
+                y2="400"
+              ></line>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="328"
+                x2="320"
+                y1="176"
+                y2="400"
+              ></line></svg
+          ></span>
+        </button>
+      </v-col>
       <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
         <span class="shadow"></span>
         <span class="edge"></span>
@@ -898,7 +929,6 @@ u {
   margin-bottom: 40px;
   padding: 0;
   min-width: auto;
-  box-shadow: none; /* 그림자 제거 */
 }
 
 .no-underline {
@@ -994,30 +1024,37 @@ u {
   transform: translate(2px, 2px);
 }
 
-/* From Uiverse.io by PriyanshuGupta28 */
 .pushable {
   position: relative;
   background: transparent;
-  padding: 0px;
+  padding: 0; /* 버튼 자체의 패딩 제거 */
   border: none;
   cursor: pointer;
-  outline-offset: 4px;
+  outline-offset: 2px;
   outline-color: deeppink;
   transition: filter 250ms;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  display: inline-flex;
+  align-items: center; /* 세로 정렬을 가운데로 */
+  justify-content: center;
+  margin-top: 10px;
+  width: 120px; /* 버튼 너비를 조정 */
+  height: 40px; /* 높이를 적당히 줄여 조정 */
+  border-radius: 8px; /* 전체적으로 둥근 모서리 */
+  overflow: hidden; /* 내부 요소가 삐져나오지 않도록 */
 }
 
 .shadow {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  top: 3px; /* 그림자 위치 조정 */
+  left: 3px;
+  height: calc(100% - 6px); /* 그림자 높이를 줄여 세로 크기 조정 */
+  width: calc(100% - 6px);
   background: hsl(226, 25%, 69%);
   border-radius: 8px;
-  filter: blur(2px);
+  filter: blur(1.5px);
   will-change: transform;
-  transform: translateY(2px);
+  transform: translateY(1px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
@@ -1042,13 +1079,14 @@ u {
   position: relative;
   border-radius: 8px;
   background: hsl(248, 53%, 58%);
-  padding: 16px 32px;
+  padding: 6px 12px; /* 세로 패딩을 줄여 버튼 높이 조정 */
   color: white;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-size: 1rem;
-  transform: translateY(-4px);
+  letter-spacing: 1px;
+  font-size: 0.875rem; /* 버튼 글자 크기 줄이기 */
+  line-height: 1.2; /* 줄 높이를 줄여 텍스트 공간 줄이기 */
+  transform: translateY(-2px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
@@ -1057,22 +1095,22 @@ u {
 }
 
 .pushable:hover .front {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .pushable:active .front {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   transition: transform 34ms;
 }
 
 .pushable:hover .shadow {
-  transform: translateY(4px);
+  transform: translateY(3px);
   transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .pushable:active .shadow {
-  transform: translateY(1px);
+  transform: translateY(0.5px);
   transition: transform 34ms;
 }
 
@@ -1579,5 +1617,65 @@ a:active {
       22px 10px 0 var(--key), 37px 12px 0 var(--key), 52px 10px 0 var(--key),
       60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
+}
+.delete_button {
+  position: relative;
+  border-radius: 12px;
+  width: 120px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cc0000;
+  background-color: #e50000;
+  overflow: hidden;
+}
+
+.delete_button,
+.delete_button_icon,
+.delete_button_text {
+  transition: all 0.3s;
+}
+
+.delete_button .delete_button_text {
+  transform: translateX(25px);
+  color: #fff;
+  font-weight: 600;
+}
+
+.delete_button .delete_button_icon {
+  position: absolute;
+  transform: translateX(95px);
+  height: 100%;
+  width: 20px;
+  background-color: #cc0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete_button .svg {
+  width: 20px;
+}
+
+.delete_button:hover {
+  background: #cc0000;
+}
+
+.delete_button:hover .delete_button_text {
+  color: transparent;
+}
+
+.delete_button:hover .delete_button_icon {
+  width: 120px;
+  transform: translateX(0);
+}
+
+.delete_button:active .delete_button_icon {
+  background-color: #b20000;
+}
+
+.delete_button:active {
+  border: 1px solid #b20000;
 }
 </style>
