@@ -17,15 +17,17 @@
             lg="2"
             class="mb-5"
           >
-            <div class="popular-company" @click = "goToCompanyReportReadPage(companyReport.companyReportId)">
-              <div class="border-top"></div>
-              <span><h5>AI - Report 추천</h5></span>
-              <div class="img">
-                <img :src="getImageUrl(companyReport.companyReportTitleImage)" :class="{'default-img': !companyReport.companyReportTitleImage}">
-              </div>
-              <span>{{ companyReport.companyReportName }}</span>
-              <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+          <div class="popular-company" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
+            <div class="border-top"></div>
+            <span><h5>AI - Report 추천</h5></span>
+            <div class="img">
+              <img 
+                :src="getImageUrl(companyReport.companyReportTitleImage)" 
+                :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple.png'}">
             </div>
+            <span>{{ companyReport.companyReportName }}</span>
+            <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
+          </div>
           </v-col>
         </v-row>  
         <!-- 기업 필터 -->
@@ -364,7 +366,18 @@ const getImageUrl = (imageName) => {
   if (!imageName) {
     return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  
+  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+
+  const img = new Image();
+  img.src = imageUrl;
+  console.log(img.src)
+  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    };
+
+  return img.src;
 };
 
 
@@ -788,18 +801,11 @@ useHead({
   font-size: 10px;
 }
 .popular-company .img img {
-  width: 85%;
+  width: 60%;
   height: 80%;
   object-fit: contain;
-  margin-left: 7.5%;
+  margin-left: 20%;
   margin-top: 5%;
-}
-.popular-company .img img.default-img {
-  width: 55%; /* 기본 이미지는 좀 더 작은 크기로 */
-  height: 20%;
-  margin-top: 5%;
-  margin-left: 22.5%;
-  display: block;
 }
 
 .popular-company button {
