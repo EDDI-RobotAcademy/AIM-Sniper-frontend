@@ -158,9 +158,14 @@
             <v-card-title class="companyReport-title">{{
               companyReport.companyReportName
             }}</v-card-title>
-            <v-card-subtitle class="companyReport-price"
-              >{{ companyReport.companyReportPrice }}원</v-card-subtitle
-            >
+            <div class="company-keyword-container">
+              <v-text
+                  v-for="(keyword, index) in companyReport.keyword.split(',').slice(0,2)"
+                  class="companyReport-keyword"
+                >
+                  {{ keyword }}
+                </v-text>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -452,6 +457,8 @@ useHead({
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
   border-radius: 32px;
+  width: 160px;
+  height: 180px;
   box-shadow: 0 1px 3px rgb(206, 205, 205);
 }
 
@@ -478,16 +485,25 @@ useHead({
 }
 
 .companyReport-title {
-  font-size: 18px;
+  font-size: 0.95rem;
   font-weight: bold;
-  margin-left: 10px;
-  padding-top: 0px;
+  margin-left: 8px;
+  padding: 0rem 0rem 0.5rem 0.5rem;
 }
 
-.companyReport-price {
-  color: #9452ff;
-  font-weight: 600;
+.company-keyword-container {
   margin-left: 10px;
+}
+
+.companyReport-keyword {
+  font-size: 0.7rem;
+  color: #79abf6;
+  background-color: #bcd4f799;
+  border-radius: 0.5rem;
+
+  font-weight: 500;
+  padding: 0.3rem;
+  margin-right: 0.1rem;
 }
 
 .companyReport-image {
