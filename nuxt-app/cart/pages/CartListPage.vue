@@ -151,7 +151,7 @@ const getImageUrl = (imageName) => {
 
   const img = new Image();
   img.src = imageUrl;
-  console.log(img.src)
+  // console.log(img.src)
   // 이미지가 존재하지 않는 경우 기본 이미지로 설정
   if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
     img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
@@ -186,7 +186,6 @@ async function proceedToOrder() {
     const selectedCartItems = cartItems.value.filter((item) =>
       selectedItems.value.includes(item)
     );
-    console.log("dddd", cartItems.value)
     const orderItems = selectedCartItems.map((item) => ({
       cartItemId: item.cartItemId,
       quantity: item.quantity,

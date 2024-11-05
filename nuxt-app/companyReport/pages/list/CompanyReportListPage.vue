@@ -371,7 +371,7 @@ const getImageUrl = (imageName) => {
 
   const img = new Image();
   img.src = imageUrl;
-  console.log(img.src)
+  // console.log(img.src)
   // 이미지가 존재하지 않는 경우 기본 이미지로 설정
   if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
     img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;

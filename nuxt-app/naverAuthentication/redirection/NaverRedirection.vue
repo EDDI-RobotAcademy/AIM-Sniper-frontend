@@ -47,7 +47,7 @@
   
         // 사용자 Role Type 확인
         const roleType = await accountStore.requestRoleTypeToDjango(email);
-        console.log(roleType.data.roleType);
+        // console.log(roleType.data.roleType);
   
         if (roleType.data.roleType === "ADMIN") {
           sessionStorage.setItem('adminToken', sessionStorage.getItem('userToken'));
