@@ -221,17 +221,12 @@ const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
-const topN = ref(5);
-const topList = ref([]);
 const topNCompanyReportList = ref([]);
 
 onMounted(async () => {
-  const response = await companyReportStore.requestTopNCompanyReportListToDjango(topN.value);
-  topList.value = response.data;
-
   topNCompanyReportList.value = companyReportStore.companyReportList.filter(
     (companyReport) => {
-      return topList.value.some((topId) => topId === companyReport.companyReportId);
+      return companyReportStore.topList.some((topId) => topId === companyReport.companyReportId);
     }
   );
 });
