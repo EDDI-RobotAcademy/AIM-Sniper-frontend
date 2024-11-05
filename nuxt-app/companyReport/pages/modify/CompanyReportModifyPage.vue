@@ -80,8 +80,6 @@ async function onModify() {
       companyReportPrice: companyReportPrice.value || companyReport.value.companyReportPrice
     };
 
-    console.log('수정할 payload:', payload);
-
     await companyReportStore.requestModifyCompanyReportToDjango(payload);
     alert('수정이 완료되었습니다.');
     await router.push(`/companyReport/read/${companyReportId.value}`);

@@ -291,7 +291,6 @@ const addQuestion = () => {
 const onFileChange = (files) => {
   const newImages = Array.from(files);
   uploadedImages.value = [...uploadedImages.value, ...newImages];
-  console.log('값 추가됨? ', uploadedImages.value);
   uploadedImage.value = null;
 };
 
