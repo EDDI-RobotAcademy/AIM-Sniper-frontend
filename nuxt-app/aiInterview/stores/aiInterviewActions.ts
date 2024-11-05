@@ -4,20 +4,32 @@ import { useAiInterviewStore } from "./aiInterviewStore"
 
 export const aiInterviewActions = {
     
-    async requestGetQuestionListToDjango(sessionId: number): Promise<AxiosResponse> {
+    // async requestGetQuestionListToDjango(sessionId: number): Promise<AxiosResponse> {
+    //     const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+
+    //     try {
+    //         const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-session', sessionId)
+    //         return res.data
+    //     } catch (err) {
+    //         console.error('requestGetQuestionListToDjango() -> error:', err)
+    //         throw err
+    //     }        
+    // },
+    async requestFirstQuestionToDjango(questionId: number): Promise<AxiosResponse> {
         const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
 
         try {
-            const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-session', sessionId)
+            const res: AxiosResponse = await djangoAxiosInst.post('/interview/get-first-question', questionId)
             return res.data
         } catch (err) {
-            console.error('requestGetQuestionListToDjango() -> error:', err)
+            console.error('requestFirstQuestionToDjango() -> error:', err)
             throw err
         }        
     },
+
     async requestInferNextQuestionToFastAPI(payload: { answer: string, nextIntent: string }): Promise<string> {
         const { fastapiAxiosInst } = axiosUtility.createAxiosInstances();
-        console.log("payload:", payload)
+        // console.log("payload:", payload)
         const { answer, nextIntent } = payload
         
         try {
@@ -53,14 +65,17 @@ export const aiInterviewActions = {
             // console.log('requestInferedResultToFastAPI()')
 
             let response: AxiosResponse<any>;
-            const maxAttempts = 30; // 최대 시도 횟수
-            const delay = 1000; // 각 시도 사이의 지연시간 (ms)
+            const maxAttempts = 500; // 최대 시도 횟수
+            const delay = 10000; // 각 시도 사이의 지연시간 (ms)
             
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
                 response = await fastapiAxiosInst.get('/polyglot-result');
 
                 if (response.data && response.data.nextQuestion) {
                     // console.log('response.data', response.data);
+                    return response.data;
+                }
+                if (response.data && response.data.resultList){
                     return response.data;
                 }
 

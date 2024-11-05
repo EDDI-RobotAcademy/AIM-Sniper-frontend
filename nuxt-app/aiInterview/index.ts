@@ -12,15 +12,15 @@ export default defineNuxtModule({
 
 		nuxt.hook("pages:extend", (pages) => {
 			pages.push(
-				{
-					name: "AiInterviewPage",
-					path: "/ai-interview",
-					file: resolve(themeDir, "aiInterview/pages/AiInterviewPage.vue"),
-				},
+				// {
+				// 	name: "AiInterviewPage",
+				// 	path: "/ai-interview",
+				// 	file: resolve(themeDir, "aiInterview/pages/AiInterviewPage.vue"),
+				// },
 				
 				{
 					name: "AIInterviewLLMTestPage",
-					path: "/ai-interview/llmTest",
+					path: "/ai-interview",
 					file: resolve(themeDir, "aiInterview/pages/llmTest/AIInterviewLLMTestPage.vue"),
 				},
 				{

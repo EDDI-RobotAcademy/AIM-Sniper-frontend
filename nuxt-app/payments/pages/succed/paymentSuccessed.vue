@@ -60,9 +60,7 @@ export default defineComponent({
         const secretKey = ref(config.public.TOSS_SECRET_KEY)
 
         async function confirmPayment(requestData) {
-            console.log(secretKey)
             const encryptedSecretKey = btoa(secretKey.value + ":")
-            console.log(encryptedSecretKey)
 
             const response = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
                 method: "POST",
@@ -80,7 +78,6 @@ export default defineComponent({
         async function confirm(requestData) {
             try {
                 const { response, json } = await confirmPayment(requestData)
-                console.log(response, json)
                 if (!response.ok) {
                     router.push(`fail?message=${json.mesasge}&code=${json.code}`)
                 } else {

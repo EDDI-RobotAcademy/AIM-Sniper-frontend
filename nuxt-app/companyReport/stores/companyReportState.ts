@@ -1,6 +1,7 @@
 export const companyReportState = () => ({
 	companyReportList: [] as CompanyReport[],
 	companyReport: null as CompanyReport | null,
+  topList: [],
 });
 
 export type CompanyReport = {

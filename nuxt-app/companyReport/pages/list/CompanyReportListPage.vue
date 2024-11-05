@@ -1,7 +1,7 @@
 <template>
   <div class="background-image">
     <v-container class="custom-padding">
-      <div>
+      <div class="my-5">
         <v-row>
           <v-col cols="12">
             <h2 class="section-title">전체 보고서</h2>
@@ -24,7 +24,7 @@
                 <v-col cols="1" class="filter-group-title">
                   <strong>카테고리</strong>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="11">
                   <v-chip-group v-if="!resetCategory" v-model="selectedCategories" class="category-select-group" multiple column>
                     <v-btn @click="clearSelectedCategory" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray;">
                       <v-icon left>mdi-refresh</v-icon>
@@ -50,7 +50,7 @@
                 <v-col cols="1" class="filter-group-title">
                   <strong>키워드</strong>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="11">
                   <v-chip-group v-if="!resetChips" v-model="selectedKeywords" multiple column>
                     <v-btn @click="clearSelectedKeywords" class="reset-chip" style="background-color:white; border-radius: 20px; height: 33px; margin-right: 10px; margin-top: 3px; box-shadow: none; border: 1px solid lightgray">
                       <v-icon left>mdi-refresh</v-icon>
@@ -76,7 +76,7 @@
           </v-row>
         </v-slide-y-transition>
         <!-- 검색 입력 -->
-        <v-row class="my-8" justify="center">
+        <v-row class="my-6" justify="center">
           <v-col cols="10">
             <div class="search">
               <input
@@ -89,6 +89,36 @@
             </div>
           </v-col>
         </v-row>
+        <div class="top-container">
+          <v-row class="justify-center">
+            <p class="my-3"><b>조회수 ✨Top5✨ 기업의 요약보고서를 <u>무료로 확인</u>해보세요!</b></p>
+          </v-row>
+          <v-row class="justify-center align-center flex-wrap mx-auto">
+            <v-col
+              v-for="(companyReport, index) in topNCompanyReportList"
+              :key="index"
+              cols="12"
+              sm="3"
+              md="3"
+              lg="2"
+              class="mb-9 mr-5"
+            >
+            <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
+                <div class="card-load">
+                  <img 
+                  :src="getImageUrl(companyReport.companyReportTitleImage)" 
+                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple_Grey.png'}">
+                </div>
+                <div class="card-load-extreme-title">
+                  <p>{{ companyReport.companyReportName }}</p>
+                </div>
+                <div class="card-load-extreme-descripion">
+                  <p>✨조회 <b>Top {{ index + 1 }}</b></p>
+                </div>
+            </div>
+            </v-col>
+          </v-row>
+        </div>
       </div>
       <!-- 기업 리스트업 -->
       <v-row
@@ -112,6 +142,7 @@
             <div class="companyReport-img-container">
               <v-img
                 class="companyReport-scaled-img"
+                :class="{ 'companyReport-scaled-grey-img': !companyReport.companyReportTitleImage }"
                 :src="getImageUrl(companyReport.companyReportTitleImage)"
               >
                 <template v-slot:placeholder>
@@ -128,9 +159,14 @@
             <v-card-title class="companyReport-title">{{
               companyReport.companyReportName
             }}</v-card-title>
-            <v-card-subtitle class="companyReport-price"
-              >{{ companyReport.companyReportPrice }}원</v-card-subtitle
-            >
+            <div class="company-keyword-container">
+              <v-text
+                  v-for="(keyword, index) in companyReport.keyword.split(',').slice(0,2)"
+                  class="companyReport-keyword"
+                >
+                  {{ keyword }}
+                </v-text>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -191,17 +227,12 @@ const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
-const topN = ref(3);
-const topList = ref([]);
 const topNCompanyReportList = ref([]);
 
 onMounted(async () => {
-  const response = await companyReportStore.requestTopNCompanyReportListToDjango(topN.value);
-  topList.value = response.data;
-
   topNCompanyReportList.value = companyReportStore.companyReportList.filter(
     (companyReport) => {
-      return topList.value.some((topId) => topId === companyReport.companyReportId);
+      return companyReportStore.topList.some((topId) => topId === companyReport.companyReportId);
     }
   );
 });
@@ -341,9 +372,22 @@ function changePage(page) {
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  } else {
+    return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  
+  // const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+
+  // const img = new Image();
+  // img.src = imageUrl;
+  // // console.log(img.src)
+  // // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  // if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+  //   img.src = new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  //   };
+
+  // return img.src;
 };
 
 
@@ -409,13 +453,14 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* text-align: center; */
   padding: 12px;
 }
 
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
   border-radius: 32px;
+  width: 160px;
+  height: 180px;
   box-shadow: 0 1px 3px rgb(206, 205, 205);
 }
 
@@ -426,7 +471,7 @@ useHead({
 .companyReport-img-container {
   position: relative;
   width: 100%;
-  height: 130px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -434,24 +479,39 @@ useHead({
 }
 
 .companyReport-scaled-img {
-  width: 20%;
+  max-width: 80%;
+  max-height: auto;
   height: auto;
-  transition: transform 0.3s ease; /* 애니메이션 효과 추가 */
-  /* border-bottom: 1px */
-  padding: 50px;
+  transition: transform 0.3s ease;
+}
+
+.companyReport-scaled-grey-img {
+  max-width: 40%;
+  max-height: auto;
+  height: auto;
+  transition: transform 0.3s ease;
 }
 
 .companyReport-title {
-  font-size: 18px;
+  font-size: 0.95rem;
   font-weight: bold;
-  margin-left: 10px;
-  padding-top: 0px;
+  margin-left: 8px;
+  padding: 0rem 0rem 0.5rem 0.5rem;
 }
 
-.companyReport-price {
-  color: #9452ff;
-  font-weight: 600;
+.company-keyword-container {
   margin-left: 10px;
+}
+
+.companyReport-keyword {
+  font-size: 0.7rem;
+  color: #79abf6;
+  background-color: #bcd4f799;
+  border-radius: 0.5rem;
+
+  font-weight: 500;
+  padding: 0.3rem;
+  margin-right: 0.1rem;
 }
 
 .companyReport-image {
@@ -496,6 +556,7 @@ useHead({
   align-items: center;
   justify-content: space-between;
   text-align: center;
+  margin-bottom: 1rem;
 }
 
 .search-input {
@@ -689,6 +750,121 @@ useHead({
   margin-right: 8px;
   margin-bottom: 8px;
 }
+
+.keyword-btn{
+  border-radius: 8px;
+  color: #1e68d1;
+  padding: 4px 12px;
+  width: auto;
+  height: 4vh;
+}
+
+.top-container {
+  border-radius: 5.5rem;
+  color: #525252;
+  font-size: 0.95rem;
+  background-color: rgba(166, 191, 248, 0.2);
+  box-shadow: 0 0 0.4rem 0.2rem #bcd4f799;
+}
+
+u {
+  text-underline-offset: 0.15rem;
+  text-decoration-color: #c8c8c8;
+  text-decoration-style: wavy;
+}
+
+/* From Uiverse.io by mrhyddenn */ 
+.card {
+  width: 190px;
+  height: 90px;
+  background: #ffff;
+  box-shadow: 0 1px 15px rgba(0,0,0,0.1);
+  position: relative;
+  padding: 12px 10px;
+  border-radius: 1.5rem;
+}
+
+.card-load {
+  width: 70px;
+  height: 70px;
+  position: relative;
+  float: left;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid #e5e5e5;
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  animation: load89234 2s infinite;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-load img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
+
+.card-load::before {
+  content: "";
+  position: absolute;
+  height: 7rem;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateX(2.3rem); /* 원형 경로의 시작 위치 */
+  box-shadow: 0 0 0.8rem 0.4rem #bcd4f799; 
+  animation: orbit 3s linear infinite; /* 원형 궤도를 도는 애니메이션 */
+}
+
+
+@keyframes orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(2.3rem);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(2.3rem);
+  }
+}
+
+.card-load-extreme-title {
+  width: 90px;
+  height: auto;
+  position: relative;
+  float: right;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  background-color: #efefef;
+  background-size: 200% 100%;
+  animation: load89234 2s infinite;
+  font-weight: bold;
+  font-size: 80%;
+  color: #525252;
+  text-align: center;
+}
+
+.card-load-extreme-descripion {
+  width: 90px;
+  height: auto;
+  position: relative;
+  float: right;
+  border-radius: 5px;
+  margin-top: 10px;
+  animation: load89234 2s infinite;
+  font-size: 75%;
+  color: #525252;
+  text-align: center;
+}
+
+
+@keyframes load89234 {
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 
 @keyframes bounce05 {
   85%, 92%, 100% {

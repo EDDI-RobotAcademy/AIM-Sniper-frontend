@@ -7,24 +7,24 @@
                         <span class="headline">간편 신규 회원가입</span>
                     </v-card-title>
                     
-                    
+
                     <v-responsive class="mx-auto" min-width="400">
                         <v-form ref="form" v-model="formValid" lazy-validation>
-                            <v-text-field v-if="this.loginType == 'KAKAO'"
+                            <v-text-field v-if="loginType === 'KAKAO'"
                                     v-model="kakaoEmail"
                                     label="Email"
                                     variant="solo"                                    
                                     required
                                     :rules="emailRules"
                                     :disabled="true"/>
-                            <v-text-field v-if="this.loginType == 'NAVER'"
+                            <v-text-field v-if="loginType === 'NAVER'"
                                     v-model="naverEmail"
                                     label="Email"
                                     variant="solo"                                    
                                     required
                                     :rules="emailRules"
                                     :disabled="true"/>
-                            <v-text-field v-if="this.loginType == 'GOOGLE'"
+                            <v-text-field v-if="loginType === 'GOOGLE'"
                                 v-model="googleEmail"
                                 label="Email"
                                 variant="solo"                                    

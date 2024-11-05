@@ -2,7 +2,9 @@
   <v-container class="template">
     <v-container
       v-if="companyReport"
-      class="d-flex flex-column justify-center ml-10" style="margin: 0 auto;">
+      class="d-flex flex-column justify-center ml-10"
+      style="margin: 0 auto"
+    >
       <v-row>
         <v-col cols="3" class="d-flex justify-end" style="margin-right: 20px">
           <v-img
@@ -44,9 +46,7 @@
             </v-col>
             <v-col cols="3" class="d-flex align-end justify-end">
               <p class="companyReport-price">
-                <span class="original-price">
-                  200
-                </span>
+                <span class="original-price"> 200 </span>
                 <span> → </span>
                 {{ companyReport.companyReportPrice }}
                 <span class="currency">원</span>
@@ -85,7 +85,11 @@
           <!-- 기업/사업 리포트 -->
           <!-- 미리보기 섹션 -->
           <v-row ref="overviewRow" class="overview" justify="center">
-            <v-col ref="overviewRef" cols="auto" class="overview-content mb-2 mt-2">
+            <v-col
+              ref="overviewRef"
+              cols="auto"
+              class="overview-content mb-2 mt-2"
+            >
               <v-row no-gutters>
                 <v-col cols="auto" class="mb-2">
                   <span><b>주소</b> {{ companyInfo.address }}</span>
@@ -99,7 +103,11 @@
                 <v-col cols="auto">
                   <span>
                     <b>웹사이트</b>
-                    <a :href="'https://' + companyInfo.website" target="_blank" rel="noopener">
+                    <a
+                      :href="'https://' + companyInfo.website"
+                      target="_blank"
+                      rel="noopener"
+                    >
                       {{ companyInfo.website }}
                     </a>
                   </span>
@@ -113,43 +121,62 @@
           <div :class="{ 'preview-section': !isPurchased }">
             <!-- 재무정보 차트 -->
             <v-row class="finance" justify="center">
-              <v-col ref="financeRef" cols="auto" class="my-5 d-flex justify-center align-center">
+              <v-col
+                ref="financeRef"
+                cols="auto"
+                class="my-5 d-flex justify-center align-center"
+              >
                 <div ref="chartRef"></div>
               </v-col>
             </v-row>
 
             <!-- 그라데이션 오버레이 -->
-            <div :class="{'gradient-overlay': !isPurchased}"></div>
+            <div :class="{ 'gradient-overlay': !isPurchased }"></div>
           </div>
 
           <!-- 블러 처리된 섹션 -->
-          <div :class="{'blur-section': !isPurchased}">
+          <div :class="{ 'blur-section': !isPurchased }">
             <!-- 재무제표 설명 -->
-            <v-row class="finance-desc mb-11" align="center" justify="start"
-              :style="{ width: financeWidth + 'px', margin: '0 auto' }">
+            <v-row
+              class="finance-desc mb-11"
+              align="center"
+              justify="start"
+              :style="{ width: financeWidth + 'px', margin: '0 auto' }"
+            >
               <v-col>
                 <p class="finance-desc-title">💡 재무제표 보는 팁 TIP</p>
                 <!-- 재무제표 설명 내용 -->
                 <p class="finance-desc-content">
-                  • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내 <span class="graph-stay">유지</span>, 10%이상 <span class="graph-up">증가</span> 10%이하 <span class="graph-down">하락</span>
+                  • 직전년도({{ financeYears[1] }}) 대비 변동폭이 10%내
+                  <span class="graph-stay">유지</span>, 10%이상
+                  <span class="graph-up">증가</span> 10%이하
+                  <span class="graph-down">하락</span>
                 </p>
-                <p class="finance-desc-content"> 
-                  1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로, <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
-                </p>
-                <p class="finance-desc-detail">
-                  - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를, 하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
-                </p>
-                <p class="finance-desc-content"> 
-                  2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로, <u>기업의 수익성</u>을 판단할 수 있습니다.
+                <p class="finance-desc-content">
+                  1️⃣ <b>매출액</b> : 기업이 1년 동안 번 총 수입으로,
+                  <u>기업의 전체적인 규모</u>를 볼 수 있습니다.
                 </p>
                 <p class="finance-desc-detail">
-                  - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리 개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나 시장 경쟁 심화를 의미할 수 있습니다.
+                  - 유지(±10%)는 안정적인 시장 지위를, 증가(+10%)는 시장 확대를,
+                  하락(-10%)은 시장 점유율 감소를 의미할 수 있습니다.
                 </p>
-                <p class="finance-desc-content"> 
-                  3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로, <u>재무 안정성</u>을 평가할 수 있습니다.
+                <p class="finance-desc-content">
+                  2️⃣ <b>영업이익</b> : 순수 사업 수익(매출 - 운영비용)으로,
+                  <u>기업의 수익성</u>을 판단할 수 있습니다.
                 </p>
                 <p class="finance-desc-detail">
-                  - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부 축적을, 하락(-10%)은  적자 누적이나 투자 집행을 의미할 수 있습니다.
+                  - 유지(±10%)는 일관된 경영 효율을, 증가(+10%)는 비용 관리
+                  개선이나 고수익 사업 확대를, 하락(-10%)은 비용 부담 증가나
+                  시장 경쟁 심화를 의미할 수 있습니다.
+                </p>
+                <p class="finance-desc-content">
+                  3️⃣<b>자기자본</b> : 기업이 보유한 순수 재산으로,
+                  <u>재무 안정성</u>을 평가할 수 있습니다.
+                </p>
+                <p class="finance-desc-detail">
+                  - 유지(±10%)는 안정적인 재무구조를, 증가(+10%)는 수익의 내부
+                  축적을, 하락(-10%)은 적자 누적이나 투자 집행을 의미할 수
+                  있습니다.
                 </p>
               </v-col>
             </v-row>
@@ -171,9 +198,10 @@
               </v-col>
             </v-row>
             <!-- 매출액 표 -->
-            <v-row 
+            <v-row
               v-if="isPurchased"
-              class="revenue-table my-5 d-flex justify-center align-center">
+              class="revenue-table my-5 d-flex justify-center align-center"
+            >
               <v-col cols="auto">
                 <span
                   v-html="companyInfo.revenue_table"
@@ -202,12 +230,19 @@
                 <v-card-text class="text-center">
                   <h3>구매 후 전체 리포트를 확인하실 수 있습니다</h3>
                   <p class="mt-3">✨오픈 베타 서비스 이벤트✨</p>
-                  <p class="mt-3"><u>한 step만 더</u> 따라오주세요!</p>
-                  <p>구매 버튼만 누르셔도 확인 가능합니다!</p>
-                  <p>결제창이 나오지만 <u>실제로 결제는 되지 않습니다</u></p>
-                  <v-btn color="primary" class="mt-4" @click="navigateToPurchase">
+                  <!-- <p class="mt-3"><u>한 Step만 더</u> 따라와주세요!</p> -->
+                  <br />
+                  <p>
+                    위에서 <b style="color: blue">[구매하기]</b> 버튼을 눌러서
+                    결제를 진행해주세요
+                  </p>
+                  <br />
+                  <p>
+                    결제창이 나오지만 <u><b>실제로 결제는 되지 않습니다</b></u>
+                  </p>
+                  <!-- <v-btn color="primary" class="mt-4" @click="onPurchase">
                     구매하러 가기
-                  </v-btn>
+                  </v-btn> -->
                 </v-card-text>
               </v-card>
             </div>
@@ -244,26 +279,57 @@
           <span>목록으로 돌아가기</span>
         </v-btn>
       </v-col>
-
-      <!-- 관리자 기능 -->
-      <button v-if="isAdmin" class="Btn" @click="deleteCompanyReport">
-        <div class="sign">
-          <svg
-            viewBox="0 0 16 16"
-            class="bi bi-trash3-fill"
-            fill="currentColor"
-            height="18"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"
-            ></path>
-          </svg>
-        </div>
-        <div class="text">Delete</div>
-      </button>
-
+      <v-col cols="auto">              
+        <button  v-if="isAdmin" class="delete_button" @click="deleteCompanyReport">
+          <span class="delete_button_text">삭제</span>
+          <span class="delete_button_icon"
+            ><svg
+              class="svg"
+              height="512"
+              viewBox="0 0 512 512"
+              width="512"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title></title>
+              <path
+                d="M112,112l20,320c.95,18.49,14.4,32,32,32H348c17.67,0,30.87-13.51,32-32l20-320"
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+              ></path>
+              <line
+                style="stroke:#fff;stroke-linecap:round;stroke-miterlimit:10;stroke-width:32px"
+                x1="80"
+                x2="432"
+                y1="112"
+                y2="112"
+              ></line>
+              <path
+                d="M192,112V72h0a23.93,23.93,0,0,1,24-24h80a23.93,23.93,0,0,1,24,24h0v40"
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+              ></path>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="256"
+                x2="256"
+                y1="176"
+                y2="400"
+              ></line>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="184"
+                x2="192"
+                y1="176"
+                y2="400"
+              ></line>
+              <line
+                style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"
+                x1="328"
+                x2="320"
+                y1="176"
+                y2="400"
+              ></line></svg>
+            </span>
+        </button>
+      </v-col>
       <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
         <span class="shadow"></span>
         <span class="edge"></span>
@@ -325,6 +391,7 @@ import { useOrderStore } from "../../../order/stores/orderStore";
 const route = useRoute();
 const router = useRouter();
 const companyReportName = route.query.companyReportName || "기업";
+const companyReportId = ref(route.params.id);
 
 const companyReportStore = useCompanyReportStore();
 const accountStore = useAccountStore();
@@ -335,7 +402,6 @@ const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
-const companyReportId = ref(route.params.id);
 const selectedCompanyName = ref(null);
 const isCheckoutDialogVisible = ref(false);
 const isGoToCartListDialogVisible = ref(false);
@@ -383,13 +449,20 @@ function checkAuthenticated() {
 }
 
 async function checkPurchased() {
-  if(isAdmin.value) {
+  if (companyReportStore.topList.includes(Number(companyReportId.value))){
+    isPurchased.value = true;
+  }
+
+  if (isAdmin.value) {
     isPurchased.value = true;
   } else {
-    if(isAuthenticated.value) {
-      const res = await orderStore.requestOrderItemDuplicationCheckToDjango({email: email.value, companyReportId: Number(companyReportId.value)})
-      
-      if(res) {
+    if (isAuthenticated.value) {
+      const res = await orderStore.requestOrderItemDuplicationCheckToDjango({
+        email: email.value,
+        companyReportId: Number(companyReportId.value),
+      });
+
+      if (res) {
         isPurchased.value = true;
       }
     }
@@ -397,7 +470,7 @@ async function checkPurchased() {
 }
 
 function navigateToLogin() {
-  router.push('/account/login')
+  router.push("/account/login");
 }
 
 function navigateToPurchase() {
@@ -508,11 +581,19 @@ async function getCompanyInfo() {
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url)
-      .href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url)
-    .href;
+  
+  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+
+  const img = new Image();
+  img.src = imageUrl;
+  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    };
+
+  return img.src;
 };
 
 function confirmCheckout() {
@@ -754,7 +835,6 @@ onMounted(async () => {
   checkAdmin();
   checkAuthenticated();
   checkPurchased();
-
 });
 
 onBeforeUnmount(() => {
@@ -861,7 +941,6 @@ u {
   margin-bottom: 40px;
   padding: 0;
   min-width: auto;
-  box-shadow: none; /* 그림자 제거 */
 }
 
 .no-underline {
@@ -957,30 +1036,37 @@ u {
   transform: translate(2px, 2px);
 }
 
-/* From Uiverse.io by PriyanshuGupta28 */
 .pushable {
   position: relative;
   background: transparent;
-  padding: 0px;
+  padding: 0; /* 버튼 자체의 패딩 제거 */
   border: none;
   cursor: pointer;
-  outline-offset: 4px;
+  outline-offset: 2px;
   outline-color: deeppink;
   transition: filter 250ms;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  display: inline-flex;
+  align-items: center; /* 세로 정렬을 가운데로 */
+  justify-content: center;
+  margin-top: 10px;
+  width: 120px; /* 버튼 너비를 조정 */
+  height: 40px; /* 높이를 적당히 줄여 조정 */
+  border-radius: 8px; /* 전체적으로 둥근 모서리 */
+  overflow: hidden; /* 내부 요소가 삐져나오지 않도록 */
 }
 
 .shadow {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  top: 3px; /* 그림자 위치 조정 */
+  left: 3px;
+  height: calc(100% - 6px); /* 그림자 높이를 줄여 세로 크기 조정 */
+  width: calc(100% - 6px);
   background: hsl(226, 25%, 69%);
   border-radius: 8px;
-  filter: blur(2px);
+  filter: blur(1.5px);
   will-change: transform;
-  transform: translateY(2px);
+  transform: translateY(1px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
@@ -1005,13 +1091,14 @@ u {
   position: relative;
   border-radius: 8px;
   background: hsl(248, 53%, 58%);
-  padding: 16px 32px;
+  padding: 6px 12px; /* 세로 패딩을 줄여 버튼 높이 조정 */
   color: white;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-size: 1rem;
-  transform: translateY(-4px);
+  letter-spacing: 1px;
+  font-size: 0.875rem; /* 버튼 글자 크기 줄이기 */
+  line-height: 1.2; /* 줄 높이를 줄여 텍스트 공간 줄이기 */
+  transform: translateY(-2px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
@@ -1020,22 +1107,22 @@ u {
 }
 
 .pushable:hover .front {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .pushable:active .front {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   transition: transform 34ms;
 }
 
 .pushable:hover .shadow {
-  transform: translateY(4px);
+  transform: translateY(3px);
   transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .pushable:active .shadow {
-  transform: translateY(1px);
+  transform: translateY(0.5px);
   transition: transform 34ms;
 }
 
@@ -1089,7 +1176,7 @@ a:active {
 }
 
 .blur-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1183,7 +1270,7 @@ a:active {
 }
 
 .graph-stay {
-  background-color: #AEC6CF;
+  background-color: #aec6cf;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;
@@ -1192,7 +1279,7 @@ a:active {
 }
 
 .graph-up {
-  background-color: #77DD77;
+  background-color: #77dd77;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;
@@ -1201,7 +1288,7 @@ a:active {
 }
 
 .graph-down {
-  background-color: #FF6961;
+  background-color: #ff6961;
   color: #ffffff;
   padding: 0.15rem;
   border-radius: 6px;
@@ -1542,5 +1629,65 @@ a:active {
       22px 10px 0 var(--key), 37px 12px 0 var(--key), 52px 10px 0 var(--key),
       60px 10px 0 var(--key), 68px 10px 0 var(--key), 83px 10px 0 var(--key);
   }
+}
+.delete_button {
+  position: relative;
+  border-radius: 12px;
+  width: 120px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cc0000;
+  background-color: #e50000;
+  overflow: hidden;
+}
+
+.delete_button,
+.delete_button_icon,
+.delete_button_text {
+  transition: all 0.3s;
+}
+
+.delete_button .delete_button_text {
+  transform: translateX(25px);
+  color: #fff;
+  font-weight: 600;
+}
+
+.delete_button .delete_button_icon {
+  position: absolute;
+  transform: translateX(95px);
+  height: 100%;
+  width: 20px;
+  background-color: #cc0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete_button .svg {
+  width: 20px;
+}
+
+.delete_button:hover {
+  background: #cc0000;
+}
+
+.delete_button:hover .delete_button_text {
+  color: transparent;
+}
+
+.delete_button:hover .delete_button_icon {
+  width: 120px;
+  transform: translateX(0);
+}
+
+.delete_button:active .delete_button_icon {
+  background-color: #b20000;
+}
+
+.delete_button:active {
+  border: 1px solid #b20000;
 }
 </style>

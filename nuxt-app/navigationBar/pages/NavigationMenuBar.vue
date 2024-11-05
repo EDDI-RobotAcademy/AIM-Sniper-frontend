@@ -20,7 +20,7 @@
     <v-btn
       v-if="!googleAuthenticationStore.isGoogleAdmin && !authenticationStore.isKakaoAdmin && !naverAuthenticationStore.isNaverAdmin"
       text @click="goToSurvey" class="btn-text">
-      SURVEY
+      REVIEW
     </v-btn>
 
     <v-btn text @click="goToProductList" class="btn-text">
@@ -165,8 +165,8 @@ const goToMyPage = () => router.push('/account/mypage');
 const goToSurveyListPage = () => router.push('/survey/list');
 const goToManagementUserPage = () => router.push('/management/user');
 const goToManagementUserLogList = () => router.push('/management/log');
-const goToAiInterviewPage = () => router.push('/ai-interview');
-const goToLlmTestPage = () => router.push('/ai-interview/llmTest');
+// const goToAiInterviewPage = () => router.push('/ai-interview');
+const goToLlmTestPage = () => router.push('/ai-interview');
 
 // 로그아웃 처리
 const signOut = async () => {

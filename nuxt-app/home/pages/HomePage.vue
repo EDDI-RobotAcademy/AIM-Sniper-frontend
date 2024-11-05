@@ -26,14 +26,14 @@
         보다 많은 사람들에게 양질의 정보를 공유하고 도움을 드릴 수 있도록 최선을 다하겠습니다.
       </p>
       <div style="margin-bottom: 40px"></div>
-      <div class="buttons">
+      <!-- <div class="buttons">
         <button class="goToProduct-button" @click="goToProductList">
           <b>기업 분석 보고서</b> 구경하기
         </button>
         <button class="goToSurvey-button" @click="goToSurveyList">
-          <b>설문조사</b> 해주세요
+          <b>리뷰</b> 작성하기
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -124,6 +124,7 @@ const goToSurveyList = async () => {
 .description {
   font-size: 18px;
   color: #FFFFFF;
+  margin-top: 10vh;
 }
 
 .buttons {

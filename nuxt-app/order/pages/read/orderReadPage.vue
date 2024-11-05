@@ -1,11 +1,9 @@
 <template>
-    <v-container>
+    <v-container style="margin-top: 10vh;">
       <v-row>
         <v-col cols="12">
+          <h2>구매한 보고서</h2><br>
           <v-card>
-            <v-card-title>
-              <span>구매한 보고서</span><br>
-            </v-card-title>
             <v-card-text>
               <v-table>
                 <thead>
@@ -17,9 +15,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in orderItemList" :key="item.companyReportId">
+                  <tr
+                    v-for="item in orderItemList"
+                    :key="item.companyReportId"
+                    @click="goToCompanyReportReadPage(item.companyReportId)"  
+                  >
                     <td>
-                      <!-- <p>{{ item.companyReportTitleImage }}</p> -->
                       <v-img
                         :src="getImageUrl(item.companyReportTitleImage)"
                         aspect-ratio="1"
@@ -80,17 +81,32 @@ const orderItem = ref([]);
 // Pinia의 상태 참조
 const orderItemList = computed(() => orderStore.orderItemList);
 
-function getImageUrl(imageName) {
+const getImageUrl = (imageName) => {
   if (!imageName) {
-    console.warn("No image name provided, using default image.");
-    return new URL('/assets/images/fixed/AIM_BI_Blue.png', import.meta.url).href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
-}
+  
+  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+
+  const img = new Image();
+  img.src = imageUrl;
+  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    };
+
+  return img.src;
+};
 
 function goToLastPage() {
   router.go(-1);
 }
+
+function goToCompanyReportReadPage(companyReportId) {
+  router.push({
+    path: `/companyReport/read/${companyReportId}`,
+  })
+};
 
 // 마운트 시 데이터 로드
 onMounted(async () => {

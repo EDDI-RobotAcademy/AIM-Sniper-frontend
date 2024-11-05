@@ -32,7 +32,7 @@
     if (isEmailDuplication === true) {
       const accessToken = sessionStorage.getItem('googleAccessToken')
       if (accessToken) {
-        await googleAuthStore.requestAddGoogleRedisAccessTokenToDjango(email, accessToken)
+        await googleAuthStore.requestAddGoogleRedisAccessTokenToDjango({email, accessToken})
       } else {
         console.error('AccessToken is missing')
       }

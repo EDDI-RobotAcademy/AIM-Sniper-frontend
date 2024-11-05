@@ -142,15 +142,23 @@ const selectedItemsTotal = computed(() => {
 
 const isCheckoutDisabled = computed(() => selectedItems.value.length === 0);
 
-function getImageUrl(imageName) {
+const getImageUrl = (imageName) => {
   if (!imageName) {
-    // companyReportTitleImage가 null이거나 undefined인 경우 기본 이미지를 반환
-    return new URL("/assets/images/fixed/AIM_BI_Blue.png", import.meta.url)
-      .href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
   }
-  return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url)
-    .href;
-}
+  
+  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+
+  const img = new Image();
+  img.src = imageUrl;
+  // console.log(img.src)
+  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    };
+
+  return img.src;
+};
 
 async function removeItem(item) {
   try {
@@ -178,7 +186,6 @@ async function proceedToOrder() {
     const selectedCartItems = cartItems.value.filter((item) =>
       selectedItems.value.includes(item)
     );
-    console.log("dddd", cartItems.value)
     const orderItems = selectedCartItems.map((item) => ({
       cartItemId: item.cartItemId,
       quantity: item.quantity,
@@ -226,7 +233,7 @@ async function fetchCartList() {
 }
 
 function goToLastPage() {
-  router.go('/');
+  router.go(-1);
 }
 
 onMounted(async () => {
