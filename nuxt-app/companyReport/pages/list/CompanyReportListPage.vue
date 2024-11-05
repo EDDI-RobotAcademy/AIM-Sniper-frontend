@@ -101,13 +101,13 @@
               sm="3"
               md="3"
               lg="2"
-              class="mb-5 mr-5"
+              class="mb-9 mr-5"
             >
             <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
                 <div class="card-load">
                   <img 
                   :src="getImageUrl(companyReport.companyReportTitleImage)" 
-                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple.png'}">
+                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple_Grey.png'}">
                 </div>
                 <div class="card-load-extreme-title">
                   <p>{{ companyReport.companyReportName }}</p>
@@ -142,6 +142,7 @@
             <div class="companyReport-img-container">
               <v-img
                 class="companyReport-scaled-img"
+                :class="{ 'companyReport-scaled-grey-img': !companyReport.companyReportTitleImage }"
                 :src="getImageUrl(companyReport.companyReportTitleImage)"
               >
                 <template v-slot:placeholder>
@@ -371,20 +372,22 @@ function changePage(page) {
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  } else {
+    return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
   }
   
-  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  // const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
 
-  const img = new Image();
-  img.src = imageUrl;
-  // console.log(img.src)
-  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
-  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
-    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
-    };
+  // const img = new Image();
+  // img.src = imageUrl;
+  // // console.log(img.src)
+  // // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  // if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+  //   img.src = new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  //   };
 
-  return img.src;
+  // return img.src;
 };
 
 
@@ -450,7 +453,6 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* text-align: center; */
   padding: 12px;
 }
 
@@ -469,7 +471,7 @@ useHead({
 .companyReport-img-container {
   position: relative;
   width: 100%;
-  height: 130px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -477,11 +479,17 @@ useHead({
 }
 
 .companyReport-scaled-img {
-  width: 20%;
+  max-width: 80%;
+  max-height: auto;
   height: auto;
-  transition: transform 0.3s ease; /* 애니메이션 효과 추가 */
-  /* border-bottom: 1px */
-  padding: 50px;
+  transition: transform 0.3s ease;
+}
+
+.companyReport-scaled-grey-img {
+  max-width: 40%;
+  max-height: auto;
+  height: auto;
+  transition: transform 0.3s ease;
 }
 
 .companyReport-title {
@@ -548,6 +556,7 @@ useHead({
   align-items: center;
   justify-content: space-between;
   text-align: center;
+  margin-bottom: 1rem;
 }
 
 .search-input {
@@ -802,7 +811,6 @@ u {
   content: "";
   position: absolute;
   height: 7rem;
-  background-color: rgba(166, 191, 248, 0.8); /* 빛의 색상 */
   border-radius: 50%;
   top: 50%;
   left: 50%;
