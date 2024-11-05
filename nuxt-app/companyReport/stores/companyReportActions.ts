@@ -1,4 +1,5 @@
 import * as axiosUtility from "../../utility/axiosInstance";
+import { companyReportState } from "./companyReportState";
 import { useCompanyReportStore } from "./companyReportStore";
 
 export const companyReportActions = {
@@ -105,9 +106,13 @@ export const companyReportActions = {
 	
 	async requestTopNCompanyReportListToDjango(topN: number): Promise<void> {
 		const { djangoAxiosInst } = axiosUtility.createAxiosInstances();
+		const companyReportStore = useCompanyReportStore();
 		
 		try {
-			return await djangoAxiosInst.post('company_report/top', { params: { topN } });
+			const res = await djangoAxiosInst.post('company_report/top', { params: { topN } });
+			companyReportStore.topList = res.data;
+			console.log("top 성공", res.data)
+			console.log("top 성공", companyReportStore.topList)
 		} catch (error) {
 			console.log('requestTopNCompanyReportListToDjango() -> error:', error);
 			throw error;

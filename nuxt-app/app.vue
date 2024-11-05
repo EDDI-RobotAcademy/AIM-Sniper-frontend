@@ -18,7 +18,9 @@ import NavigationBar from '~/navigationBar/pages/NavigationMenuBar.vue';
 import { useCompanyReportStore } from './companyReport/stores/companyReportStore';
 
 const companyReportStore = useCompanyReportStore()
+const topN = ref(5);
 companyReportStore.requestCompanyReportListToDjango()
+companyReportStore.requestTopNCompanyReportListToDjango(topN.value)
 </script>
 
 <style>
