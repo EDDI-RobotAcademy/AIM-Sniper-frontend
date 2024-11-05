@@ -89,7 +89,7 @@
             </div>
           </v-col>
         </v-row>
-        <div class="top-container">
+        <div class="top-container" v-if="topCompanyReportListVisible">
           <v-row class="justify-center">
             <p class="my-3"><b>조회수 ✨Top5✨ 기업의 요약보고서를 <u>무료로 확인</u>해보세요!</b></p>
           </v-row>
@@ -101,13 +101,16 @@
               sm="3"
               md="3"
               lg="2"
-              class="mb-9 mr-5"
+              class="mb-4 mr-5"
             >
             <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
                 <div class="card-load">
                   <img 
-                  :src="getImageUrl(companyReport.companyReportTitleImage)" 
-                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple_Grey.png'}">
+                    :src="getImageUrl(companyReport.companyReportTitleImage)" 
+                    :class="{'default-img': !companyReport.companyReportTitleImage}"
+                    @error="handleImageError"
+                    alt="company report image"
+                  >
                 </div>
                 <div class="card-load-extreme-title">
                   <p>{{ companyReport.companyReportName }}</p>
@@ -144,6 +147,8 @@
                 class="companyReport-scaled-img"
                 :class="{ 'companyReport-scaled-grey-img': !companyReport.companyReportTitleImage }"
                 :src="getImageUrl(companyReport.companyReportTitleImage)"
+                :error-src="getDefaultImageUrl()"
+                alt="company report image"
               >
                 <template v-slot:placeholder>
                   <v-row
@@ -227,15 +232,31 @@ const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
+const topCompanyReportListVisible = ref(false);
 const topNCompanyReportList = ref([]);
 
-onMounted(async () => {
-  topNCompanyReportList.value = companyReportStore.companyReportList.filter(
-    (companyReport) => {
-      return companyReportStore.topList.some((topId) => topId === companyReport.companyReportId);
+watch(
+  () => [companyReportStore.companyReportList, companyReportStore.topList],
+  () => {
+
+    if (
+      companyReportStore.companyReportList.length > 0 &&
+      companyReportStore.topList.length > 0
+    ) {
+      topNCompanyReportList.value = companyReportStore.companyReportList.filter(
+        (companyReport) => {
+          return companyReportStore.topList.some(
+            (topId) => topId === companyReport.companyReportId
+          );
+        }
+      );
+
+      topCompanyReportListVisible.value = true;
     }
-  );
-});
+  },
+  { immediate: true }
+);
+
 
 const filteredCompanyReportList = computed(() => {
   let reports = companyReportStore.companyReportList;
@@ -370,26 +391,38 @@ function changePage(page) {
   currentPage.value = page;
 }
 
-const getImageUrl = (imageName) => {
-  if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
-  } else {
-    return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+const getDefaultImageUrl = () => {
+  try {
+    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey2.png`, import.meta.url).href;
+  } catch (error) {
+    console.error('Error loading default image:', error);
+    return '/assets/images/fixed/AIM_BI_Simple_Grey2.png';
   }
-  
-  // const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
-
-  // const img = new Image();
-  // img.src = imageUrl;
-  // // console.log(img.src)
-  // // 이미지가 존재하지 않는 경우 기본 이미지로 설정
-  // if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
-  //   img.src = new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
-  //   };
-
-  // return img.src;
 };
 
+const getImageUrl = (imageName) => {
+  try {
+    if (!imageName || typeof imageName !== 'string') {
+      return getDefaultImageUrl();
+    }
+    
+    // 이미지 경로가 유효한지 확인
+    const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+    if (imageUrl.includes('undefined')) {
+      return getDefaultImageUrl();
+    }
+    return imageUrl;
+  } catch (error) {
+    console.error('Error loading image:', error);
+    return getDefaultImageUrl();
+  }
+};
+
+const handleImageError = (event) => {
+  if (event && event.target) {
+    event.target.src = getDefaultImageUrl();
+  }
+};
 
 useHead({
   title: `전자공시시스템(DART) 기반 기업 핵심 정보 분석 | `,
