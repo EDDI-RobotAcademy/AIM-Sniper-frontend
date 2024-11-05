@@ -111,8 +111,6 @@ export const companyReportActions = {
 		try {
 			const res = await djangoAxiosInst.post('company_report/top', { params: { topN } });
 			companyReportStore.topList = res.data;
-			console.log("top 성공", res.data)
-			console.log("top 성공", companyReportStore.topList)
 		} catch (error) {
 			console.log('requestTopNCompanyReportListToDjango() -> error:', error);
 			throw error;

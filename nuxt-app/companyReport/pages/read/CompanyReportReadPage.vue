@@ -326,8 +326,8 @@
                 x2="320"
                 y1="176"
                 y2="400"
-              ></line></svg
-          ></span>
+              ></line></svg>
+            </span>
         </button>
       </v-col>
       <button v-if="isAdmin" class="pushable" @click="goToModifyPage">
@@ -391,6 +391,7 @@ import { useOrderStore } from "../../../order/stores/orderStore";
 const route = useRoute();
 const router = useRouter();
 const companyReportName = route.query.companyReportName || "기업";
+const companyReportId = ref(route.params.id);
 
 const companyReportStore = useCompanyReportStore();
 const accountStore = useAccountStore();
@@ -401,7 +402,6 @@ const userLogStore = useUserLogStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
-const companyReportId = ref(route.params.id);
 const selectedCompanyName = ref(null);
 const isCheckoutDialogVisible = ref(false);
 const isGoToCartListDialogVisible = ref(false);
@@ -449,6 +449,10 @@ function checkAuthenticated() {
 }
 
 async function checkPurchased() {
+  if (companyReportStore.topList.includes(Number(companyReportId.value))){
+    isPurchased.value = true;
+  }
+
   if (isAdmin.value) {
     isPurchased.value = true;
   } else {
