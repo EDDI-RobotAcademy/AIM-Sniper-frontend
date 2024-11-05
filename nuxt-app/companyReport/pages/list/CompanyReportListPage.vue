@@ -106,8 +106,11 @@
             <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
                 <div class="card-load">
                   <img 
-                  :src="getImageUrl(companyReport.companyReportTitleImage)" 
-                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple_Grey.png'}">
+                    :src="getImageUrl(companyReport.companyReportTitleImage)" 
+                    :class="{'default-img': !companyReport.companyReportTitleImage}"
+                    @error="handleImageError"
+                    alt="company report image"
+                  >
                 </div>
                 <div class="card-load-extreme-title">
                   <p>{{ companyReport.companyReportName }}</p>
@@ -144,6 +147,8 @@
                 class="companyReport-scaled-img"
                 :class="{ 'companyReport-scaled-grey-img': !companyReport.companyReportTitleImage }"
                 :src="getImageUrl(companyReport.companyReportTitleImage)"
+                :error-src="getDefaultImageUrl()"
+                alt="company report image"
               >
                 <template v-slot:placeholder>
                   <v-row
@@ -230,12 +235,15 @@ const allCompanyReportListVisible = ref(true);
 const topNCompanyReportList = ref([]);
 
 onMounted(async () => {
+  
+  // 데이터를 기반으로 topN 리스트 생성
   topNCompanyReportList.value = companyReportStore.companyReportList.filter(
     (companyReport) => {
       return companyReportStore.topList.some((topId) => topId === companyReport.companyReportId);
     }
   );
 });
+
 
 const filteredCompanyReportList = computed(() => {
   let reports = companyReportStore.companyReportList;
@@ -370,26 +378,38 @@ function changePage(page) {
   currentPage.value = page;
 }
 
-const getImageUrl = (imageName) => {
-  if (!imageName) {
+const getDefaultImageUrl = () => {
+  try {
     return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
-  } else {
-    return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  } catch (error) {
+    console.error('Error loading default image:', error);
+    return '/assets/images/fixed/AIM_BI_Simple_Grey.png';
   }
-  
-  // const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
-
-  // const img = new Image();
-  // img.src = imageUrl;
-  // // console.log(img.src)
-  // // 이미지가 존재하지 않는 경우 기본 이미지로 설정
-  // if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
-  //   img.src = new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
-  //   };
-
-  // return img.src;
 };
 
+const getImageUrl = (imageName) => {
+  try {
+    if (!imageName || typeof imageName !== 'string') {
+      return getDefaultImageUrl();
+    }
+    
+    // 이미지 경로가 유효한지 확인
+    const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+    if (imageUrl.includes('undefined')) {
+      return getDefaultImageUrl();
+    }
+    return imageUrl;
+  } catch (error) {
+    console.error('Error loading image:', error);
+    return getDefaultImageUrl();
+  }
+};
+
+const handleImageError = (event) => {
+  if (event && event.target) {
+    event.target.src = getDefaultImageUrl();
+  }
+};
 
 useHead({
   title: `전자공시시스템(DART) 기반 기업 핵심 정보 분석 | `,
