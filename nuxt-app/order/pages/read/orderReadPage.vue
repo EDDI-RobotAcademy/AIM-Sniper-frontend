@@ -1,11 +1,9 @@
 <template>
-    <v-container>
+    <v-container style="margin-top: 10vh;">
       <v-row>
         <v-col cols="12">
+          <h2>구매한 보고서</h2><br>
           <v-card>
-            <v-card-title>
-              <span>구매한 보고서</span><br>
-            </v-card-title>
             <v-card-text>
               <v-table>
                 <thead>
@@ -17,9 +15,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in orderItemList" :key="item.companyReportId">
+                  <tr
+                    v-for="item in orderItemList"
+                    :key="item.companyReportId"
+                    @click="goToCompanyReportReadPage(item.companyReportId)"  
+                  >
                     <td>
-                      <!-- <p>{{ item.companyReportTitleImage }}</p> -->
                       <v-img
                         :src="getImageUrl(item.companyReportTitleImage)"
                         aspect-ratio="1"
@@ -101,6 +102,12 @@ const getImageUrl = (imageName) => {
 function goToLastPage() {
   router.go(-1);
 }
+
+function goToCompanyReportReadPage(companyReportId) {
+  router.push({
+    path: `/companyReport/read/${companyReportId}`,
+  })
+};
 
 // 마운트 시 데이터 로드
 onMounted(async () => {
