@@ -1,35 +1,12 @@
 <template>
   <div class="background-image">
     <v-container class="custom-padding">
-      <div>
+      <div class="my-5">
         <v-row>
           <v-col cols="12">
             <h2 class="section-title">전체 보고서</h2>
           </v-col>
         </v-row>
-        <v-row class="justify-space-between align-center flex-wrap">
-          <v-col
-            v-for="(companyReport, index) in topNCompanyReportList"
-            :key="index"
-            cols="12"
-            sm="4"
-            md="3"
-            lg="2"
-            class="mb-5"
-          >
-          <div class="popular-company" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
-            <div class="border-top"></div>
-            <span><h5>AI - Report 추천</h5></span>
-            <div class="img">
-              <img 
-                :src="getImageUrl(companyReport.companyReportTitleImage)" 
-                :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple.png'}">
-            </div>
-            <span>{{ companyReport.companyReportName }}</span>
-            <p class="price"> ✨조회 Top {{ index + 1 }}✨ </p>
-          </div>
-          </v-col>
-        </v-row>  
         <!-- 기업 필터 -->
         <v-row>
           <v-col cols="12">
@@ -99,7 +76,7 @@
           </v-row>
         </v-slide-y-transition>
         <!-- 검색 입력 -->
-        <v-row class="my-8" justify="center">
+        <v-row class="my-6" justify="center">
           <v-col cols="10">
             <div class="search">
               <input
@@ -112,6 +89,36 @@
             </div>
           </v-col>
         </v-row>
+        <div class="top-container">
+          <v-row class="justify-center">
+            <p class="my-3"><b>조회수 ✨Top5✨ 기업의 요약보고서를 <u>무료로 확인</u>해보세요!</b></p>
+          </v-row>
+          <v-row class="justify-center align-center flex-wrap mx-auto">
+            <v-col
+              v-for="(companyReport, index) in topNCompanyReportList"
+              :key="index"
+              cols="12"
+              sm="3"
+              md="3"
+              lg="2"
+              class="mb-5 mr-5"
+            >
+            <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
+                <div class="card-load">
+                  <img 
+                  :src="getImageUrl(companyReport.companyReportTitleImage)" 
+                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple.png'}">
+                </div>
+                <div class="card-load-extreme-title">
+                  <p>{{ companyReport.companyReportName }}</p>
+                </div>
+                <div class="card-load-extreme-descripion">
+                  <p>✨조회 <b>Top {{ index + 1 }}</b></p>
+                </div>
+            </div>
+            </v-col>
+          </v-row>
+        </div>
       </div>
       <!-- 기업 리스트업 -->
       <v-row
@@ -723,106 +730,7 @@ useHead({
   margin-right: 8px;
   margin-bottom: 8px;
 }
-.popular-company {
-  width: 150px; /* 고정된 너비 값 */
-  height: 180px;
-  background: #0a28b0;
-  border-radius: 15px;
-  box-shadow: 1px 5px 20px 5px #1f199d6b; /* 조정된 그림자 */
-  position: relative;
-}
 
-.popular-company::before {
-  content: "";
-  position: absolute;
-  width: 3px; /* 점의 크기 */
-  height: 3px;
-  background-color: white; /* 점의 색상 */
-  border-radius: 50%; /* 점을 둥글게 만듦 */
-  top: 0;
-  left: 0;
-  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8), /* 빛 효과 */
-              0 0 50px 25px rgba(255, 255, 255, 0.5), /* 첫 번째 꼬리 */
-              0 0 75px 25px rgba(255, 255, 255, 0.3); /* 더 긴 꼬리 */
-  animation: shooting-star 4s linear infinite; /* 애니메이션 설정 */
-}
-
-@keyframes shooting-star {
-  0% {
-    top: 0;
-    left: 0;
-    transform: scale(1); /* 처음 크기 */
-  }
-  25% {
-    top: 0;
-    left: 100%;
-    transform: translateX(-100%) scale(1.2); /* 크기 약간 확대 */
-  }
-  50% {
-    top: 100%;
-    left: 100%;
-    transform: translate(-100%, -100%) scale(1.4); /* 크기 더 확대 */
-  }
-  75% {
-    top: 100%;
-    left: 0;
-    transform: translateY(-100%) scale(1.2); /* 다시 크기 축소 */
-  }
-  100% {
-    top: 0;
-    left: 0;
-    transform: scale(1); /* 원래 크기로 돌아옴 */
-  }
-}
-
-.popular-company .border-top {
-  width: 75%;
-  height: 3%;
-  background: #8094F4;
-  margin: auto;
-  border-radius: 0px 0px 15px 15px;
-}
-
-.popular-company span {
-  font-weight: 00;
-  color: white;
-  text-align: center;
-  display: block;
-  padding-top: 10px;
-  font-size: 12px;
-}
-
-.popular-company .price {
-  font-weight: 400;
-  color: white;
-  display: block;
-  text-align: center;
-  padding-top: 3px;
-  font-size: 10px;
-}
-.popular-company .img img {
-  width: 60%;
-  height: 80%;
-  object-fit: contain;
-  margin-left: 20%;
-  margin-top: 5%;
-}
-
-.popular-company button {
-  padding: 8px 25px;
-  display: block;
-  margin: 0 auto;
-  border-radius: 8px;
-  border: none;
-  margin-top: 20px;
-  background: #8094F4;
-  color: white;
-  font-weight: 600;
-}
-
-.popular-company button:hover {
-  background: #534bf3;
-}
 .keyword-btn{
   border-radius: 8px;
   color: #1e68d1;
@@ -830,6 +738,114 @@ useHead({
   width: auto;
   height: 4vh;
 }
+
+.top-container {
+  border-radius: 5.5rem;
+  color: #525252;
+  font-size: 0.95rem;
+  background-color: rgba(166, 191, 248, 0.2);
+  box-shadow: 0 0 0.4rem 0.2rem #bcd4f799;
+}
+
+u {
+  text-underline-offset: 0.15rem;
+  text-decoration-color: #c8c8c8;
+  text-decoration-style: wavy;
+}
+
+/* From Uiverse.io by mrhyddenn */ 
+.card {
+  width: 190px;
+  height: 90px;
+  background: #ffff;
+  box-shadow: 0 1px 15px rgba(0,0,0,0.1);
+  position: relative;
+  padding: 12px 10px;
+  border-radius: 1.5rem;
+}
+
+.card-load {
+  width: 70px;
+  height: 70px;
+  position: relative;
+  float: left;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid #e5e5e5;
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  animation: load89234 2s infinite;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-load img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
+
+.card-load::before {
+  content: "";
+  position: absolute;
+  height: 7rem;
+  background-color: rgba(166, 191, 248, 0.8); /* 빛의 색상 */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateX(2.3rem); /* 원형 경로의 시작 위치 */
+  box-shadow: 0 0 0.8rem 0.4rem #bcd4f799; 
+  animation: orbit 3s linear infinite; /* 원형 궤도를 도는 애니메이션 */
+}
+
+
+@keyframes orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(2.3rem);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(2.3rem);
+  }
+}
+
+.card-load-extreme-title {
+  width: 90px;
+  height: auto;
+  position: relative;
+  float: right;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  background-color: #efefef;
+  background-size: 200% 100%;
+  animation: load89234 2s infinite;
+  font-weight: bold;
+  font-size: 80%;
+  color: #525252;
+  text-align: center;
+}
+
+.card-load-extreme-descripion {
+  width: 90px;
+  height: auto;
+  position: relative;
+  float: right;
+  border-radius: 5px;
+  margin-top: 10px;
+  animation: load89234 2s infinite;
+  font-size: 75%;
+  color: #525252;
+  text-align: center;
+}
+
+
+@keyframes load89234 {
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 
 @keyframes bounce05 {
   85%, 92%, 100% {
