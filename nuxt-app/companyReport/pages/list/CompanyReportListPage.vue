@@ -101,13 +101,13 @@
               sm="3"
               md="3"
               lg="2"
-              class="mb-5 mr-5"
+              class="mb-9 mr-5"
             >
             <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
                 <div class="card-load">
                   <img 
                   :src="getImageUrl(companyReport.companyReportTitleImage)" 
-                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple.png'}">
+                  :class="{'default-img': getImageUrl(companyReport.companyReportTitleImage) === '/images/fixed/AIM_BI_Simple_Grey.png'}">
                 </div>
                 <div class="card-load-extreme-title">
                   <p>{{ companyReport.companyReportName }}</p>
@@ -142,6 +142,7 @@
             <div class="companyReport-img-container">
               <v-img
                 class="companyReport-scaled-img"
+                :class="{ 'companyReport-scaled-grey-img': !companyReport.companyReportTitleImage }"
                 :src="getImageUrl(companyReport.companyReportTitleImage)"
               >
                 <template v-slot:placeholder>
@@ -158,9 +159,14 @@
             <v-card-title class="companyReport-title">{{
               companyReport.companyReportName
             }}</v-card-title>
-            <v-card-subtitle class="companyReport-price"
-              >{{ companyReport.companyReportPrice }}원</v-card-subtitle
-            >
+            <div class="company-keyword-container">
+              <v-text
+                  v-for="(keyword, index) in companyReport.keyword.split(',').slice(0,2)"
+                  class="companyReport-keyword"
+                >
+                  {{ keyword }}
+                </v-text>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -366,20 +372,22 @@ function changePage(page) {
 
 const getImageUrl = (imageName) => {
   if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  } else {
+    return new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
   }
   
-  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+  // const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
 
-  const img = new Image();
-  img.src = imageUrl;
-  // console.log(img.src)
-  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
-  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
-    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
-    };
+  // const img = new Image();
+  // img.src = imageUrl;
+  // // console.log(img.src)
+  // // 이미지가 존재하지 않는 경우 기본 이미지로 설정
+  // if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
+  //   img.src = new URL(`/assets/images/fixed/AIM_BI_Simple_Grey.png`, import.meta.url).href;
+  //   };
 
-  return img.src;
+  // return img.src;
 };
 
 
@@ -445,13 +453,14 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* text-align: center; */
   padding: 12px;
 }
 
 .companyReport-card {
   transition: transform 0.2s ease-in-out;
   border-radius: 32px;
+  width: 160px;
+  height: 180px;
   box-shadow: 0 1px 3px rgb(206, 205, 205);
 }
 
@@ -462,7 +471,7 @@ useHead({
 .companyReport-img-container {
   position: relative;
   width: 100%;
-  height: 130px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -470,24 +479,39 @@ useHead({
 }
 
 .companyReport-scaled-img {
-  width: 20%;
+  max-width: 80%;
+  max-height: auto;
   height: auto;
-  transition: transform 0.3s ease; /* 애니메이션 효과 추가 */
-  /* border-bottom: 1px */
-  padding: 50px;
+  transition: transform 0.3s ease;
+}
+
+.companyReport-scaled-grey-img {
+  max-width: 40%;
+  max-height: auto;
+  height: auto;
+  transition: transform 0.3s ease;
 }
 
 .companyReport-title {
-  font-size: 18px;
+  font-size: 0.95rem;
   font-weight: bold;
-  margin-left: 10px;
-  padding-top: 0px;
+  margin-left: 8px;
+  padding: 0rem 0rem 0.5rem 0.5rem;
 }
 
-.companyReport-price {
-  color: #9452ff;
-  font-weight: 600;
+.company-keyword-container {
   margin-left: 10px;
+}
+
+.companyReport-keyword {
+  font-size: 0.7rem;
+  color: #79abf6;
+  background-color: #bcd4f799;
+  border-radius: 0.5rem;
+
+  font-weight: 500;
+  padding: 0.3rem;
+  margin-right: 0.1rem;
 }
 
 .companyReport-image {
@@ -532,6 +556,7 @@ useHead({
   align-items: center;
   justify-content: space-between;
   text-align: center;
+  margin-bottom: 1rem;
 }
 
 .search-input {
@@ -786,7 +811,6 @@ u {
   content: "";
   position: absolute;
   height: 7rem;
-  background-color: rgba(166, 191, 248, 0.8); /* 빛의 색상 */
   border-radius: 50%;
   top: 50%;
   left: 50%;
