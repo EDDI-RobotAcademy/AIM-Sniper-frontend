@@ -89,7 +89,7 @@
             </div>
           </v-col>
         </v-row>
-        <div class="top-container">
+        <div class="top-container" v-if="topCompanyReportListVisible">
           <v-row class="justify-center">
             <p class="my-3"><b>조회수 ✨Top5✨ 기업의 요약보고서를 <u>무료로 확인</u>해보세요!</b></p>
           </v-row>
@@ -101,7 +101,7 @@
               sm="3"
               md="3"
               lg="2"
-              class="mb-9 mr-5"
+              class="mb-4 mr-5"
             >
             <div class="card" @click="goToCompanyReportReadPage(companyReport.companyReportId)">
                 <div class="card-load">
@@ -232,17 +232,30 @@ const showFilterTags = ref(false);
 
 // 보고서 관련 변수
 const allCompanyReportListVisible = ref(true);
+const topCompanyReportListVisible = ref(false);
 const topNCompanyReportList = ref([]);
 
-onMounted(async () => {
-  
-  // 데이터를 기반으로 topN 리스트 생성
-  topNCompanyReportList.value = companyReportStore.companyReportList.filter(
-    (companyReport) => {
-      return companyReportStore.topList.some((topId) => topId === companyReport.companyReportId);
+watch(
+  () => [companyReportStore.companyReportList, companyReportStore.topList],
+  () => {
+
+    if (
+      companyReportStore.companyReportList.length > 0 &&
+      companyReportStore.topList.length > 0
+    ) {
+      topNCompanyReportList.value = companyReportStore.companyReportList.filter(
+        (companyReport) => {
+          return companyReportStore.topList.some(
+            (topId) => topId === companyReport.companyReportId
+          );
+        }
+      );
+
+      topCompanyReportListVisible.value = true;
     }
-  );
-});
+  },
+  { immediate: true }
+);
 
 
 const filteredCompanyReportList = computed(() => {
