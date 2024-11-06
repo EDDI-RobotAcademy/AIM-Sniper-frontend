@@ -87,7 +87,7 @@
                                 v-model="birthyear"
                                 label="출생년도" 
                                 :rules="birthyearRules"
-                                required            
+                                required       
                         />                       
                         
                         </v-form>
@@ -170,6 +170,7 @@ const requestUserInfo = async () => {
     } else if (loginType.value === 'NAVER') {
       const naverUserInfo = await naverAuthenticationStore.requestNaverUserInfoToDjango();
       naverEmail.value = naverUserInfo.response.email;
+      birthyear.value = naverUserInfo.response.birthyear;
     }
   } catch (error) {
     console.error('에러:', error);
