@@ -139,9 +139,9 @@ const goToGoogleLogin = async () => {
 };
 
 const goToNaverLogin = async () => {
-  alert("현재 로그인 검수 중입니다.");
-  // sessionStorage.setItem('loginType', "NAVER");
-  // await naverAuthentication.requestNaverOauthRedirectionToDjango();
+  // alert("현재 로그인 검수 중입니다.");
+  sessionStorage.setItem('loginType', "NAVER");
+  await naverAuthentication.requestNaverOauthRedirectionToDjango();
 };
 
 // Computed properties (Pinia 상태에 기반한 계산된 속성)
