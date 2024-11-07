@@ -107,7 +107,7 @@ const currentAIMessage = ref('');
 const chatHistory = ref([{ type: 'ai', content: '' }]);
 const isLoading = ref(false);
 const sendCount = ref(0);
-const maxMessages = 5;
+const maxMessages = 6;
 const aiResponseList = ref([]);
 const questionIndex = ref(0);
 const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발', '기술적 역량'];
@@ -172,15 +172,15 @@ watch(visible, (newVal) => {
 });
 
 // Lifecycle Hooks
-// onMounted(async () => {
-//   const email = sessionStorage.getItem("email");
-//   if (email) {
-//     accountId.value = await accountStore.requestAccountIdToDjango(email);
-//   } else {
-//     alert('로그인이 필요합니다.');
-//     router.push('/account/login');
-//   }
-// });
+onMounted(async () => {
+  const email = sessionStorage.getItem("email");
+  if (email) {
+    accountId.value = await accountStore.requestAccountIdToDjango(email);
+  } else {
+    alert('로그인이 필요합니다.');
+    router.push('/account/login');
+  }
+});
 
 const startTimer = () => {
   clearInterval(timer.value);
@@ -372,7 +372,6 @@ const sendMessage = async () => {
           }
           if ( nextIntent == '기술적 역량' ) {
             const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
-            const randomIndex = Math.floor(Math.random() * copingSklills.length);
             const techQuestion = await aiInterviewStore.requestTechQuestionToDjango({ job: selectedRole});
             currentAIMessage.value = `${prefix[prefixRandomIndex]} ${techQuestion}`;
             chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
