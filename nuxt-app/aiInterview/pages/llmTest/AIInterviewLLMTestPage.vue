@@ -22,7 +22,7 @@
       <div v-if="!visible" class="interview-container">
         <v-icon>mdi-account-tie</v-icon>
         <h2 v-html="formattedAIMessage"></h2><br>
-        <div :class="{'timer': true, 'red-text': remainingTime <= 10}">
+        <div v-if="doingInterview" :class="{'timer': true, 'red-text': remainingTime <= 10}">
           남은 시간: {{ Math.floor(remainingTime / 60) }}:{{ (remainingTime % 60).toString().padStart(2, '0') }}
         </div>
       </div>
@@ -94,6 +94,7 @@ const aiResponseList = ref([]);
 const questionIndex = ref(0);
 const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
 const intentIndex = ref(0);
+const doingIntervew = ref(true);
 
 const formattedAIMessage = computed(() => {
       return currentAIMessage.value.replace(/([.?])/g, '$1<br>');
@@ -281,6 +282,7 @@ const sendMessage = async () => {
       }
 
       if (intentIndex.value === 4) {
+        doingIntervew = false;
         currentAIMessage.value = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
         chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
         finished.value = true;
@@ -324,7 +326,7 @@ const sendMessage = async () => {
             break;
           }
         }
-        if (lastUserInput.length <= 20 ) {
+        if (lastUserInput.length <= 30 ) {
           if ( nextIntent == '대처 능력' ) {
             const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
             const randomIndex = Math.floor(Math.random() * copingSklills.length);
