@@ -136,18 +136,6 @@ const myPageItems = ref([
   },
 ]);
 
-const aiInterviewPageList = ref([
-  // {
-  //   title: "대화형",
-  //   action: () => goToAiInterviewPage(),
-  // },
-  {
-    title: "단일 질문 노출형",
-    action: () => goToLlmTestPage(),
-  },
-]);
-
-const surveyId = ref(1);
 const isUserAuthenticated = ref(null);
 
 // 브라우저 환경에서만 실행되도록 수정

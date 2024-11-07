@@ -81,26 +81,32 @@ const orderItem = ref([]);
 // Pinia의 상태 참조
 const orderItemList = computed(() => orderStore.orderItemList);
 
-const getImageUrl = (imageName) => {
-  if (!imageName) {
-    return new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
+const getDefaultImageUrl = () => {
+  try {
+    return new URL(`/assets/images/fixed/AIM_BI_Simple_Grey2.png`, import.meta.url).href;
+  } catch (error) {
+    console.error('Error loading default image:', error);
+    return '/assets/images/fixed/AIM_BI_Simple_Grey2.png';
   }
-  
-  const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
-
-  const img = new Image();
-  img.src = imageUrl;
-  // 이미지가 존재하지 않는 경우 기본 이미지로 설정
-  if(img.src=="http://localhost:3000/_nuxt/companyReport/pages/list/undefined") {
-    img.src = new URL(`/assets/images/fixed/AIM_BI_Simple.png`, import.meta.url).href;
-    };
-
-  return img.src;
 };
 
-function goToLastPage() {
-  router.go(-1);
-}
+const getImageUrl = (imageName) => {
+  try {
+    if (!imageName || typeof imageName !== 'string') {
+      return getDefaultImageUrl();
+    }
+    
+    // 이미지 경로가 유효한지 확인
+    const imageUrl = new URL(`/assets/images/uploadImages/${imageName}`, import.meta.url).href;
+    if (imageUrl.includes('undefined')) {
+      return getDefaultImageUrl();
+    }
+    return imageUrl;
+  } catch (error) {
+    console.error('Error loading image:', error);
+    return getDefaultImageUrl();
+  }
+};
 
 function goToCompanyReportReadPage(companyReportId) {
   router.push({
