@@ -5,13 +5,31 @@
       <h2>안녕하십니까? AI 모의 면접 서비스입니다.</h2><br>
       <v-container class="draw-line" align=start>
         <v-card-title align=center><strong>※ 사전 공지 ※</strong></v-card-title><br>
-        <li class="li">본 면접은 특정 기업 및 직무에 맞추어진 면접이 아닌 <strong>인성 면접</strong>임을 알려드립니다.</li><br>
-        <li class="li">총 <strong>5개</strong>의 질문이 제공됩니다.</li><br>
+        <li class="li">본 면접은 특정 기업에 맞추어진 면접은 아닙니다.</li><br>
+        <li class="li"><strong>인성 면접</strong> 질문 5개와 <strong>기술 면접</strong> 질문 1개로 총 <strong>6개</strong>의 질문이 제공됩니다.</li><br>
         <li class="li"><strong>질문</strong>은 <strong>답변</strong>을 기반으로 제공되니 가능한 <strong>구체적으로</strong> 답변해 주세요.</li><br>
         <li class="li">면접 질문 당 답변 제한 시간은 <strong>1분 30초</strong>입니다. 시간 내에 작성 부탁드립니다.</li><br>
+        <li class="li">기술 면접을 희망하는 <strong>개발 분야</strong>를 선택해 주세요. </li><br>
+
+        <v-radio-group v-model="selectedRole">
+          <v-row justify="center">
+            <v-col cols="auto">
+              <v-radio label="Backend" value="Backend"></v-radio>
+            </v-col>
+            <v-col cols="auto">
+              <v-radio label="Frontend" value="Frontend"></v-radio>
+            </v-col>
+            <v-col cols="auto">
+              <v-radio label="AI" value="AI"></v-radio>
+            </v-col>
+            <v-col cols="auto">
+              <v-radio label="Infra" value="Infra"></v-radio>
+            </v-col>
+          </v-row>
+        </v-radio-group>
       </v-container><br>
-      <v-card-text><strong>면접 서비스를 시작하시려면 아래 버튼을 눌러주세요.</strong></v-card-text>
-      <v-btn @click="startInterview" color="primary">START</v-btn>
+      <v-card-text><strong>모의 면접을 시작하시려면 아래 버튼을 눌러주세요.</strong></v-card-text>
+      <v-btn @click="startInterview" color="primary" :disabled="!selectedRole">START</v-btn>
       
     </v-container>
     <v-container v-if="start" align="center">
@@ -92,9 +110,10 @@ const sendCount = ref(0);
 const maxMessages = 5;
 const aiResponseList = ref([]);
 const questionIndex = ref(0);
-const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
+const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발', '기술적 역량'];
 const intentIndex = ref(0);
 const doingInterview = ref(true);
+const selectedRole = ref(null);
 
 const formattedAIMessage = computed(() => {
       return currentAIMessage.value.replace(/([.?])/g, '$1<br>');
@@ -153,15 +172,15 @@ watch(visible, (newVal) => {
 });
 
 // Lifecycle Hooks
-onMounted(async () => {
-  const email = sessionStorage.getItem("email");
-  if (email) {
-    accountId.value = await accountStore.requestAccountIdToDjango(email);
-  } else {
-    alert('로그인이 필요합니다.');
-    router.push('/account/login');
-  }
-});
+// onMounted(async () => {
+//   const email = sessionStorage.getItem("email");
+//   if (email) {
+//     accountId.value = await accountStore.requestAccountIdToDjango(email);
+//   } else {
+//     alert('로그인이 필요합니다.');
+//     router.push('/account/login');
+//   }
+// });
 
 const startTimer = () => {
   clearInterval(timer.value);
@@ -281,7 +300,7 @@ const sendMessage = async () => {
         aiResponseList.value = await aiInterviewStore.requestFirstQuestionToDjango({ questionId: questionId});
       }
 
-      if (intentIndex.value === 4) {
+      if (intentIndex.value === 5) {
         doingInterview.value = false;
         currentAIMessage.value = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
         chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
@@ -291,7 +310,7 @@ const sendMessage = async () => {
           chatHistory.value.pop();
           const contents = chatHistory.value.map(item => item.content);
           const pairedContents = [];
-          const interviewIntents = ['자기 분석', '대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
+          const interviewIntents = ['자기 분석', '대처 능력', '소통 능력', '프로젝트 경험', '자기 개발', '기술적 역량'];
 
           for (let i = 0; i < contents.length; i += 2) {
             pairedContents.push([contents[i], contents[i + 1], interviewIntents[Math.floor(i / 2)]]);
@@ -351,36 +370,50 @@ const sendMessage = async () => {
             currentAIMessage.value = `${prefix[prefixRandomIndex]} ${selfDevelopments[randomIndex]}`;
             chatHistory.value.push({ type: "ai", content: selfDevelopments[randomIndex] });
           }
+          if ( nextIntent == '기술적 역량' ) {
+            const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
+            const randomIndex = Math.floor(Math.random() * copingSklills.length);
+            const techQuestion = await aiInterviewStore.requestTechQuestionToDjango({ job: selectedRole});
+            currentAIMessage.value = `${prefix[prefixRandomIndex]} ${techQuestion}`;
+            chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+          }
+
         } else {
           const payload = { answer: lastUserInput, nextIntent: nextIntent };
-          try {
-            await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
-            const response = await aiInterviewStore.requestInferedResultToFastAPI();
-            if (response && response.nextQuestion) {
-              currentAIMessage.value = response.nextQuestion;
-              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+          if ( nextIntent != '기술적 역량' ) {
+            try {
+              await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
+              const response = await aiInterviewStore.requestInferedResultToFastAPI();
+              if (response && response.nextQuestion) {
+                currentAIMessage.value = response.nextQuestion;
+                chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+              }
+            } catch {
+              if ( nextIntent == '대처 능력' ) {
+                const randomIndex = Math.floor(Math.random() * copingSklills.length);
+                currentAIMessage.value = copingSklills[randomIndex];
+                chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+              }
+              if ( nextIntent == '소통 능력' ) {
+                const randomIndex = Math.floor(Math.random() * commuicationSkills.length);
+                currentAIMessage.value = commuicationSkills[randomIndex];
+                chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+              }
+              if ( nextIntent == '프로젝트 경험' ) {
+                const randomIndex = Math.floor(Math.random() * projectExperiences.length);
+                currentAIMessage.value = projectExperiences[randomIndex];
+                chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+              }
+              if ( nextIntent == '자기 개발' ) {
+                const randomIndex = Math.floor(Math.random() * selfDevelopments.length);
+                currentAIMessage.value = selfDevelopments[randomIndex];
+                chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+              }
             }
-          } catch {
-            if ( nextIntent == '대처 능력' ) {
-              const randomIndex = Math.floor(Math.random() * copingSklills.length);
-              currentAIMessage.value = copingSklills[randomIndex];
-              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
-            }
-            if ( nextIntent == '소통 능력' ) {
-              const randomIndex = Math.floor(Math.random() * commuicationSkills.length);
-              currentAIMessage.value = commuicationSkills[randomIndex];
-              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
-            }
-            if ( nextIntent == '프로젝트 경험' ) {
-              const randomIndex = Math.floor(Math.random() * projectExperiences.length);
-              currentAIMessage.value = projectExperiences[randomIndex];
-              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
-            }
-            if ( nextIntent == '자기 개발' ) {
-              const randomIndex = Math.floor(Math.random() * selfDevelopments.length);
-              currentAIMessage.value = selfDevelopments[randomIndex];
-              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
-            }
+          } else {
+            const techQuestion = await aiInterviewStore.requestTechQuestionToDjango({ job: selectedRole});
+            currentAIMessage.value = techQuestion;
+            chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
           }
         }
       }
@@ -421,6 +454,12 @@ useHead({
   width: 57%;
 }
 
+.radio-group-horizontal {
+  display: flex;
+  flex-direction: row; /* 가로 배치 강제 */
+  gap: 16px; /* 각 라디오 버튼 사이의 간격 */
+}
+
 .li {
   margin-left: 3%;
 }
@@ -434,7 +473,7 @@ useHead({
 }
 
 .control-margin {
-  margin-top: 5%;
+  margin-top: 1.5%;
 }
 
 .interview-container {
