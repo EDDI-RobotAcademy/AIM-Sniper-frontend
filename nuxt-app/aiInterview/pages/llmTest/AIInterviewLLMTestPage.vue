@@ -7,6 +7,7 @@
         <v-card-title align=center><strong>※ 사전 공지 ※</strong></v-card-title><br>
         <li class="li">본 면접은 특정 기업 및 직무에 맞추어진 면접이 아닌 <strong>인성 면접</strong>임을 알려드립니다.</li><br>
         <li class="li">총 <strong>5개</strong>의 질문이 제공됩니다.</li><br>
+        <li class="li"><strong>질문</strong>은 <strong>답변</strong>을 기반으로 제공되니 가능한 <strong>구체적으로</strong> 답변해 주세요.</li><br>
         <li class="li">면접 질문 당 답변 제한 시간은 <strong>1분 30초</strong>입니다. 시간 내에 작성 부탁드립니다.</li><br>
       </v-container><br>
       <v-card-text><strong>면접 서비스를 시작하시려면 아래 버튼을 눌러주세요.</strong></v-card-text>
@@ -98,6 +99,38 @@ const formattedAIMessage = computed(() => {
       return currentAIMessage.value.replace(/([.?])/g, '$1<br>');
     });
 
+const prefix = [
+  "이번 질문에서는 조금 더 구체적인 답변을 부탁드리겠습니다.",
+  "이번 질문은 조금 더 깊이 있는 답변을 기대합니다.",
+  "이번 질문은 조금 더 상세하게 답변해 주세요.",
+  "이번 질문에서는 조금 더 상세한 답변을 부탁드립니다.",
+]
+
+const copingSklills = [
+  "어려운 상황이나 갈등이 발생했을 때, 어떻게 대처하시는 편인가요? 그 사례를 들어 설명해 주세요.",
+  "어려운 상황에서 예상치 못한 문제가 발생했을 때, 어떻게 대처하시는 편인가요? 구체적인 예시가 있다면 말씀해 주세요.",
+  "스트레스를 받는 상황이나 예상치 못한 문제에 직면했을 때, 보통 어떤 방식으로 대처하시나요? 구체적인 예시를 들어주시면 좋겠습니다.",
+  "스트레스를 받는 상황이 생겼을 때, 어떻게 대처하는 편인가요? 구체적인 사례와 함께 설명해 주세요."
+]
+const commuicationSkills = [
+  "팀원 간에 소통이 원활하지 않을 때, 이를 어떻게 개선할 수 있다고 생각하나요?",
+  "팀원 간의 의사소통이 원활하지 않을 때, 이를 개선하기 위해 어떤 노력을 기울였는지 구체적인 사례를 들어 설명해 주세요.",
+  "팀원 간의 갈등이 발생했을 때, 그 상황을 어떻게 해결하실 건가요?",
+  "팀원들과의 소통에서 가장 중요하게 생각하는 점은 무엇이며, 이를 실천하기 위해 어떤 노력을 하고 있나요?"
+]
+const projectExperiences = [
+  "최근에 참여한 프로젝트에 대해 소개해주실 수 있나요? 프로젝트의 목표와 주요 내용을 말씀해 주세요.",
+  "이전에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행되었고, 어떤 결과를 이끌어냈는지 궁금합니다.",
+  "이전에 참여했던 프로젝트 중 가장 기억에 남는 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표가 있었고, 어떤 방식으로 진행되었는지 궁금합니다.",
+  "최근에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행했으며, 어떤 결과가 있었는지 궁금합니다."
+]
+const selfDevelopments = [
+  "자기 개발을 위해 최근에 어떤 새로운 기술이나 지식을 배우셨나요? 그 과정에서 느낀 점은 무엇인가요?",
+  "최근에 본인에게 가장 큰 발전이 있다고 느꼈던 경험은 무엇이었나요? 그 경험이 왜 중요했는지 설명해 주시겠습니까?",
+  "최근에 어떤 자기 개발 활동을 진행했는지 설명해 주시고, 그 경험이 어떻게 도움이 되었는지도 이야기해 주시기 바랍니다.",
+  "최근에 자신이 개발한 기술이나 역량이 있나요? 그 기술을 어떻게 익히게 되었는지 구체적으로 말씀해 주세요."
+]
+
 // Computed Properties
 const isCheckoutDisabled = computed(() => sendCount.value >= maxMessages);
 
@@ -119,15 +152,15 @@ watch(visible, (newVal) => {
 });
 
 // Lifecycle Hooks
-onMounted(async () => {
-  const email = sessionStorage.getItem("email");
-  if (email) {
-    accountId.value = await accountStore.requestAccountIdToDjango(email);
-  } else {
-    alert('로그인이 필요합니다.');
-    router.push('/account/login');
-  }
-});
+// onMounted(async () => {
+//   const email = sessionStorage.getItem("email");
+//   if (email) {
+//     accountId.value = await accountStore.requestAccountIdToDjango(email);
+//   } else {
+//     alert('로그인이 필요합니다.');
+//     router.push('/account/login');
+//   }
+// });
 
 const startTimer = () => {
   clearInterval(timer.value);
@@ -290,55 +323,61 @@ const sendMessage = async () => {
             break;
           }
         }
-
-        const payload = { answer: lastUserInput, nextIntent: nextIntent };
-        try {
-          await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
-          const response = await aiInterviewStore.requestInferedResultToFastAPI();
-          if (response && response.nextQuestion) {
-            currentAIMessage.value = response.nextQuestion;
-            chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
-          }
-        } catch {
+        if (lastUserInput.length <= 20 ) {
           if ( nextIntent == '대처 능력' ) {
-            const tempQuestionList = [
-              "어려운 상황이나 갈등이 발생했을 때, 어떻게 대처하시는 편인가요? 그 사례를 들어 설명해 주세요.",
-              "어려운 상황에서 예상치 못한 문제가 발생했을 때, 어떻게 대처하시는 편인가요? 구체적인 예시가 있다면 말씀해 주세요.",
-              "스트레스를 받는 상황이나 예상치 못한 문제에 직면했을 때, 보통 어떤 방식으로 대처하시나요? 구체적인 예시를 들어주시면 좋겠습니다.",
-              "스트레스를 받는 상황이 생겼을 때, 어떻게 대처하는 편인가요? 구체적인 사례와 함께 설명해 주세요."
-            ]
-            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
-            currentAIMessage.value = tempQuestionList[randomIndex];
+            const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
+            const randomIndex = Math.floor(Math.random() * copingSklills.length);
+            currentAIMessage.value = `${prefix[prefixRandomIndex]} ${copingSklills[randomIndex]}`;
+            chatHistory.value.push({ type: "ai", content: copingSklills[randomIndex] });
           }
           if ( nextIntent == '소통 능력' ) {
-            const tempQuestionList = [
-              "팀원 간에 소통이 원활하지 않을 때, 이를 어떻게 개선할 수 있다고 생각하나요?",
-              "팀원 간의 의사소통이 원활하지 않을 때, 이를 개선하기 위해 어떤 노력을 기울였는지 구체적인 사례를 들어 설명해 주세요.",
-              "팀원 간의 갈등이 발생했을 때, 그 상황을 어떻게 해결하실 건가요?",
-              "팀원들과의 소통에서 가장 중요하게 생각하는 점은 무엇이며, 이를 실천하기 위해 어떤 노력을 하고 있나요?"
-            ]
-            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
-            currentAIMessage.value = tempQuestionList[randomIndex];
+            const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
+            const randomIndex = Math.floor(Math.random() * commuicationSkills.length);
+            currentAIMessage.value = `${prefix[prefixRandomIndex]} ${commuicationSkills[randomIndex]}`;
+            chatHistory.value.push({ type: "ai", content: commuicationSkills[randomIndex] });
           }
           if ( nextIntent == '프로젝트 경험' ) {
-            const tempQuestionList = [
-              "최근에 참여한 프로젝트에 대해 소개해주실 수 있나요? 프로젝트의 목표와 주요 내용을 말씀해 주세요.",
-              "이전에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행되었고, 어떤 결과를 이끌어냈는지 궁금합니다.",
-              "이전에 참여했던 프로젝트 중 가장 기억에 남는 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표가 있었고, 어떤 방식으로 진행되었는지 궁금합니다.",
-              "최근에 참여했던 프로젝트에 대해 설명해 주실 수 있나요? 어떤 목표를 가지고 진행했으며, 어떤 결과가 있었는지 궁금합니다."
-            ]
-            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
-            currentAIMessage.value = tempQuestionList[randomIndex];
+            const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
+            const randomIndex = Math.floor(Math.random() * projectExperiences.length);
+            currentAIMessage.value = `${prefix[prefixRandomIndex]} ${projectExperiences[randomIndex]}`;
+            chatHistory.value.push({ type: "ai", content: projectExperiences[randomIndex] });
           }
           if ( nextIntent == '자기 개발' ) {
-            const tempQuestionList = [
-              "자기 개발을 위해 최근에 어떤 새로운 기술이나 지식을 배우셨나요? 그 과정에서 느낀 점은 무엇인가요?",
-              "최근에 본인에게 가장 큰 발전이 있다고 느꼈던 경험은 무엇이었나요? 그 경험이 왜 중요했는지 설명해 주시겠습니까?",
-              "최근에 어떤 자기 개발 활동을 진행했는지 설명해 주시고, 그 경험이 어떻게 도움이 되었는지도 이야기해 주시기 바랍니다.",
-              "최근에 자신이 개발한 기술이나 역량이 있나요? 그 기술을 어떻게 익히게 되었는지 구체적으로 말씀해 주세요."
-            ]
-            const randomIndex = Math.floor(Math.random() * tempQuestionList.length);
-            currentAIMessage.value = tempQuestionList[randomIndex];
+            const prefixRandomIndex = Math.floor(Math.random() * prefix.length);
+            const randomIndex = Math.floor(Math.random() * selfDevelopments.length);
+            currentAIMessage.value = `${prefix[prefixRandomIndex]} ${selfDevelopments[randomIndex]}`;
+            chatHistory.value.push({ type: "ai", content: selfDevelopments[randomIndex] });
+          }
+        } else {
+          const payload = { answer: lastUserInput, nextIntent: nextIntent };
+          try {
+            await aiInterviewStore.requestInferNextQuestionToFastAPI(payload);
+            const response = await aiInterviewStore.requestInferedResultToFastAPI();
+            if (response && response.nextQuestion) {
+              currentAIMessage.value = response.nextQuestion;
+              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+            }
+          } catch {
+            if ( nextIntent == '대처 능력' ) {
+              const randomIndex = Math.floor(Math.random() * copingSklills.length);
+              currentAIMessage.value = copingSklills[randomIndex];
+              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+            }
+            if ( nextIntent == '소통 능력' ) {
+              const randomIndex = Math.floor(Math.random() * commuicationSkills.length);
+              currentAIMessage.value = commuicationSkills[randomIndex];
+              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+            }
+            if ( nextIntent == '프로젝트 경험' ) {
+              const randomIndex = Math.floor(Math.random() * projectExperiences.length);
+              currentAIMessage.value = projectExperiences[randomIndex];
+              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+            }
+            if ( nextIntent == '자기 개발' ) {
+              const randomIndex = Math.floor(Math.random() * selfDevelopments.length);
+              currentAIMessage.value = selfDevelopments[randomIndex];
+              chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
+            }
           }
         }
       }
