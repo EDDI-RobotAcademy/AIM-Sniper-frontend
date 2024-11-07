@@ -259,6 +259,7 @@ const handleShiftEnter = () => {
 };
 
 const sendMessage = async () => {
+  clearInterval(timer.value);
   if (sendCount.value >= maxMessages) {
     finished.value = true;
     return;
