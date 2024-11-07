@@ -152,15 +152,15 @@ watch(visible, (newVal) => {
 });
 
 // Lifecycle Hooks
-// onMounted(async () => {
-//   const email = sessionStorage.getItem("email");
-//   if (email) {
-//     accountId.value = await accountStore.requestAccountIdToDjango(email);
-//   } else {
-//     alert('로그인이 필요합니다.');
-//     router.push('/account/login');
-//   }
-// });
+onMounted(async () => {
+  const email = sessionStorage.getItem("email");
+  if (email) {
+    accountId.value = await accountStore.requestAccountIdToDjango(email);
+  } else {
+    alert('로그인이 필요합니다.');
+    router.push('/account/login');
+  }
+});
 
 const startTimer = () => {
   clearInterval(timer.value);
