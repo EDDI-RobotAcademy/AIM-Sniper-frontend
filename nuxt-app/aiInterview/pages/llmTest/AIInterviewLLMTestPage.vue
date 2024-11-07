@@ -94,7 +94,7 @@ const aiResponseList = ref([]);
 const questionIndex = ref(0);
 const intentList = ['대처 능력', '소통 능력', '프로젝트 경험', '자기 개발'];
 const intentIndex = ref(0);
-const doingIntervew = ref(true);
+const doingInterview = ref(true);
 
 const formattedAIMessage = computed(() => {
       return currentAIMessage.value.replace(/([.?])/g, '$1<br>');
@@ -282,7 +282,7 @@ const sendMessage = async () => {
       }
 
       if (intentIndex.value === 4) {
-        doingIntervew = false;
+        doingInterview.value = false;
         currentAIMessage.value = "수고하셨습니다. 면접이 종료되었습니다. 추후에 더 발전된 서비스로 찾아뵙겠습니다.";
         chatHistory.value.push({ type: "ai", content: currentAIMessage.value });
         finished.value = true;
